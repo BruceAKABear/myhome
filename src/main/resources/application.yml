@@ -1,0 +1,13 @@
+server:
+  port: 8888
+spring:
+  profiles:
+    active: dev
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+system:
+  default-name: 大熊
+  default-avatar: https://image.dengyi.pro/dengyi/1625405280547962.jpg
+  default-email: dengyi@dengyi.pro
+  default-password: $2a$10$qoLZE501qBaWARUgH.HvMePjwZb84dej09ha08jlk4utMDpOtMTnq
