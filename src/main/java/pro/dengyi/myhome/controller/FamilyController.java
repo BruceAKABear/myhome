@@ -38,5 +38,12 @@ public class FamilyController {
         return new DataResponse<>(familyDto);
     }
 
+    @ApiOperation("查询是否是")
+    @GetMapping("/checkIsFirst")
+    public DataResponse<Boolean> checkIsFirst() {
+        Boolean flag = familyService.checkIsFirst();
+        return new DataResponse<>(flag);
+    }
+
 
 }

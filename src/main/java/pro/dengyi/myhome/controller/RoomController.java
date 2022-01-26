@@ -23,7 +23,6 @@ import javax.validation.constraints.NotBlank;
 @RestController
 @RequestMapping("/room")
 public class RoomController {
-
     @Autowired
     private RoomService roomService;
 

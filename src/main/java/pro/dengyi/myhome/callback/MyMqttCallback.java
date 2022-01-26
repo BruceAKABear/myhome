@@ -1,8 +1,13 @@
 package pro.dengyi.myhome.callback;
 
+import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Component;
+import pro.dengyi.myhome.service.DeviceService;
 
 /**
  * mqtt回调
@@ -10,7 +15,14 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
  * @author dengyi (email:dengyi@dengyi.pro)
  * @date 2022-01-22
  */
+@Slf4j
+@Component
 public class MyMqttCallback implements MqttCallback {
+    @Autowired
+    private DeviceService deviceService;
+    @Autowired
+    private RedisTemplate redisTemplate;
+
 
     @Override
     public void connectionLost(Throwable cause) {
@@ -21,11 +33,12 @@ public class MyMqttCallback implements MqttCallback {
     @Override
     public void messageArrived(String topic, MqttMessage message) throws Exception {
         String deviceId = topic.substring(topic.indexOf("/") + 1);
+        //查询设备的信息
+//        Device device = deviceService.selectById(deviceId);
         if (topic.startsWith("heartbeat/")) {
-            //更新redis
-            System.out.println("设备ID：" + deviceId);
-
-
+            log.info("接收到设备心跳数据，开始更新缓存");
+            //35秒没接收到设备上报心跳视为设备离线
+            redisTemplate.opsForValue().set("onlineDevice:" + deviceId, true, 35);
         } else {
             System.out.println("设备ID：" + deviceId);
         }

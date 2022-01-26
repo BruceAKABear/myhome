@@ -11,4 +11,7 @@ public interface FamilyService {
     void addUpdate(Family family);
 
     FamilyDto info();
+
+    Boolean checkIsFirst();
+
 }

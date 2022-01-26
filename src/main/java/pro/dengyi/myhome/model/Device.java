@@ -20,7 +20,7 @@ import java.util.Date;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Device {
 
-    @ApiModelProperty(value = "设备在系统中的ID")
+    @ApiModelProperty(value = "设备在系统中的ID,或者芯片的chipId")
     private String id;
 
     @ApiModelProperty(value = "是否在线")
@@ -29,9 +29,10 @@ public class Device {
     @ApiModelProperty(value = "是否启用")
     private Boolean enable;
 
-    @ApiModelProperty(value = "图标地址")
-    @TableField(exist = false)
-    private String iconUrl;
+    //网络图片是否需要？
+//    @ApiModelProperty(value = "图标地址")
+//    @TableField(exist = false)
+//    private String iconUrl;
 
     @ApiModelProperty(value = "所属分类ID")
     private String categoryId;
@@ -51,12 +52,4 @@ public class Device {
     @ApiModelProperty(value = "只能户主可见")
     private Boolean onlyHolderCanSee;
 
-    @ApiModelProperty(value = "连接系统用户名")
-    private String userName;
-
-    @ApiModelProperty(value = "盐")
-    private String salt;
-
-    @ApiModelProperty(value = "设备连接密码")
-    private String password;
 }

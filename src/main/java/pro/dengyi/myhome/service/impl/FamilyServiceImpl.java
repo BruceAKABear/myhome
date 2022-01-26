@@ -45,4 +45,10 @@ public class FamilyServiceImpl implements FamilyService {
         return familyDao.selectFamilyDto();
     }
 
+    @Override
+    public Boolean checkIsFirst() {
+        List<Family> familyList = familyDao.selectList(new QueryWrapper<>());
+        return CollectionUtils.isEmpty(familyList);
+    }
+
 }

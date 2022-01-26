@@ -24,7 +24,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/floor")
 public class FloorController {
-
     @Autowired
     private FloorService floorService;
 
@@ -48,4 +47,7 @@ public class FloorController {
         floorService.delete(id);
         return CommonResponse.success();
     }
+
+
+
 }
