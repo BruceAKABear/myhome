@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import pro.dengyi.myhome.annotations.NeedHolderPermission;
 import pro.dengyi.myhome.model.User;
 import pro.dengyi.myhome.model.vo.LoginVo;
 import pro.dengyi.myhome.response.CommonResponse;
@@ -45,5 +46,13 @@ public class UserController {
         return new DataResponse<>(user);
     }
 
+
+    @ApiOperation("新增用户")
+    @PostMapping("/add")
+    @NeedHolderPermission
+    public CommonResponse add(@RequestBody @Validated User user) {
+        userService.add(user);
+        return CommonResponse.success();
+    }
 
 }

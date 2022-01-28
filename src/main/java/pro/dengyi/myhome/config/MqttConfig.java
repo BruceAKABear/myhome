@@ -1,30 +1,44 @@
 package pro.dengyi.myhome.config;
 
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
-import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import pro.dengyi.myhome.callback.MyMqttCallback;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import pro.dengyi.myhome.dao.CategoryFieldDao;
+import pro.dengyi.myhome.dao.DeviceDao;
+import pro.dengyi.myhome.threads.MqttMessageHandleThread;
+
+import java.util.concurrent.Executor;
 
 /**
  * mqtt配置
- *
+ * <p>
  * 服务端下发命名在队列 control/#
  * 服务端监听队列在 report/#
  * 心跳队列在 heartbeat/#
+ *
  * @author dengyi (email:dengyi@dengyi.pro)
  * @date 2022-01-22
  */
 @Slf4j
 @Configuration
 public class MqttConfig {
-    private static final String[] SUBTOPIC = {"report/#","heartbeat/#"};
+    private static final String[] SUBTOPIC = {"report/#", "heartbeat/#"};
     private static final String CLIENT_ID = "server-client";
     private static final String USER_NAME = "server";
     private static final String PASS_WORD = "passwd";
+    @Autowired
+    private DeviceDao deviceDao;
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+    @Autowired
+    private Executor serviceExecutor;
+    @Autowired
+    private CategoryFieldDao categoryFieldDao;
+
 
     @Bean
     public MqttClient mqttClient() {
@@ -39,7 +53,27 @@ public class MqttConfig {
             // 保留会话
             connOpts.setCleanSession(true);
             // 设置回调
-            client.setCallback(new MyMqttCallback());
+            client.setCallback(new MqttCallbackExtended() {
+                @Override
+                public void connectComplete(boolean reconnect, String serverURI) {
+                    log.info("连接完毕");
+                }
+
+                @Override
+                public void connectionLost(Throwable cause) {
+                    log.error("连接失去");
+                }
+
+                @Override
+                public void messageArrived(String topic, MqttMessage message) throws Exception {
+                    serviceExecutor.execute(new MqttMessageHandleThread(stringRedisTemplate, deviceDao, categoryFieldDao, topic, message));
+                }
+
+                @Override
+                public void deliveryComplete(IMqttDeliveryToken token) {
+                    log.warn("消息发送完毕");
+                }
+            });
             // 建立连
             client.connect(connOpts);
             // 订阅

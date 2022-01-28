@@ -1,5 +1,6 @@
 package pro.dengyi.myhome.listener;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.listener.KeyExpirationEventMessageListener;
@@ -15,6 +16,7 @@ import pro.dengyi.myhome.model.Device;
  * @author DengYi
  * @version v1.0
  */
+@Slf4j
 @Component
 public class RedisExpireListener extends KeyExpirationEventMessageListener {
     @Autowired
@@ -30,6 +32,7 @@ public class RedisExpireListener extends KeyExpirationEventMessageListener {
         // 设备离线更新数据库
         if (expiredKey.startsWith("onlineDevice:")) {
             String deviceId = expiredKey.substring(expiredKey.lastIndexOf(":") + 1);
+            log.warn("设备离线：设备ID为{}", deviceId);
             Device device = deviceDao.selectById(deviceId);
             device.setOnline(false);
             deviceDao.updateById(device);

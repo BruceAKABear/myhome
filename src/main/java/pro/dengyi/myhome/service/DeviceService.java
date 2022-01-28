@@ -8,4 +8,8 @@ import pro.dengyi.myhome.model.Device;
  */
 public interface DeviceService {
     Device selectById(String deviceId);
+
+    void addUpdate(Device device);
+
+    void delete(String id);
 }

@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import pro.dengyi.myhome.annotations.NeedHolderPermission;
 import pro.dengyi.myhome.model.Family;
 import pro.dengyi.myhome.model.dto.FamilyDto;
 import pro.dengyi.myhome.response.CommonResponse;
@@ -26,6 +27,7 @@ public class FamilyController {
 
     @ApiOperation("新增或修改家庭")
     @PostMapping("/addUpdate")
+    @NeedHolderPermission
     public CommonResponse addUpdate(@RequestBody @Validated Family family) {
         familyService.addUpdate(family);
         return CommonResponse.success();
@@ -38,8 +40,9 @@ public class FamilyController {
         return new DataResponse<>(familyDto);
     }
 
-    @ApiOperation("查询是否是")
+    @ApiOperation("查询是否是第一次登陆")
     @GetMapping("/checkIsFirst")
+    @NeedHolderPermission
     public DataResponse<Boolean> checkIsFirst() {
         Boolean flag = familyService.checkIsFirst();
         return new DataResponse<>(flag);

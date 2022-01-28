@@ -10,3 +10,10 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+
+  redis:
+    host: 127.0.0.1
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

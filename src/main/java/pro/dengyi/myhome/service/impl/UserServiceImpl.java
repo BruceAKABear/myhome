@@ -55,4 +55,11 @@ public class UserServiceImpl implements UserService {
         user.setPassword(null);
         return user;
     }
+
+    @Transactional
+    @Override
+    public void add(User user) {
+        userDao.insert(user);
+
+    }
 }
