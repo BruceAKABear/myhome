@@ -5,9 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 import pro.dengyi.myhome.dao.CategoryFieldDao;
 import pro.dengyi.myhome.dao.DeviceDao;
 import pro.dengyi.myhome.model.CategoryField;
+import pro.dengyi.myhome.model.Device;
 
 import java.util.List;
 import java.util.Map;
@@ -42,6 +44,13 @@ public class MqttMessageHandleThread implements Runnable {
         String deviceId = topic.substring(topic.indexOf("/") + 1);
         if (topic.startsWith("heartbeat/")) {
             log.info("接收到设备心跳数据，开始更新缓存");
+            //第一次设备上线，设置数据库
+            if (ObjectUtils.isEmpty(stringRedisTemplate.opsForValue().get("onlineDevice:" + deviceId))) {
+                Device device = deviceDao.selectById(deviceId);
+                device.setOnline(true);
+                deviceDao.updateById(device);
+
+            }
             //35秒没接收到设备上报心跳视为设备离线
             stringRedisTemplate.opsForValue().set("onlineDevice:" + deviceId, "online", 35, TimeUnit.SECONDS);
         } else {
