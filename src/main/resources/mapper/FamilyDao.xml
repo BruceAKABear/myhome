@@ -7,7 +7,9 @@
             family.`name`,
             ( SELECT COUNT( id ) FROM floor ) AS floorCount,
             ( SELECT COUNT( id ) FROM room ) AS roomCount,
-            ( SELECT COUNT( id ) FROM device ) AS deviceCount
+            ( SELECT COUNT( id ) FROM device ) AS deviceCount,
+            family.app_id,
+            family.app_secret
         FROM
             family
     </select>

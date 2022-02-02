@@ -1,5 +1,6 @@
 package pro.dengyi.myhome.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import pro.dengyi.myhome.model.Floor;
 import pro.dengyi.myhome.model.dto.FloorDto;
 
@@ -15,4 +16,6 @@ public interface FloorService {
     void delete(String id);
 
     List<FloorDto> floorList();
+
+    IPage<FloorDto> page(Integer pageNumber, Integer pageSize, String floorName);
 }

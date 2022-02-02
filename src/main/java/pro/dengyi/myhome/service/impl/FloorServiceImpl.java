@@ -1,5 +1,6 @@
 package pro.dengyi.myhome.service.impl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,5 +41,10 @@ public class FloorServiceImpl implements FloorService {
     @Override
     public List<FloorDto> floorList() {
         return floorDao.selectFloorDto();
+    }
+
+    @Override
+    public IPage<FloorDto> page(Integer pageNumber, Integer pageSize, String floorName) {
+        return null;
     }
 }

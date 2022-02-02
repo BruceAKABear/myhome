@@ -9,6 +9,7 @@ import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * 设备类型实体
@@ -36,4 +37,10 @@ public class DeviceCategory {
     @ApiModelProperty(value = "分类下设备总数")
     @TableField(exist = false)
     private Integer deviceCount;
+
+    @ApiModelProperty(value = "分类控制字段")
+    @TableField(exist = false)
+    @NotNull(message = "控制字段不能为空")
+    private List<CategoryField> categoryFieldList;
+
 }

@@ -1,5 +1,6 @@
 package pro.dengyi.myhome.controller;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,13 @@ public class FloorController {
     @Autowired
     private FloorService floorService;
 
+    @ApiOperation("楼层分页查询")
+    @GetMapping("/page")
+    public DataResponse<IPage<FloorDto>> page(Integer pageNumber, Integer pageSize, String floorName) {
+        IPage<FloorDto> pageResult = floorService.page(pageNumber, pageSize, floorName);
+        return new DataResponse<>(pageResult);
+    }
+
     @ApiOperation("新增或修改楼层")
     @PostMapping("/addUpdate")
     public CommonResponse addUpdate(@RequestBody @Validated Floor floor) {
@@ -47,7 +55,6 @@ public class FloorController {
         floorService.delete(id);
         return CommonResponse.success();
     }
-
 
 
 }
