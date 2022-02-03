@@ -22,14 +22,16 @@ public class Family {
     private String id;
 
     @ApiModelProperty(value = "天气appId")
+    @Length(max = 15)
     private String appId;
 
     @ApiModelProperty(value = "天气appSecret")
+    @Length(max = 15)
     private String appSecret;
 
     @ApiModelProperty(value = "家庭名")
     @NotBlank
-    @Length(min = 2, max = 10)
+    @Length(min = 3, max = 10)
     private String name;
 
 }
