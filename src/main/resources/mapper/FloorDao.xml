@@ -2,22 +2,34 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="pro.dengyi.myhome.dao.FloorDao">
     <select id="selectFloorDto" resultType="pro.dengyi.myhome.model.dto.FloorDto">
-        SELECT
-            floor.id,
-            floor.`name`,
-            ( SELECT COUNT( id ) FROM room WHERE room.floor_id = floor.id ) AS roomCount,
-            (
-                SELECT
-                    COUNT( device.id )
-                FROM
-                    device
-                        INNER JOIN room ON device.room_id = room.id
-                        INNER JOIN floor ON floor.id = room.floor_id
-                        AND floor.id = floor.id
-                WHERE
-                    device.room_id = room.id
-            ) AS deviceCount
-        FROM
-            floor
+        SELECT floor.id,
+               floor.`name`,
+               (SELECT COUNT(id) FROM room WHERE room.floor_id = floor.id) AS roomCount,
+               (
+                   SELECT COUNT(device.id)
+                   FROM device
+                            INNER JOIN room ON device.room_id = room.id
+                            INNER JOIN floor ON floor.id = room.floor_id
+                       AND floor.id = floor.id
+                   WHERE device.room_id = room.id
+               )                                                           AS deviceCount
+        FROM floor
+    </select>
+    <select id="selectCustomPage" resultType="pro.dengyi.myhome.model.dto.FloorDto">
+        SELECT floor.id,
+        floor.`name`,
+        (SELECT COUNT(id) FROM room WHERE floor.id = room.floor_id) AS roomCount,
+        (
+        SELECT COUNT(device.id)
+        FROM device
+        INNER JOIN room AS r ON device.room_id = r.id
+        WHERE floor.id = r.floor_id
+        ) AS deviceCount
+        FROM floor
+        WHERE 1 = 1
+        <if test="floorName!=null and floorName!=''">
+            and floor.`name` LIKE concat(#{floorName},'%')
+        </if>
+
     </select>
 </mapper>

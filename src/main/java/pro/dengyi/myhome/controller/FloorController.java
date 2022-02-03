@@ -50,7 +50,7 @@ public class FloorController {
     }
 
     @ApiOperation("删除楼层")
-    @PostMapping("/delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public CommonResponse delete(@PathVariable @NotBlank(message = "id不能为空") String id) {
         floorService.delete(id);
         return CommonResponse.success();
