@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="pro.dengyi.myhome.dao.RoomDao">
+    <select id="selectCustomPage" resultType="pro.dengyi.myhome.model.dto.RoomDto">
+        SELECT
+        room.id,
+        room.`name`,
+        ( SELECT count( id ) FROM device WHERE device.room_id = room.id ) AS deviceCount,
+        floor.`name` AS floorName,
+        ( SELECT count( room_location_anchor.id ) FROM room_location_anchor WHERE room_location_anchor.room_id = room_id
+        ) AS anchorCount
+        FROM
+        room
+        INNER JOIN floor ON room.floor_id = floor.id
+        WHERE
+        1=1
+        <if test="floorId!=null and floorId!=''">
+            and floor.id = #{floorId}
+        </if>
+
+    </select>
+</mapper>

@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import pro.dengyi.myhome.annotations.NeedHolderPermission;
 import pro.dengyi.myhome.model.Floor;
 import pro.dengyi.myhome.model.dto.FloorDto;
 import pro.dengyi.myhome.response.CommonResponse;
@@ -35,6 +36,7 @@ public class FloorController {
         return new DataResponse<>(pageResult);
     }
 
+    @NeedHolderPermission
     @ApiOperation("新增或修改楼层")
     @PostMapping("/addUpdate")
     public CommonResponse addUpdate(@RequestBody @Validated Floor floor) {
@@ -49,6 +51,7 @@ public class FloorController {
         return new DataResponse<>(floorDtoList);
     }
 
+    @NeedHolderPermission
     @ApiOperation("删除楼层")
     @DeleteMapping("/delete/{id}")
     public CommonResponse delete(@PathVariable @NotBlank(message = "id不能为空") String id) {

@@ -1,8 +1,11 @@
 package pro.dengyi.myhome.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 import pro.dengyi.myhome.model.Room;
+import pro.dengyi.myhome.model.dto.RoomDto;
 
 /**
  * @author dengyi (email:dengyi@dengyi.pro)
@@ -10,4 +13,5 @@ import pro.dengyi.myhome.model.Room;
  */
 @Repository
 public interface RoomDao extends BaseMapper<Room> {
+    IPage<RoomDto> selectCustomPage(IPage<RoomDto> page, @Param("floorId") String floorId);
 }
