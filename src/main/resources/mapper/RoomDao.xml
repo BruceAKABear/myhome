@@ -7,6 +7,7 @@
         room.`name`,
         ( SELECT count( id ) FROM device WHERE device.room_id = room.id ) AS deviceCount,
         floor.`name` AS floorName,
+        floor.id AS floorId,
         ( SELECT count( room_location_anchor.id ) FROM room_location_anchor WHERE room_location_anchor.room_id = room_id
         ) AS anchorCount
         FROM

@@ -1,5 +1,6 @@
 package pro.dengyi.myhome.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 import pro.dengyi.myhome.dao.FloorDao;
+import pro.dengyi.myhome.exception.BusinessException;
 import pro.dengyi.myhome.model.Floor;
 import pro.dengyi.myhome.model.dto.FloorDto;
 import pro.dengyi.myhome.service.FloorService;
@@ -26,6 +28,11 @@ public class FloorServiceImpl implements FloorService {
     @Override
     public void addUpdate(Floor floor) {
         if (ObjectUtils.isEmpty(floor.getId())) {
+            //校验楼层名
+            Floor floorSaved = floorDao.selectOne(new LambdaQueryWrapper<Floor>().eq(Floor::getName, floor.getName()));
+            if (floorSaved != null) {
+                throw new BusinessException(13001, "同名楼层已存在");
+            }
             floorDao.insert(floor);
         } else {
             floorDao.updateById(floor);

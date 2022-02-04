@@ -1,5 +1,6 @@
 package pro.dengyi.myhome.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,9 +8,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 import pro.dengyi.myhome.dao.RoomDao;
+import pro.dengyi.myhome.exception.BusinessException;
 import pro.dengyi.myhome.model.Room;
 import pro.dengyi.myhome.model.dto.RoomDto;
 import pro.dengyi.myhome.service.RoomService;
+
+import java.util.List;
 
 /**
  * @author dengyi (email:dengyi@dengyi.pro)
@@ -24,6 +28,10 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public void addUpdate(Room room) {
         if (ObjectUtils.isEmpty(room.getId())) {
+            Room roomSaved = roomDao.selectOne(new LambdaQueryWrapper<Room>().eq(Room::getFloorId, room.getFloorId()).eq(Room::getName, room.getName()));
+            if (roomSaved != null) {
+                throw new BusinessException(14001, "同楼层同名房间已存在");
+            }
             roomDao.insert(room);
         } else {
             roomDao.updateById(room);
@@ -40,5 +48,10 @@ public class RoomServiceImpl implements RoomService {
     public IPage<RoomDto> page(Integer pageNumber, Integer pageSize, String floorId) {
         IPage<RoomDto> page = new Page<>(pageNumber == null ? 1 : pageNumber, pageSize == null ? 10 : pageSize);
         return roomDao.selectCustomPage(page, floorId);
+    }
+
+    @Override
+    public List<Room> roomList() {
+        return roomDao.selectList(new LambdaQueryWrapper<>());
     }
 }

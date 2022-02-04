@@ -8,7 +8,6 @@ import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
-import java.util.Date;
 
 /**
  * 楼层实体
@@ -25,10 +24,11 @@ public class Room {
     private String id;
 
     @ApiModelProperty(value = "楼层ID")
+    @NotBlank(message = "楼层ID不能为空")
     private String floorId;
 
     @ApiModelProperty(value = "房间名")
-    @Length(max = 10)
-    @NotBlank
+    @Length(min = 2, max = 10)
+    @NotBlank(message = "房间名不能为空")
     private String name;
 }

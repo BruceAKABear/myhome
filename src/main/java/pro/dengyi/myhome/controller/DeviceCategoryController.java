@@ -13,6 +13,7 @@ import pro.dengyi.myhome.response.DataResponse;
 import pro.dengyi.myhome.service.DeviceCategoryService;
 
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 /**
  * 设备分类controller
@@ -51,6 +52,14 @@ public class DeviceCategoryController {
     public DataResponse<IPage<DeviceCategory>> page(Integer pageNumber, Integer pageSize, String name) {
         IPage<DeviceCategory> pageResult = deviceCategoryService.page(pageNumber, pageSize, name);
         return new DataResponse<>(pageResult);
+    }
+
+    @NeedHolderPermission
+    @ApiOperation("查询分类集合")
+    @GetMapping("/categoryList")
+    public DataResponse<List<DeviceCategory>> categoryList() {
+        List<DeviceCategory> deviceCategoryList = deviceCategoryService.categoryList();
+        return new DataResponse<>(deviceCategoryList);
     }
 
 

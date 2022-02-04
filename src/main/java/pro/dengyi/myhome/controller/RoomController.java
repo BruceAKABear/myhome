@@ -14,6 +14,7 @@ import pro.dengyi.myhome.response.DataResponse;
 import pro.dengyi.myhome.service.RoomService;
 
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 /**
  * 楼层controller
@@ -34,6 +35,13 @@ public class RoomController {
     public DataResponse<IPage<RoomDto>> page(Integer pageNumber, Integer pageSize, String floorId) {
         IPage<RoomDto> pageRes = roomService.page(pageNumber, pageSize, floorId);
         return new DataResponse<>(pageRes);
+    }
+
+    @ApiOperation("查询房间列表")
+    @GetMapping("/roomList")
+    public DataResponse<List<Room>> roomList() {
+        List<Room> roomList = roomService.roomList();
+        return new DataResponse<>(roomList);
     }
 
     @NeedHolderPermission

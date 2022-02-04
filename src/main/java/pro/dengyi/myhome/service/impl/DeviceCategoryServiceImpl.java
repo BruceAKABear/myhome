@@ -39,6 +39,10 @@ public class DeviceCategoryServiceImpl implements DeviceCategoryService {
     @Override
     public void addUpdate(DeviceCategory deviceCategory) {
         if (ObjectUtils.isEmpty(deviceCategory.getId())) {
+            DeviceCategory deviceCategorySaved = deviceCategoryDao.selectOne(new LambdaQueryWrapper<DeviceCategory>().eq(DeviceCategory::getName, deviceCategory.getName()));
+            if (deviceCategorySaved != null) {
+                throw new BusinessException(15001, "同名设备分类已存在");
+            }
             deviceCategoryDao.insert(deviceCategory);
 
         } else {
@@ -81,5 +85,10 @@ public class DeviceCategoryServiceImpl implements DeviceCategoryService {
 
         }
         return deviceCategoryIPage;
+    }
+
+    @Override
+    public List<DeviceCategory> categoryList() {
+        return deviceCategoryDao.selectList(new LambdaQueryWrapper<>());
     }
 }

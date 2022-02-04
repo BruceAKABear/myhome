@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="pro.dengyi.myhome.dao.DeviceDao">
+    <select id="selectCustomPage" resultType="pro.dengyi.myhome.model.dto.DeviceDto">
+        SELECT device.id,
+        device.room_id,
+        device.`online`,
+        device.`enable`,
+        device.category_id,
+        device.nick_name,
+        device.floor_id,
+        device.only_holder_can_see,
+        room.`name` AS roomName,
+        floor.`name` AS floorName,
+        device_category.`name` AS categoryName
+        FROM device
+        INNER JOIN room ON room.id = device.room_id
+        INNER JOIN floor ON device.floor_id = floor.id
+        INNER JOIN device_category ON device_category.id = device.category_id
+        where 1=1
+        <if test="floorId !=null and floorId!= ''">
+            and floor.id=#{floorId}
+        </if>
+        <if test="roomId !=null and roomId!= ''">
+            and room.id=#{roomId}
+        </if>
+        <if test="categoryId !=null and categoryId!= ''">
+            and device_category.id=#{categoryId}
+        </if>
+    </select>
+</mapper>

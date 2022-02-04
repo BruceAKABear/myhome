@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -27,11 +28,12 @@ public class DeviceCategory {
     private String id;
 
     @ApiModelProperty(value = "设备类型名")
-    @NotBlank
+    @NotBlank(message = "设备分类名不能为空")
+    @Length(min = 3, max = 30)
     private String name;
 
     @ApiModelProperty(value = "是否可以下发命令")
-    @NotNull
+    @NotNull(message = "必须选择是否可控")
     private Boolean canControl;
 
     @ApiModelProperty(value = "分类下设备总数")

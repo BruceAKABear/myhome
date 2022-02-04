@@ -12,6 +12,7 @@ import pro.dengyi.myhome.model.Room;
 @Data
 public class RoomDto extends Room {
     private String floorName;
+    private String floorId;
     private Integer deviceCount;
     private Integer anchorCount;
 }
