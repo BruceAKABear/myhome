@@ -41,6 +41,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .addInterceptor(loginInterceptor)
                 .addPathPatterns("/**")
                 .excludePathPatterns(
+                        "/ui/**",
                         "/user/login",
                         "/swagger-resources/**",
                         "/webjars/**",

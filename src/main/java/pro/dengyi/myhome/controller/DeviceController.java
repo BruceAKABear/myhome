@@ -15,6 +15,7 @@ import pro.dengyi.myhome.service.DeviceService;
 
 import javax.validation.constraints.NotBlank;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 设备controller
@@ -62,5 +63,13 @@ public class DeviceController {
         return CommonResponse.success();
     }
 
+
+    @NeedHolderPermission
+    @ApiOperation("下发debug命令")
+    @PostMapping("/sendDebug")
+    public CommonResponse sendDebug(@RequestBody Map<String, Object> orderMap) {
+        deviceService.sendDebug(orderMap);
+        return CommonResponse.success();
+    }
 
 }

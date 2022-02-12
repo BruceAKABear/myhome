@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import pro.dengyi.myhome.dao.CategoryFieldDao;
 import pro.dengyi.myhome.dao.DeviceDao;
+import pro.dengyi.myhome.dao.DeviceLogDao;
+import pro.dengyi.myhome.model.DeviceLog;
 import pro.dengyi.myhome.threads.MqttMessageHandleThread;
 
 import java.util.concurrent.Executor;
@@ -38,6 +40,9 @@ public class MqttConfig {
     private Executor serviceExecutor;
     @Autowired
     private CategoryFieldDao categoryFieldDao;
+    @Autowired
+    private DeviceLogDao deviceLogDao;
+
 
 
     @Bean
@@ -66,7 +71,7 @@ public class MqttConfig {
 
                 @Override
                 public void messageArrived(String topic, MqttMessage message) throws Exception {
-                    serviceExecutor.execute(new MqttMessageHandleThread(stringRedisTemplate, deviceDao, categoryFieldDao, topic, message));
+                    serviceExecutor.execute(new MqttMessageHandleThread(stringRedisTemplate, deviceDao, categoryFieldDao,deviceLogDao, topic, message));
                 }
 
                 @Override

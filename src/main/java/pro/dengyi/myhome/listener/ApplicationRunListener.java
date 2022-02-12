@@ -7,7 +7,10 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
+import pro.dengyi.myhome.dao.FamilyDao;
 import pro.dengyi.myhome.dao.UserDao;
+import pro.dengyi.myhome.model.Family;
 import pro.dengyi.myhome.model.User;
 import pro.dengyi.myhome.properties.InitProperties;
 
@@ -27,14 +30,23 @@ public class ApplicationRunListener implements ApplicationRunner {
 
     @Autowired
     private UserDao userDao;
+    @Autowired
+    private FamilyDao familyDao;
+
 
     @Transactional
     @Override
     public void run(ApplicationArguments args) throws Exception {
         //项目初始化
-
+        Family family = familyDao.selectOne(new LambdaQueryWrapper<>());
+        if (ObjectUtils.isEmpty(family)) {
+            Family newFamily = new Family();
+            newFamily.setName("我的家");
+            familyDao.insert(newFamily);
+        }
         List<User> userList = userDao.selectList(new LambdaQueryWrapper<User>().eq(User::getHouseHolder, true));
         if (CollectionUtils.isEmpty(userList)) {
+            //初始化一个默认家庭
             //默认用户不存在，新增一个
             User user = new User();
             user.setName(initProperties.getDefaultName());
