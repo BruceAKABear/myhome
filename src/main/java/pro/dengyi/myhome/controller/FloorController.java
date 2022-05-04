@@ -8,7 +8,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pro.dengyi.myhome.annotations.NeedHolderPermission;
 import pro.dengyi.myhome.model.Floor;
-import pro.dengyi.myhome.model.dto.FloorDto;
+import pro.dengyi.myhome.model.dto.FloorPageDto;
 import pro.dengyi.myhome.response.CommonResponse;
 import pro.dengyi.myhome.response.DataResponse;
 import pro.dengyi.myhome.service.FloorService;
@@ -22,42 +22,45 @@ import java.util.List;
  * @author dengyi (email:dengyi@dengyi.pro)
  * @date 2022-01-23
  */
+@Validated
 @Api(tags = "楼层接口")
 @RestController
 @RequestMapping("/floor")
 public class FloorController {
-    @Autowired
-    private FloorService floorService;
 
-    @ApiOperation("楼层分页查询")
-    @GetMapping("/page")
-    public DataResponse<IPage<FloorDto>> page(Integer pageNumber, Integer pageSize, String floorName) {
-        IPage<FloorDto> pageResult = floorService.page(pageNumber, pageSize, floorName);
-        return new DataResponse<>(pageResult);
-    }
+  @Autowired
+  private FloorService floorService;
 
-    @NeedHolderPermission
-    @ApiOperation("新增或修改楼层")
-    @PostMapping("/addUpdate")
-    public CommonResponse addUpdate(@RequestBody @Validated Floor floor) {
-        floorService.addUpdate(floor);
-        return CommonResponse.success();
-    }
+  @ApiOperation("楼层分页查询")
+  @GetMapping("/page")
+  public DataResponse<IPage<FloorPageDto>> page(Integer pageNumber, Integer pageSize,
+      String floorName) {
+    IPage<FloorPageDto> pageResult = floorService.page(pageNumber, pageSize, floorName);
+    return new DataResponse<>(pageResult);
+  }
 
-    @ApiOperation("楼层集合")
-    @GetMapping("/floorList")
-    public DataResponse<List<FloorDto>> floorList() {
-        List<FloorDto> floorDtoList = floorService.floorList();
-        return new DataResponse<>(floorDtoList);
-    }
+  @NeedHolderPermission
+  @ApiOperation("新增或修改楼层")
+  @PostMapping("/addUpdate")
+  public CommonResponse addUpdate(@RequestBody @Validated Floor floor) {
+    floorService.addUpdate(floor);
+    return CommonResponse.success();
+  }
 
-    @NeedHolderPermission
-    @ApiOperation("删除楼层")
-    @DeleteMapping("/delete/{id}")
-    public CommonResponse delete(@PathVariable @NotBlank(message = "id不能为空") String id) {
-        floorService.delete(id);
-        return CommonResponse.success();
-    }
+  @ApiOperation("楼层集合")
+  @GetMapping("/floorList")
+  public DataResponse<List<FloorPageDto>> floorList() {
+    List<FloorPageDto> floorPageDtoList = floorService.floorList();
+    return new DataResponse<>(floorPageDtoList);
+  }
+
+  @NeedHolderPermission
+  @ApiOperation("删除楼层")
+  @DeleteMapping("/delete/{id}")
+  public CommonResponse delete(@PathVariable @NotBlank(message = "id不能为空") String id) {
+    floorService.delete(id);
+    return CommonResponse.success();
+  }
 
 
 }

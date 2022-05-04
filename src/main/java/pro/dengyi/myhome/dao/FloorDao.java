@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 import pro.dengyi.myhome.model.Floor;
-import pro.dengyi.myhome.model.dto.FloorDto;
+import pro.dengyi.myhome.model.dto.FloorPageDto;
 
 import java.util.List;
 
@@ -15,7 +15,9 @@ import java.util.List;
  */
 @Repository
 public interface FloorDao extends BaseMapper<Floor> {
-    List<FloorDto> selectFloorDto();
 
-    IPage<FloorDto> selectCustomPage(IPage<FloorDto> iPage, @Param("floorName") String floorName);
+  List<FloorPageDto> selectFloorDto();
+
+  IPage<FloorPageDto> selectCustomPage(IPage<FloorPageDto> iPage,
+      @Param("floorName") String floorName);
 }

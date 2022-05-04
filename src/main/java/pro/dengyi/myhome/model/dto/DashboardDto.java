@@ -8,10 +8,11 @@ import lombok.Data;
  */
 @Data
 public class DashboardDto {
-    private Integer familyCount;
-    private Integer userCount;
-    private Integer floorCount;
-    private Integer roomCount;
-    private Integer deviceCount;
-    private Integer onlineDeviceCount;
+
+  private Integer familyCount;
+  private Integer userCount;
+  private Integer floorCount;
+  private Integer roomCount;
+  private Integer deviceCount;
+  private Integer onlineDeviceCount;
 }

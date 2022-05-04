@@ -21,16 +21,17 @@ import pro.dengyi.myhome.service.DashboardService;
 @RestController
 @RequestMapping("/dashboard")
 public class DashboardController {
-    @Autowired
-    private DashboardService dashboardService;
+
+  @Autowired
+  private DashboardService dashboardService;
 
 
-    @ApiOperation("查询dashboard信息")
-    @GetMapping("/dashboardInfo")
-    @NeedHolderPermission
-    public DataResponse<DashboardDto> dashboardInfo() {
-        DashboardDto dashboardDto = dashboardService.dashboardInfo();
-        return new DataResponse<>(dashboardDto);
-    }
+  @ApiOperation("查询dashboard信息")
+  @GetMapping("/dashboardInfo")
+  @NeedHolderPermission
+  public DataResponse<DashboardDto> dashboardInfo() {
+    DashboardDto dashboardDto = dashboardService.dashboardInfo();
+    return new DataResponse<>(dashboardDto);
+  }
 
 }

@@ -10,12 +10,13 @@ import java.util.List;
  * @date 2022-01-28
  */
 public interface DeviceCategoryService {
-    void addUpdate(DeviceCategory deviceCategory);
 
-    void delete(String id);
+  void addUpdate(DeviceCategory deviceCategory);
 
-    IPage<DeviceCategory> page(Integer pageNumber, Integer pageSize, String name);
+  void delete(String id);
 
-    List<DeviceCategory> categoryList();
+  IPage<DeviceCategory> page(Integer pageNumber, Integer pageSize, String name);
+
+  List<DeviceCategory> categoryList();
 
 }

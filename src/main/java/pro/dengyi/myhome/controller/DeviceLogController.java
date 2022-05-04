@@ -21,15 +21,17 @@ import pro.dengyi.myhome.service.DeviceLogService;
 @RestController
 @RequestMapping("/deviceLog")
 public class DeviceLogController {
-    @Autowired
-    private DeviceLogService deviceLogService;
+
+  @Autowired
+  private DeviceLogService deviceLogService;
 
 
-    @ApiOperation("分页查询")
-    @GetMapping("/page")
-    public DataResponse<IPage<DeviceLog>> page(Integer pageNumber, Integer pageSize, String deviceId) {
-        IPage<DeviceLog> pageRes = deviceLogService.page(pageNumber, pageSize, deviceId);
-        return new DataResponse<>(pageRes);
-    }
+  @ApiOperation("分页查询")
+  @GetMapping("/page")
+  public DataResponse<IPage<DeviceLog>> page(Integer pageNumber, Integer pageSize,
+      String deviceId) {
+    IPage<DeviceLog> pageRes = deviceLogService.page(pageNumber, pageSize, deviceId);
+    return new DataResponse<>(pageRes);
+  }
 
 }

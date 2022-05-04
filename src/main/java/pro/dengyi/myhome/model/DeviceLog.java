@@ -17,18 +17,19 @@ import java.util.Date;
 @ApiModel("设备消息实体")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class DeviceLog {
-    private String id;
 
-    @ApiModelProperty(value = "设备ID")
-    private String deviceId;
+  private String id;
 
-    @ApiModelProperty(value = "数据内容")
-    private String payload;
+  @ApiModelProperty(value = "设备ID")
+  private String deviceId;
 
-    @ApiModelProperty(value = "数据流向：1平台下发，2设备上报")
-    private Integer direction;
+  @ApiModelProperty(value = "数据内容")
+  private String payload;
 
-    @ApiModelProperty(value = "创建时间")
-    private Date createTime;
+  @ApiModelProperty(value = "数据流向：1平台下发，2设备上报")
+  private Integer direction;
+
+  @ApiModelProperty(value = "创建时间")
+  private Date createTime;
 
 }

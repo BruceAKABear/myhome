@@ -8,5 +8,6 @@ import pro.dengyi.myhome.model.DeviceLog;
  * @date 2022-02-05
  */
 public interface DeviceLogService {
-    IPage<DeviceLog> page(Integer pageNumber, Integer pageSize, String deviceId);
+
+  IPage<DeviceLog> page(Integer pageNumber, Integer pageSize, String deviceId);
 }

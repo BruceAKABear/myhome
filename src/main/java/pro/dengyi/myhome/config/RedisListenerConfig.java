@@ -10,10 +10,11 @@ import org.springframework.data.redis.listener.RedisMessageListenerContainer;
  */
 @Configuration
 public class RedisListenerConfig {
-    @Bean
-    public RedisMessageListenerContainer container(RedisConnectionFactory connectionFactory) {
-        RedisMessageListenerContainer container = new RedisMessageListenerContainer();
-        container.setConnectionFactory(connectionFactory);
-        return container;
-    }
+
+  @Bean
+  public RedisMessageListenerContainer container(RedisConnectionFactory connectionFactory) {
+    RedisMessageListenerContainer container = new RedisMessageListenerContainer();
+    container.setConnectionFactory(connectionFactory);
+    return container;
+  }
 }

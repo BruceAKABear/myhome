@@ -20,15 +20,15 @@ import javax.validation.constraints.NotBlank;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Room {
 
-    @ApiModelProperty(value = "Id")
-    private String id;
+  @ApiModelProperty(value = "Id")
+  private String id;
 
-    @ApiModelProperty(value = "楼层ID")
-    @NotBlank(message = "楼层ID不能为空")
-    private String floorId;
+  @ApiModelProperty(value = "楼层ID")
+  @NotBlank(message = "楼层ID不能为空")
+  private String floorId;
 
-    @ApiModelProperty(value = "房间名")
-    @Length(min = 2, max = 10)
-    @NotBlank(message = "房间名不能为空")
-    private String name;
+  @ApiModelProperty(value = "房间名")
+  @Length(min = 2, max = 10)
+  @NotBlank(message = "房间名不能为空")
+  private String name;
 }

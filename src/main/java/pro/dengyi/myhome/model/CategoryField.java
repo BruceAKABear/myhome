@@ -20,17 +20,17 @@ import javax.validation.constraints.NotBlank;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CategoryField {
 
-    private String id;
+  private String id;
 
-    @ApiModelProperty(value = "分类Id")
-    private String categoryId;
+  @ApiModelProperty(value = "分类Id")
+  private String categoryId;
 
-    @ApiModelProperty(value = "字段")
-    @NotBlank(message = "字段不能为空")
-    private String field;
+  @ApiModelProperty(value = "字段")
+  @NotBlank(message = "字段不能为空")
+  private String field;
 
-    @ApiModelProperty(value = "字段类型")
-    @NotBlank(message = "字段类型不能为空")
-    private String fieldType;
+  @ApiModelProperty(value = "字段类型")
+  @NotBlank(message = "字段类型不能为空")
+  private String fieldType;
 
 }

@@ -19,24 +19,24 @@ import pro.dengyi.myhome.utils.UserHolder;
 public class AopConfig {
 
 
-    /**
-     * 定义切点
-     */
-    @Pointcut("@annotation(pro.dengyi.myhome.annotations.NeedHolderPermission)")
-    public void permissionPointCut() {
+  /**
+   * 定义切点
+   */
+  @Pointcut("@annotation(pro.dengyi.myhome.annotations.NeedHolderPermission)")
+  public void permissionPointCut() {
+  }
+
+  /**
+   * 定义通知
+   *
+   * @param joinPoint
+   */
+  @Before(value = "permissionPointCut()")
+  public void checkPermission(JoinPoint joinPoint) {
+    Boolean houseHolder = UserHolder.getHouseHolder();
+    if (!houseHolder) {
+      throw new BusinessException(22222, "权限不足");
     }
 
-    /**
-     * 定义通知
-     *
-     * @param joinPoint
-     */
-    @Before(value = "permissionPointCut()")
-    public void checkPermission(JoinPoint joinPoint) {
-        Boolean houseHolder = UserHolder.getHouseHolder();
-        if (!houseHolder) {
-            throw new BusinessException(22222, "权限不足");
-        }
-
-    }
+  }
 }

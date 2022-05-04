@@ -18,25 +18,27 @@ import pro.dengyi.myhome.service.DashboardService;
  */
 @Service
 public class DashboardServiceImpl implements DashboardService {
-    @Autowired
-    private UserDao userDao;
 
-    @Autowired
-    private FloorDao floorDao;
-    @Autowired
-    private RoomDao roomDao;
-    @Autowired
-    private DeviceDao deviceDao;
+  @Autowired
+  private UserDao userDao;
 
-    @Override
-    public DashboardDto dashboardInfo() {
-        DashboardDto dashboardDto = new DashboardDto();
-        dashboardDto.setUserCount(Math.toIntExact(userDao.selectCount(new QueryWrapper<>())));
-        dashboardDto.setFamilyCount(1);
-        dashboardDto.setFloorCount(Math.toIntExact(floorDao.selectCount(new QueryWrapper<>())));
-        dashboardDto.setRoomCount(Math.toIntExact(roomDao.selectCount(new QueryWrapper<>())));
-        dashboardDto.setDeviceCount(Math.toIntExact(deviceDao.selectCount(new QueryWrapper<>())));
-        dashboardDto.setOnlineDeviceCount(Math.toIntExact(deviceDao.selectCount(new LambdaQueryWrapper<Device>().eq(Device::getOnline, true))));
-        return dashboardDto;
-    }
+  @Autowired
+  private FloorDao floorDao;
+  @Autowired
+  private RoomDao roomDao;
+  @Autowired
+  private DeviceDao deviceDao;
+
+  @Override
+  public DashboardDto dashboardInfo() {
+    DashboardDto dashboardDto = new DashboardDto();
+    dashboardDto.setUserCount(Math.toIntExact(userDao.selectCount(new QueryWrapper<>())));
+    dashboardDto.setFamilyCount(1);
+    dashboardDto.setFloorCount(Math.toIntExact(floorDao.selectCount(new QueryWrapper<>())));
+    dashboardDto.setRoomCount(Math.toIntExact(roomDao.selectCount(new QueryWrapper<>())));
+    dashboardDto.setDeviceCount(Math.toIntExact(deviceDao.selectCount(new QueryWrapper<>())));
+    dashboardDto.setOnlineDeviceCount(Math.toIntExact(
+        deviceDao.selectCount(new LambdaQueryWrapper<Device>().eq(Device::getOnline, true))));
+    return dashboardDto;
+  }
 }

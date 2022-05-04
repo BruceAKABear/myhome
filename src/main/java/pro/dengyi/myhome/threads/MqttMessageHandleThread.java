@@ -27,56 +27,59 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class MqttMessageHandleThread implements Runnable {
 
-    private StringRedisTemplate stringRedisTemplate;
-    private DeviceDao deviceDao;
-    private CategoryFieldDao categoryFieldDao;
-    private String topic;
-    private MqttMessage message;
-    private DeviceLogDao deviceLogDao;
+  private StringRedisTemplate stringRedisTemplate;
+  private DeviceDao deviceDao;
+  private CategoryFieldDao categoryFieldDao;
+  private String topic;
+  private MqttMessage message;
+  private DeviceLogDao deviceLogDao;
 
-    private static final String TOPIC_HEARTBEAT = "heartbeat/";
+  private static final String TOPIC_HEARTBEAT = "heartbeat/";
 
-    public MqttMessageHandleThread(StringRedisTemplate stringRedisTemplate, DeviceDao deviceDao, CategoryFieldDao categoryFieldDao, DeviceLogDao deviceLogDao, String topic, MqttMessage message) {
-        this.stringRedisTemplate = stringRedisTemplate;
-        this.deviceDao = deviceDao;
-        this.categoryFieldDao = categoryFieldDao;
-        this.topic = topic;
-        this.message = message;
-        this.deviceLogDao = deviceLogDao;
-    }
+  public MqttMessageHandleThread(StringRedisTemplate stringRedisTemplate, DeviceDao deviceDao,
+      CategoryFieldDao categoryFieldDao, DeviceLogDao deviceLogDao, String topic,
+      MqttMessage message) {
+    this.stringRedisTemplate = stringRedisTemplate;
+    this.deviceDao = deviceDao;
+    this.categoryFieldDao = categoryFieldDao;
+    this.topic = topic;
+    this.message = message;
+    this.deviceLogDao = deviceLogDao;
+  }
 
-    @Override
-    public void run() {
-        String deviceId = topic.substring(topic.indexOf("/") + 1);
-        if (topic.startsWith(TOPIC_HEARTBEAT)) {
-            log.info("接收到设备心跳数据，开始更新缓存");
-            //第一次设备上线，设置数据库
-            if (ObjectUtils.isEmpty(stringRedisTemplate.opsForValue().get("onlineDevice:" + deviceId))) {
-                Device device = deviceDao.selectById(deviceId);
-                device.setOnline(true);
-                deviceDao.updateById(device);
+  @Override
+  public void run() {
+    String deviceId = topic.substring(topic.indexOf("/") + 1);
+    if (topic.startsWith(TOPIC_HEARTBEAT)) {
+      log.info("接收到设备心跳数据，开始更新缓存");
+      //第一次设备上线，设置数据库
+      if (ObjectUtils.isEmpty(stringRedisTemplate.opsForValue().get("onlineDevice:" + deviceId))) {
+        Device device = deviceDao.selectById(deviceId);
+        device.setOnline(true);
+        deviceDao.updateById(device);
 
-            }
-            //35秒没接收到设备上报心跳视为设备离线
-            stringRedisTemplate.opsForValue().set("onlineDevice:" + deviceId, "online", 35, TimeUnit.SECONDS);
-        } else {
-            log.info("设备状态上报:消息为{}", message);
-            DeviceLog deviceLog = new DeviceLog();
-            deviceLog.setDeviceId(deviceId);
-            deviceLog.setDirection(2);
-            deviceLog.setPayload(new String(message.getPayload()));
-            deviceLog.setCreateTime(new Date());
-            deviceLogDao.insert(deviceLog);
-            Object parseObjectMap = JSON.parseObject(message.getPayload(), Map.class);
-            //获取设备所有控制字段
-            List<CategoryField> fields = categoryFieldDao.selectListByDeviceId(deviceId);
-            if (!CollectionUtils.isEmpty(fields)) {
-                for (CategoryField field : fields) {
-                    System.out.println(field);
+      }
+      //35秒没接收到设备上报心跳视为设备离线
+      stringRedisTemplate.opsForValue()
+          .set("onlineDevice:" + deviceId, "online", 35, TimeUnit.SECONDS);
+    } else {
+      log.info("设备状态上报:消息为{}", message);
+      DeviceLog deviceLog = new DeviceLog();
+      deviceLog.setDeviceId(deviceId);
+      deviceLog.setDirection(2);
+      deviceLog.setPayload(new String(message.getPayload()));
+      deviceLog.setCreateTime(new Date());
+      deviceLogDao.insert(deviceLog);
+      Object parseObjectMap = JSON.parseObject(message.getPayload(), Map.class);
+      //获取设备所有控制字段
+      List<CategoryField> fields = categoryFieldDao.selectListByDeviceId(deviceId);
+      if (!CollectionUtils.isEmpty(fields)) {
+        for (CategoryField field : fields) {
+          System.out.println(field);
 
-                }
-
-            }
         }
+
+      }
     }
+  }
 }

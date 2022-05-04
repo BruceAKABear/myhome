@@ -13,5 +13,6 @@ import java.util.List;
  */
 @Repository
 public interface CategoryFieldDao extends BaseMapper<CategoryField> {
-    List<CategoryField> selectListByDeviceId(@Param("deviceId") String deviceId);
+
+  List<CategoryField> selectListByDeviceId(@Param("deviceId") String deviceId);
 }

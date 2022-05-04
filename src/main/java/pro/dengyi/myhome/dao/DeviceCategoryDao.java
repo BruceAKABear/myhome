@@ -10,4 +10,5 @@ import pro.dengyi.myhome.model.DeviceCategory;
  */
 @Repository
 public interface DeviceCategoryDao extends BaseMapper<DeviceCategory> {
+
 }

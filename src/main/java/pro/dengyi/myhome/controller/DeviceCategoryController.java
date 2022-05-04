@@ -26,41 +26,43 @@ import java.util.List;
 @RestController
 @RequestMapping("/deviceCategory")
 public class DeviceCategoryController {
-    @Autowired
-    private DeviceCategoryService deviceCategoryService;
+
+  @Autowired
+  private DeviceCategoryService deviceCategoryService;
 
 
-    @NeedHolderPermission
-    @ApiOperation("添加后修改分类")
-    @PostMapping("/addUpdate")
-    public CommonResponse addUpdate(@RequestBody @Validated DeviceCategory deviceCategory) {
-        deviceCategoryService.addUpdate(deviceCategory);
-        return CommonResponse.success();
-    }
+  @NeedHolderPermission
+  @ApiOperation("添加后修改分类")
+  @PostMapping("/addUpdate")
+  public CommonResponse addUpdate(@RequestBody @Validated DeviceCategory deviceCategory) {
+    deviceCategoryService.addUpdate(deviceCategory);
+    return CommonResponse.success();
+  }
 
-    @NeedHolderPermission
-    @ApiOperation("删除分类")
-    @DeleteMapping("/delete/{id}")
-    public CommonResponse delete(@PathVariable @NotBlank(message = "id不能为空") String id) {
-        deviceCategoryService.delete(id);
-        return CommonResponse.success();
-    }
+  @NeedHolderPermission
+  @ApiOperation("删除分类")
+  @DeleteMapping("/delete/{id}")
+  public CommonResponse delete(@PathVariable @NotBlank(message = "id不能为空") String id) {
+    deviceCategoryService.delete(id);
+    return CommonResponse.success();
+  }
 
-    @NeedHolderPermission
-    @ApiOperation("分页查询")
-    @GetMapping("/page")
-    public DataResponse<IPage<DeviceCategory>> page(Integer pageNumber, Integer pageSize, String name) {
-        IPage<DeviceCategory> pageResult = deviceCategoryService.page(pageNumber, pageSize, name);
-        return new DataResponse<>(pageResult);
-    }
+  @NeedHolderPermission
+  @ApiOperation("分页查询")
+  @GetMapping("/page")
+  public DataResponse<IPage<DeviceCategory>> page(Integer pageNumber, Integer pageSize,
+      String name) {
+    IPage<DeviceCategory> pageResult = deviceCategoryService.page(pageNumber, pageSize, name);
+    return new DataResponse<>(pageResult);
+  }
 
-    @NeedHolderPermission
-    @ApiOperation("查询分类集合")
-    @GetMapping("/categoryList")
-    public DataResponse<List<DeviceCategory>> categoryList() {
-        List<DeviceCategory> deviceCategoryList = deviceCategoryService.categoryList();
-        return new DataResponse<>(deviceCategoryList);
-    }
+  @NeedHolderPermission
+  @ApiOperation("查询分类集合")
+  @GetMapping("/categoryList")
+  public DataResponse<List<DeviceCategory>> categoryList() {
+    List<DeviceCategory> deviceCategoryList = deviceCategoryService.categoryList();
+    return new DataResponse<>(deviceCategoryList);
+  }
 
 
 }

@@ -10,4 +10,5 @@ import pro.dengyi.myhome.model.DeviceLog;
  */
 @Repository
 public interface DeviceLogDao extends BaseMapper<DeviceLog> {
+
 }

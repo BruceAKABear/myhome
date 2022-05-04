@@ -10,4 +10,5 @@ import pro.dengyi.myhome.model.User;
  */
 @Repository
 public interface UserDao extends BaseMapper<User> {
+
 }

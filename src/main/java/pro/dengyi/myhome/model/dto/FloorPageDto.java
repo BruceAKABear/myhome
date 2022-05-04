@@ -1,7 +1,6 @@
 package pro.dengyi.myhome.model.dto;
 
 import lombok.Data;
-import pro.dengyi.myhome.model.Family;
 import pro.dengyi.myhome.model.Floor;
 
 /**
@@ -11,8 +10,8 @@ import pro.dengyi.myhome.model.Floor;
  * @date 2022-01-23
  */
 @Data
-public class FloorDto extends Floor {
+public class FloorPageDto extends Floor {
 
-    private Integer roomCount;
-    private Integer deviceCount;
+  private Integer roomCount;
+  private Integer deviceCount;
 }

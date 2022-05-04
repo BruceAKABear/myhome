@@ -15,12 +15,16 @@ import pro.dengyi.myhome.service.DeviceLogService;
  */
 @Service
 public class DeviceLogServiceImpl implements DeviceLogService {
-    @Autowired
-    private DeviceLogDao deviceLogDao;
 
-    @Override
-    public IPage<DeviceLog> page(Integer pageNumber, Integer pageSize, String deviceId) {
-        IPage<DeviceLog> page = new Page<>(pageNumber == null ? 1 : pageNumber, pageSize == null ? 10 : pageSize);
-        return deviceLogDao.selectPage(page, new LambdaQueryWrapper<DeviceLog>().eq(DeviceLog::getDeviceId, deviceId).orderByDesc(DeviceLog::getCreateTime));
-    }
+  @Autowired
+  private DeviceLogDao deviceLogDao;
+
+  @Override
+  public IPage<DeviceLog> page(Integer pageNumber, Integer pageSize, String deviceId) {
+    IPage<DeviceLog> page = new Page<>(pageNumber == null ? 1 : pageNumber,
+        pageSize == null ? 10 : pageSize);
+    return deviceLogDao.selectPage(page,
+        new LambdaQueryWrapper<DeviceLog>().eq(DeviceLog::getDeviceId, deviceId)
+            .orderByDesc(DeviceLog::getCreateTime));
+  }
 }

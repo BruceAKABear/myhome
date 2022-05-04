@@ -27,36 +27,38 @@ import java.util.List;
 @RestController
 @RequestMapping("/room")
 public class RoomController {
-    @Autowired
-    private RoomService roomService;
 
-    @ApiOperation("分页查询")
-    @GetMapping("/page")
-    public DataResponse<IPage<RoomDto>> page(Integer pageNumber, Integer pageSize, String floorId) {
-        IPage<RoomDto> pageRes = roomService.page(pageNumber, pageSize, floorId);
-        return new DataResponse<>(pageRes);
-    }
+  @Autowired
+  private RoomService roomService;
 
-    @ApiOperation("查询房间列表")
-    @GetMapping("/roomList")
-    public DataResponse<List<Room>> roomList() {
-        List<Room> roomList = roomService.roomList();
-        return new DataResponse<>(roomList);
-    }
+  @ApiOperation("分页查询")
+  @GetMapping("/page")
+  public DataResponse<IPage<RoomDto>> page(Integer pageNumber, Integer pageSize, String floorId,
+      String roomName) {
+    IPage<RoomDto> pageRes = roomService.page(pageNumber, pageSize, floorId, roomName);
+    return new DataResponse<>(pageRes);
+  }
 
-    @NeedHolderPermission
-    @ApiOperation("新增或修改房间")
-    @PostMapping("/addUpdate")
-    public CommonResponse addUpdate(@RequestBody @Validated Room room) {
-        roomService.addUpdate(room);
-        return CommonResponse.success();
-    }
+  @ApiOperation("查询房间列表")
+  @GetMapping("/roomList")
+  public DataResponse<List<Room>> roomList() {
+    List<Room> roomList = roomService.roomList();
+    return new DataResponse<>(roomList);
+  }
 
-    @NeedHolderPermission
-    @ApiOperation("删除房间")
-    @DeleteMapping("/delete/{id}")
-    public CommonResponse delete(@PathVariable @NotBlank(message = "id不能为空") String id) {
-        roomService.delete(id);
-        return CommonResponse.success();
-    }
+  @NeedHolderPermission
+  @ApiOperation("新增或修改房间")
+  @PostMapping("/addUpdate")
+  public CommonResponse addUpdate(@RequestBody @Validated Room room) {
+    roomService.addUpdate(room);
+    return CommonResponse.success();
+  }
+
+  @NeedHolderPermission
+  @ApiOperation("删除房间")
+  @DeleteMapping("/delete/{id}")
+  public CommonResponse delete(@PathVariable @NotBlank(message = "id不能为空") String id) {
+    roomService.delete(id);
+    return CommonResponse.success();
+  }
 }

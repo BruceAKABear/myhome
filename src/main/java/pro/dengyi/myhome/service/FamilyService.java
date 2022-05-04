@@ -8,10 +8,11 @@ import pro.dengyi.myhome.model.dto.FamilyDto;
  * @date 2022-01-23
  */
 public interface FamilyService {
-    void addUpdate(Family family);
 
-    FamilyDto info();
+  void addUpdate(Family family);
 
-    Boolean checkIsFirst();
+  FamilyDto info();
+
+  Boolean checkIsFirst();
 
 }

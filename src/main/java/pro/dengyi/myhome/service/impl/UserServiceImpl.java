@@ -1,6 +1,9 @@
 package pro.dengyi.myhome.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,46 +23,81 @@ import pro.dengyi.myhome.utils.UserHolder;
  */
 @Service
 public class UserServiceImpl implements UserService {
-    @Autowired
-    private UserDao userDao;
+
+  @Autowired
+  private UserDao userDao;
 
 
-    @Override
-    public String login(LoginVo loginVo) {
-        User user = userDao.selectOne(new LambdaQueryWrapper<User>().eq(User::getEmail, loginVo.getEmail()));
-        if (user != null) {
-            if (PasswordUtil.match(loginVo.getPassword(), user.getPassword())) {
-                return TokenUtil.genToken(user);
-            } else {
-                throw new BusinessException(11002, "邮箱或密码错误");
-            }
-        } else {
-            throw new BusinessException(11001, "用户不存在");
-        }
+  @Override
+  public String login(LoginVo loginVo) {
+    User user = userDao.selectOne(
+        new LambdaQueryWrapper<User>().eq(User::getEmail, loginVo.getEmail()));
+    if (user != null) {
+      if (!user.getEnable()) {
+        throw new BusinessException(11001, "用户已停用不能登录");
+      }
+      if (PasswordUtil.match(loginVo.getPassword(),user.getPassw())) {
+        return TokenUtil.genToken(user);
+      } else {
+        throw new BusinessException(11002, "邮箱或密码错误");
+      }
+    } else {
+      throw new BusinessException(11003, "用户不存在");
+    }
+  }
+
+  @Transactional
+  @Override
+  public void update(User user) {
+    //密码为空则不更新密码
+    if (!ObjectUtils.isEmpty(user.getPassw())) {
+      String encodePassword = PasswordUtil.encodePassword(user.getPassw());
+      user.setPassw(encodePassword);
+    }
+    userDao.updateById(user);
+  }
+
+  @Override
+  public User info() {
+    User user = userDao.selectById(UserHolder.getUserId());
+    user.setPassw(null);
+    return user;
+  }
+
+  @Transactional
+  @Override
+  public void addOrUpdate(User user) {
+    if (ObjectUtils.isEmpty(user.getId())) {
+      LocalDateTime now = LocalDateTime.now();
+      user.setCreateTime(now);
+      user.setUpdateTime(now);
+      user.setPassw(PasswordUtil.encodePassword(user.getPassw()));
+      userDao.insert(user);
+    } else {
+      user.setUpdateTime(LocalDateTime.now());
+      if (!ObjectUtils.isEmpty(user.getPassw())) {
+        user.setPassw(PasswordUtil.encodePassword(user.getPassw()));
+      }
+      userDao.updateById(user);
     }
 
-    @Transactional
-    @Override
-    public void update(User user) {
-        //密码为空则不更新密码
-        if (!ObjectUtils.isEmpty(user.getPassword())) {
-            String encodePassword = PasswordUtil.encodePassword(user.getPassword());
-            user.setPassword(encodePassword);
-        }
-        userDao.updateById(user);
-    }
 
-    @Override
-    public User info() {
-        User user = userDao.selectById(UserHolder.getUserId());
-        user.setPassword(null);
-        return user;
-    }
+  }
 
-    @Transactional
-    @Override
-    public void add(User user) {
-        userDao.insert(user);
+  @Override
+  public IPage<User> page(Integer pageNumber, Integer pageSize, String name) {
+    IPage<User> pageParam = new Page<>(pageNumber == null ? 1 : pageNumber,
+        pageSize == null ? 10 : pageSize);
+    return userDao.selectPage(pageParam,
+        new LambdaQueryWrapper<User>().and(!(ObjectUtils.isEmpty(name)),
+            userLambdaQueryWrapper -> userLambdaQueryWrapper.like(User::getName, name)));
+  }
 
-    }
+  @Transactional
+  @Override
+  public void enable(User user) {
+    User userSaved = userDao.selectById(user.getId());
+    userSaved.setEnable(!userSaved.getEnable());
+    userDao.updateById(userSaved);
+  }
 }

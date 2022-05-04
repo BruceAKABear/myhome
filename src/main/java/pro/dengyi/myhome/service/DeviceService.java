@@ -12,15 +12,17 @@ import java.util.Map;
  * @date 2022-01-25
  */
 public interface DeviceService {
-    Device selectById(String deviceId);
 
-    void addUpdate(Device device);
+  Device selectById(String deviceId);
 
-    void delete(String id);
+  void addUpdate(Device device);
 
-    IPage<DeviceDto> page(Integer pageNumber, Integer pageSize, String floorId, String roomId, String categoryId);
+  void delete(String id);
 
-    List<Device> debugDeviceList();
+  IPage<DeviceDto> page(Integer pageNumber, Integer pageSize, String floorId, String roomId,
+      String categoryId);
 
-    void sendDebug(Map<String, Object> orderMap);
+  List<Device> debugDeviceList();
+
+  void sendDebug(Map<String, Object> orderMap);
 }

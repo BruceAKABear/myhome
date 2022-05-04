@@ -14,11 +14,12 @@ import java.util.List;
  */
 @Service
 public class CategoryFieldServiceImpl implements CategoryFieldService {
-    @Autowired
-    private CategoryFieldDao categoryFieldDao;
 
-    @Override
-    public List<CategoryField> fieldList(String deviceId) {
-        return categoryFieldDao.selectListByDeviceId(deviceId);
-    }
+  @Autowired
+  private CategoryFieldDao categoryFieldDao;
+
+  @Override
+  public List<CategoryField> fieldList(String deviceId) {
+    return categoryFieldDao.selectListByDeviceId(deviceId);
+  }
 }

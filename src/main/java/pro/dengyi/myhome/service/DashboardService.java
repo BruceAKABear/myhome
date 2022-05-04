@@ -7,6 +7,7 @@ import pro.dengyi.myhome.model.dto.DashboardDto;
  * @date 2022-01-28
  */
 public interface DashboardService {
-    DashboardDto dashboardInfo();
+
+  DashboardDto dashboardInfo();
 
 }

@@ -18,22 +18,22 @@ import javax.validation.constraints.NotBlank;
 @TableName("control_data")
 public class ControlData {
 
-    @ApiModelProperty("主键")
-    private String id;
+  @ApiModelProperty("主键")
+  private String id;
 
-    @ApiModelProperty("任务ID")
-    private String taskId;
+  @ApiModelProperty("任务ID")
+  private String taskId;
 
-    @ApiModelProperty("设备ID")
-    @NotBlank(message = "设备ID不能为空")
-    private String deviceId;
+  @ApiModelProperty("设备ID")
+  @NotBlank(message = "设备ID不能为空")
+  private String deviceId;
 
-    @ApiModelProperty("控制字段")
-    @NotBlank(message = "控制字段不能为空")
-    private String controlField;
+  @ApiModelProperty("控制字段")
+  @NotBlank(message = "控制字段不能为空")
+  private String controlField;
 
-    @ApiModelProperty("控制字段值")
-    @NotBlank(message = "字段值不能为空")
-    private String controlValue;
+  @ApiModelProperty("控制字段值")
+  @NotBlank(message = "字段值不能为空")
+  private String controlValue;
 
 }

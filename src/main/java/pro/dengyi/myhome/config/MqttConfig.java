@@ -18,9 +18,7 @@ import java.util.concurrent.Executor;
 /**
  * mqtt配置
  * <p>
- * 服务端下发命名在队列 control/#
- * 服务端监听队列在 report/#
- * 心跳队列在 heartbeat/#
+ * 服务端下发命名在队列 control/# 服务端监听队列在 report/# 心跳队列在 heartbeat/#
  *
  * @author dengyi (email:dengyi@dengyi.pro)
  * @date 2022-01-22
@@ -28,72 +26,74 @@ import java.util.concurrent.Executor;
 @Slf4j
 @Configuration
 public class MqttConfig {
-    private static final String[] SUBTOPIC = {"report/#", "heartbeat/#"};
-    private static final String CLIENT_ID = "server-client";
-    private static final String USER_NAME = "server";
-    private static final String PASS_WORD = "passwd";
-    @Autowired
-    private DeviceDao deviceDao;
-    @Autowired
-    private StringRedisTemplate stringRedisTemplate;
-    @Autowired
-    private Executor serviceExecutor;
-    @Autowired
-    private CategoryFieldDao categoryFieldDao;
-    @Autowired
-    private DeviceLogDao deviceLogDao;
+
+  private static final String[] SUBTOPIC = {"report/#", "heartbeat/#"};
+  private static final String CLIENT_ID = "server-client";
+  private static final String USER_NAME = "server";
+  private static final String PASS_WORD = "passwd";
+  @Autowired
+  private DeviceDao deviceDao;
+  @Autowired
+  private StringRedisTemplate stringRedisTemplate;
+  @Autowired
+  private Executor serviceExecutor;
+  @Autowired
+  private CategoryFieldDao categoryFieldDao;
+  @Autowired
+  private DeviceLogDao deviceLogDao;
 
 
+  @Bean
+  public MqttClient mqttClient() {
+    String broker = "tcp://121.36.171.33:1883";
+    MemoryPersistence persistence = new MemoryPersistence();
+    try {
+      MqttClient client = new MqttClient(broker, CLIENT_ID, persistence);
+      // MQTT 连接选项
+      MqttConnectOptions connOpts = new MqttConnectOptions();
+      connOpts.setUserName(USER_NAME);
+      connOpts.setPassword(PASS_WORD.toCharArray());
+      // 保留会话
+      connOpts.setCleanSession(true);
+      // 设置回调
+      client.setCallback(new MqttCallbackExtended() {
+        @Override
+        public void connectComplete(boolean reconnect, String serverURI) {
+          log.info("连接完毕");
+        }
 
-    @Bean
-    public MqttClient mqttClient() {
-        String broker = "tcp://121.36.171.33:1883";
-        MemoryPersistence persistence = new MemoryPersistence();
-        try {
-            MqttClient client = new MqttClient(broker, CLIENT_ID, persistence);
-            // MQTT 连接选项
-            MqttConnectOptions connOpts = new MqttConnectOptions();
-            connOpts.setUserName(USER_NAME);
-            connOpts.setPassword(PASS_WORD.toCharArray());
-            // 保留会话
-            connOpts.setCleanSession(true);
-            // 设置回调
-            client.setCallback(new MqttCallbackExtended() {
-                @Override
-                public void connectComplete(boolean reconnect, String serverURI) {
-                    log.info("连接完毕");
-                }
+        @Override
+        public void connectionLost(Throwable cause) {
+          log.error("连接失去");
+        }
 
-                @Override
-                public void connectionLost(Throwable cause) {
-                    log.error("连接失去");
-                }
+        @Override
+        public void messageArrived(String topic, MqttMessage message) throws Exception {
+          serviceExecutor.execute(
+              new MqttMessageHandleThread(stringRedisTemplate, deviceDao, categoryFieldDao,
+                  deviceLogDao, topic, message));
+        }
 
-                @Override
-                public void messageArrived(String topic, MqttMessage message) throws Exception {
-                    serviceExecutor.execute(new MqttMessageHandleThread(stringRedisTemplate, deviceDao, categoryFieldDao,deviceLogDao, topic, message));
-                }
-
-                @Override
-                public void deliveryComplete(IMqttDeliveryToken token) {
-                    log.warn("消息发送完毕");
-                }
-            });
-            // 建立连
-            client.connect(connOpts);
-            // 订阅
-            client.subscribe(SUBTOPIC);
-            // 消息发布所需参数
+        @Override
+        public void deliveryComplete(IMqttDeliveryToken token) {
+          log.warn("消息发送完毕");
+        }
+      });
+      // 建立连
+      client.connect(connOpts);
+      // 订阅
+      client.subscribe(SUBTOPIC);
+      // 消息发布所需参数
 //            MqttMessage message = new MqttMessage(content.getBytes());
 //            message.setQos(qos);
 //            client.publish(pubTopic, message);
 //            System.out.println("Message published");
-            return client;
+      return client;
 
-        } catch (MqttException me) {
-            log.error("初始化mqtt连接异常", me);
-            return null;
-        }
+    } catch (MqttException me) {
+      log.error("初始化mqtt连接异常", me);
+      return null;
     }
+  }
 
 }

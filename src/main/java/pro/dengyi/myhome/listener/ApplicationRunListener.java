@@ -1,6 +1,7 @@
 package pro.dengyi.myhome.listener;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -25,39 +26,42 @@ import java.util.List;
  */
 @Component
 public class ApplicationRunListener implements ApplicationRunner {
-    @Autowired
-    private InitProperties initProperties;
 
-    @Autowired
-    private UserDao userDao;
-    @Autowired
-    private FamilyDao familyDao;
+  @Autowired
+  private InitProperties initProperties;
+
+  @Autowired
+  private UserDao userDao;
+  @Autowired
+  private FamilyDao familyDao;
 
 
-    @Transactional
-    @Override
-    public void run(ApplicationArguments args) throws Exception {
-        //项目初始化
-        Family family = familyDao.selectOne(new LambdaQueryWrapper<>());
-        if (ObjectUtils.isEmpty(family)) {
-            Family newFamily = new Family();
-            newFamily.setName("我的家");
-            familyDao.insert(newFamily);
-        }
-        List<User> userList = userDao.selectList(new LambdaQueryWrapper<User>().eq(User::getHouseHolder, true));
-        if (CollectionUtils.isEmpty(userList)) {
-            //初始化一个默认家庭
-            //默认用户不存在，新增一个
-            User user = new User();
-            user.setName(initProperties.getDefaultName());
-            user.setAvatar(initProperties.getDefaultAvatar());
-            user.setEmail(initProperties.getDefaultEmail());
-            user.setPassword(initProperties.getDefaultPassword());
-            user.setHouseHolder(true);
-            user.setCreateTime(new Date());
-            user.setUpdateTime(new Date());
-            userDao.insert(user);
-        }
+  @Transactional
+  @Override
+  public void run(ApplicationArguments args) throws Exception {
+    //项目初始化
+    Family family = familyDao.selectOne(new LambdaQueryWrapper<>());
+    if (ObjectUtils.isEmpty(family)) {
+      Family newFamily = new Family();
+      newFamily.setName("我的家");
+      familyDao.insert(newFamily);
     }
+    List<User> userList = userDao.selectList(
+        new LambdaQueryWrapper<User>().eq(User::getHouseHolder, true));
+    if (CollectionUtils.isEmpty(userList)) {
+      //初始化一个默认家庭
+      //默认用户不存在，新增一个
+      User user = new User();
+      user.setName(initProperties.getDefaultName());
+      user.setAvatar(initProperties.getDefaultAvatar());
+      user.setEmail(initProperties.getDefaultEmail());
+      user.setPassw(initProperties.getDefaultPassword());
+      user.setHouseHolder(true);
+      LocalDateTime now = LocalDateTime.now();
+      user.setCreateTime(now);
+      user.setUpdateTime(now);
+      userDao.insert(user);
+    }
+  }
 
 }

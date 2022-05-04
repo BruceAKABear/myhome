@@ -11,12 +11,13 @@ import java.util.List;
  * @date 2022-01-23
  */
 public interface RoomService {
-    void addUpdate(Room room);
 
-    void delete(String id);
+  void addUpdate(Room room);
 
-    IPage<RoomDto> page(Integer pageNumber, Integer pageSize, String floorId);
+  void delete(String id);
 
-    List<Room> roomList();
+  IPage<RoomDto> page(Integer pageNumber, Integer pageSize, String floorId, String roomName);
+
+  List<Room> roomList();
 
 }

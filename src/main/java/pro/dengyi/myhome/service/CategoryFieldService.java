@@ -9,5 +9,6 @@ import java.util.List;
  * @date 2022-02-05
  */
 public interface CategoryFieldService {
-    List<CategoryField> fieldList(String deviceId);
+
+  List<CategoryField> fieldList(String deviceId);
 }

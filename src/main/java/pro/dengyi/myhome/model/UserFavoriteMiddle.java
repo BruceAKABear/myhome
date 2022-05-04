@@ -12,18 +12,18 @@ import lombok.Data;
 @ApiModel("用户收藏设备中间表")
 public class UserFavoriteMiddle {
 
-    @ApiModelProperty(value = "id")
-    private String id;
+  @ApiModelProperty(value = "id")
+  private String id;
 
-    @ApiModelProperty(value = "楼层ID")
-    private String floorId;
+  @ApiModelProperty(value = "楼层ID")
+  private String floorId;
 
-    @ApiModelProperty(value = "房间ID")
-    private String roomId;
+  @ApiModelProperty(value = "房间ID")
+  private String roomId;
 
-    @ApiModelProperty(value = "设备ID")
-    private String deviceId;
+  @ApiModelProperty(value = "设备ID")
+  private String deviceId;
 
-    @ApiModelProperty(value = "用户ID")
-    private String userId;
+  @ApiModelProperty(value = "用户ID")
+  private String userId;
 }

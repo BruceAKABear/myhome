@@ -13,5 +13,7 @@ import pro.dengyi.myhome.model.dto.RoomDto;
  */
 @Repository
 public interface RoomDao extends BaseMapper<Room> {
-    IPage<RoomDto> selectCustomPage(IPage<RoomDto> page, @Param("floorId") String floorId);
+
+  IPage<RoomDto> selectCustomPage(IPage<RoomDto> page, @Param("floorId") String floorId,
+      @Param("roomName") String roomName);
 }

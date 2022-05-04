@@ -16,8 +16,8 @@ import org.springframework.stereotype.Component;
 public class InitProperties {
 
 
-    private String defaultName;
-    private String defaultAvatar;
-    private String defaultEmail;
-    private String defaultPassword;
+  private String defaultName;
+  private String defaultAvatar;
+  private String defaultEmail;
+  private String defaultPassword;
 }

@@ -28,48 +28,51 @@ import java.util.Map;
 @RestController
 @RequestMapping("/device")
 public class DeviceController {
-    @Autowired
-    private DeviceService deviceService;
+
+  @Autowired
+  private DeviceService deviceService;
 
 
-    @ApiOperation("添加后修改设备")
-    @GetMapping("/page")
-    public DataResponse<IPage<DeviceDto>> page(Integer pageNumber, Integer pageSize, String floorId, String roomId, String categoryId) {
-        IPage<DeviceDto> pageRes = deviceService.page(pageNumber, pageSize, floorId, roomId, categoryId);
-        return new DataResponse<>(pageRes);
-    }
+  @ApiOperation("添加后修改设备")
+  @GetMapping("/page")
+  public DataResponse<IPage<DeviceDto>> page(Integer pageNumber, Integer pageSize, String floorId,
+      String roomId, String categoryId) {
+    IPage<DeviceDto> pageRes = deviceService.page(pageNumber, pageSize, floorId, roomId,
+        categoryId);
+    return new DataResponse<>(pageRes);
+  }
 
-    @ApiOperation("查询调试所有设备")
-    @GetMapping("/debugDeviceList")
-    public DataResponse<List<Device>> debugDeviceList() {
-        List<Device> deviceList = deviceService.debugDeviceList();
-        return new DataResponse<>(deviceList);
-    }
-
-
-    @NeedHolderPermission
-    @ApiOperation("添加后修改设备")
-    @PostMapping("/addUpdate")
-    public CommonResponse addUpdate(@RequestBody @Validated Device device) {
-        deviceService.addUpdate(device);
-        return CommonResponse.success();
-    }
-
-    @NeedHolderPermission
-    @ApiOperation("删除设备")
-    @DeleteMapping("/delete/{id}")
-    public CommonResponse delete(@PathVariable @NotBlank(message = "id不能为空") String id) {
-        deviceService.delete(id);
-        return CommonResponse.success();
-    }
+  @ApiOperation("查询调试所有设备")
+  @GetMapping("/debugDeviceList")
+  public DataResponse<List<Device>> debugDeviceList() {
+    List<Device> deviceList = deviceService.debugDeviceList();
+    return new DataResponse<>(deviceList);
+  }
 
 
-    @NeedHolderPermission
-    @ApiOperation("下发debug命令")
-    @PostMapping("/sendDebug")
-    public CommonResponse sendDebug(@RequestBody Map<String, Object> orderMap) {
-        deviceService.sendDebug(orderMap);
-        return CommonResponse.success();
-    }
+  @NeedHolderPermission
+  @ApiOperation("添加后修改设备")
+  @PostMapping("/addUpdate")
+  public CommonResponse addUpdate(@RequestBody @Validated Device device) {
+    deviceService.addUpdate(device);
+    return CommonResponse.success();
+  }
+
+  @NeedHolderPermission
+  @ApiOperation("删除设备")
+  @DeleteMapping("/delete/{id}")
+  public CommonResponse delete(@PathVariable @NotBlank(message = "id不能为空") String id) {
+    deviceService.delete(id);
+    return CommonResponse.success();
+  }
+
+
+  @NeedHolderPermission
+  @ApiOperation("下发debug命令")
+  @PostMapping("/sendDebug")
+  public CommonResponse sendDebug(@RequestBody Map<String, Object> orderMap) {
+    deviceService.sendDebug(orderMap);
+    return CommonResponse.success();
+  }
 
 }

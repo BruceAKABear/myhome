@@ -13,5 +13,7 @@ import pro.dengyi.myhome.model.dto.DeviceDto;
  */
 @Repository
 public interface DeviceDao extends BaseMapper<Device> {
-    IPage<DeviceDto> selectCustomPage(IPage<DeviceDto> page, @Param("floorId") String floorId, @Param("roomId") String roomId, @Param("categoryId") String categoryId);
+
+  IPage<DeviceDto> selectCustomPage(IPage<DeviceDto> page, @Param("floorId") String floorId,
+      @Param("roomId") String roomId, @Param("categoryId") String categoryId);
 }

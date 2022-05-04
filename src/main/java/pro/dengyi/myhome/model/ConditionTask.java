@@ -18,19 +18,19 @@ import javax.validation.constraints.NotBlank;
 @TableName("schedule_task")
 public class ConditionTask {
 
-    @ApiModelProperty("主键")
-    private String id;
+  @ApiModelProperty("主键")
+  private String id;
 
-    @ApiModelProperty("家庭ID")
-    @NotBlank(message = "家庭ID不能为空")
-    private String familyId;
+  @ApiModelProperty("家庭ID")
+  @NotBlank(message = "家庭ID不能为空")
+  private String familyId;
 
-    @ApiModelProperty("任务名")
-    @NotBlank(message = "任务名不能为空")
-    private String name;
+  @ApiModelProperty("任务名")
+  @NotBlank(message = "任务名不能为空")
+  private String name;
 
-    @ApiModelProperty("关联数据集合")
-    private Object relationData;
+  @ApiModelProperty("关联数据集合")
+  private Object relationData;
 
 
 }

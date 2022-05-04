@@ -11,5 +11,6 @@ import pro.dengyi.myhome.model.dto.FamilyDto;
  */
 @Repository
 public interface FamilyDao extends BaseMapper<Family> {
-    FamilyDto selectFamilyDto();
+
+  FamilyDto selectFamilyDto();
 }

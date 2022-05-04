@@ -9,7 +9,8 @@ import pro.dengyi.myhome.model.Device;
  */
 @Data
 public class DeviceDto extends Device {
-    private String floorName;
-    private String roomName;
-    private String categoryName;
+
+  private String floorName;
+  private String roomName;
+  private String categoryName;
 }

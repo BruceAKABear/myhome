@@ -31,81 +31,88 @@ import java.util.Map;
  */
 @Service
 public class DeviceServiceImpl implements DeviceService {
-    @Autowired
-    private DeviceDao deviceDao;
-    @Autowired
-    private StringRedisTemplate stringRedisTemplate;
-    @Autowired
-    private MqttClient mqttClient;
-    @Autowired
-    private DeviceLogDao deviceLogDao;
+
+  @Autowired
+  private DeviceDao deviceDao;
+  @Autowired
+  private StringRedisTemplate stringRedisTemplate;
+  @Autowired
+  private MqttClient mqttClient;
+  @Autowired
+  private DeviceLogDao deviceLogDao;
 
 
-    @Override
-    public Device selectById(String deviceId) {
-        return deviceDao.selectById(deviceId);
+  @Override
+  public Device selectById(String deviceId) {
+    return deviceDao.selectById(deviceId);
+  }
+
+  @Transactional
+  @Override
+  public void addUpdate(Device device) {
+    //todo 其他什么处理？
+    if (ObjectUtils.isEmpty(device.getId())) {
+      //新增，默认离线，默认启用
+      device.setEnable(true);
+      device.setOnline(false);
+
+      deviceDao.insert(device);
+    } else {
+      //更新
+      deviceDao.updateById(device);
     }
 
-    @Transactional
-    @Override
-    public void addUpdate(Device device) {
-        //todo 其他什么处理？
-        if (ObjectUtils.isEmpty(device.getId())) {
-            //新增，默认离线，默认启用
-            device.setEnable(true);
-            device.setOnline(false);
+  }
 
-            deviceDao.insert(device);
-        } else {
-            //更新
-            deviceDao.updateById(device);
-        }
+  @Transactional
+  @Override
+  public void delete(String id) {
+    //todo 做其他判断
+    deviceDao.deleteById(id);
+  }
 
+  @Override
+  public IPage<DeviceDto> page(Integer pageNumber, Integer pageSize, String floorId, String roomId,
+      String categoryId) {
+    IPage<DeviceDto> page = new Page<>(pageNumber == null ? 1 : pageNumber,
+        pageSize == null ? 10 : pageSize);
+    return deviceDao.selectCustomPage(page, floorId, roomId, categoryId);
+  }
+
+  @Override
+  public List<Device> debugDeviceList() {
+    return deviceDao.selectList(new LambdaQueryWrapper<>());
+  }
+
+  @Transactional
+  @Override
+  public void sendDebug(Map<String, Object> orderMap) {
+
+    String deviceId = (String) orderMap.get("deviceId");
+    //判断设备是否在线
+    String onlineStatus = stringRedisTemplate.opsForValue().get("onlineDevice:" + deviceId);
+    if (!ObjectUtils.isEmpty(onlineStatus)) {
+      String pubTopic = "control/" + deviceId;
+      String content = (String) orderMap.get("content");
+      //todo 有问题
+      JSONObject jsonObject = JSON.parseObject(content);
+      MqttMessage message = new MqttMessage(
+          JSON.toJSONString(jsonObject).getBytes(StandardCharsets.UTF_8));
+      message.setQos(1);
+      try {
+        mqttClient.publish(pubTopic, message);
+        DeviceLog deviceLog = new DeviceLog();
+        deviceLog.setDeviceId(deviceId);
+        deviceLog.setDirection(1);
+        deviceLog.setPayload(content);
+        deviceLog.setCreateTime(new Date());
+        deviceLogDao.insert(deviceLog);
+      } catch (MqttException e) {
+        throw new BusinessException(18001, "下发debug命令异常");
+      }
+    } else {
+      throw new BusinessException(18002, "设备离线不能发送命令");
     }
 
-    @Transactional
-    @Override
-    public void delete(String id) {
-        //todo 做其他判断
-        deviceDao.deleteById(id);
-    }
-
-    @Override
-    public IPage<DeviceDto> page(Integer pageNumber, Integer pageSize, String floorId, String roomId, String categoryId) {
-        IPage<DeviceDto> page = new Page<>(pageNumber == null ? 1 : pageNumber, pageSize == null ? 10 : pageSize);
-        return deviceDao.selectCustomPage(page, floorId, roomId, categoryId);
-    }
-
-    @Override
-    public List<Device> debugDeviceList() {
-        return deviceDao.selectList(new LambdaQueryWrapper<>());
-    }
-
-    @Transactional
-    @Override
-    public void sendDebug(Map<String, Object> orderMap) {
-        String deviceId = (String) orderMap.get("deviceId");
-        //判断设备是否在线
-        String onlineStatus = stringRedisTemplate.opsForValue().get("onlineDevice:" + deviceId);
-        if (!ObjectUtils.isEmpty(onlineStatus)) {
-            String pubTopic = "control/" + deviceId;
-            String content = (String) orderMap.get("content");
-            //todo 有问题
-            JSONObject jsonObject = JSON.parseObject(content);
-            MqttMessage message = new MqttMessage(JSON.toJSONString(jsonObject).getBytes(StandardCharsets.UTF_8));
-            message.setQos(1);
-            try {
-                mqttClient.publish(pubTopic, message);
-                DeviceLog deviceLog = new DeviceLog();
-                deviceLog.setDeviceId(deviceId);
-                deviceLog.setDirection(1);
-                deviceLog.setPayload(content);
-                deviceLog.setCreateTime(new Date());
-                deviceLogDao.insert(deviceLog);
-            } catch (MqttException e) {
-                throw new BusinessException(18001, "下发debug命令异常");
-            }
-        }
-
-    }
+  }
 }

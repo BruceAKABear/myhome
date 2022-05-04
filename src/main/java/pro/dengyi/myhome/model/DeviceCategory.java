@@ -24,25 +24,25 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class DeviceCategory {
 
-    @ApiModelProperty(value = "分类Id")
-    private String id;
+  @ApiModelProperty(value = "分类Id")
+  private String id;
 
-    @ApiModelProperty(value = "设备类型名")
-    @NotBlank(message = "设备分类名不能为空")
-    @Length(min = 3, max = 30)
-    private String name;
+  @ApiModelProperty(value = "设备类型名")
+  @NotBlank(message = "设备分类名不能为空")
+  @Length(min = 3, max = 30)
+  private String name;
 
-    @ApiModelProperty(value = "是否可以下发命令")
-    @NotNull(message = "必须选择是否可控")
-    private Boolean canControl;
+  @ApiModelProperty(value = "是否可以下发命令")
+  @NotNull(message = "必须选择是否可控")
+  private Boolean canControl;
 
-    @ApiModelProperty(value = "分类下设备总数")
-    @TableField(exist = false)
-    private Integer deviceCount;
+  @ApiModelProperty(value = "分类下设备总数")
+  @TableField(exist = false)
+  private Integer deviceCount;
 
-    @ApiModelProperty(value = "分类控制字段")
-    @TableField(exist = false)
-    @NotNull(message = "控制字段不能为空")
-    private List<CategoryField> categoryFieldList;
+  @ApiModelProperty(value = "分类控制字段")
+  @TableField(exist = false)
+  @NotNull(message = "控制字段不能为空")
+  private List<CategoryField> categoryFieldList;
 
 }

@@ -3,17 +3,19 @@ package pro.dengyi.myhome.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import java.time.LocalDateTime;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 import pro.dengyi.myhome.dao.FloorDao;
+import pro.dengyi.myhome.dao.RoomDao;
 import pro.dengyi.myhome.exception.BusinessException;
 import pro.dengyi.myhome.model.Floor;
-import pro.dengyi.myhome.model.dto.FloorDto;
+import pro.dengyi.myhome.model.Room;
+import pro.dengyi.myhome.model.dto.FloorPageDto;
 import pro.dengyi.myhome.service.FloorService;
-
-import java.util.List;
 
 /**
  * @author dengyi (email:dengyi@dengyi.pro)
@@ -21,39 +23,53 @@ import java.util.List;
  */
 @Service
 public class FloorServiceImpl implements FloorService {
-    @Autowired
-    private FloorDao floorDao;
 
-    @Transactional
-    @Override
-    public void addUpdate(Floor floor) {
-        if (ObjectUtils.isEmpty(floor.getId())) {
-            //校验楼层名
-            Floor floorSaved = floorDao.selectOne(new LambdaQueryWrapper<Floor>().eq(Floor::getName, floor.getName()));
-            if (floorSaved != null) {
-                throw new BusinessException(13001, "同名楼层已存在");
-            }
-            floorDao.insert(floor);
-        } else {
-            floorDao.updateById(floor);
-        }
+  @Autowired
+  private FloorDao floorDao;
+  @Autowired
+  private RoomDao roomDao;
 
+
+  @Transactional
+  @Override
+  public void addUpdate(Floor floor) {
+    if (ObjectUtils.isEmpty(floor.getId())) {
+      //校验楼层名
+      Floor floorSaved = floorDao.selectOne(
+          new LambdaQueryWrapper<Floor>().eq(Floor::getName, floor.getName()));
+      if (floorSaved != null) {
+        throw new BusinessException(13001, "同名楼层已存在");
+      }
+      LocalDateTime timeNow = LocalDateTime.now();
+      floor.setCreateTime(timeNow);
+      floor.setUpdateTime(timeNow);
+      floorDao.insert(floor);
+    } else {
+      floor.setUpdateTime(LocalDateTime.now());
+      floorDao.updateById(floor);
     }
 
-    @Transactional
-    @Override
-    public void delete(String id) {
-        floorDao.deleteById(id);
-    }
+  }
 
-    @Override
-    public List<FloorDto> floorList() {
-        return floorDao.selectFloorDto();
+  @Transactional
+  @Override
+  public void delete(String id) {
+    Long roomCount = roomDao.selectCount(new LambdaQueryWrapper<Room>().eq(Room::getFloorId, id));
+    if (roomCount != 0) {
+      throw new BusinessException(13002, "楼层下存在房间不能删除");
     }
+    floorDao.deleteById(id);
+  }
 
-    @Override
-    public IPage<FloorDto> page(Integer pageNumber, Integer pageSize, String floorName) {
-        IPage<FloorDto> iPage = new Page<>(pageNumber == null ? 1 : pageNumber, pageSize == null ? 10 : pageSize);
-        return floorDao.selectCustomPage(iPage, floorName);
-    }
+  @Override
+  public List<FloorPageDto> floorList() {
+    return floorDao.selectFloorDto();
+  }
+
+  @Override
+  public IPage<FloorPageDto> page(Integer pageNumber, Integer pageSize, String floorName) {
+    IPage<FloorPageDto> iPage = new Page<>(pageNumber == null ? 1 : pageNumber,
+        pageSize == null ? 10 : pageSize);
+    return floorDao.selectCustomPage(iPage, floorName);
+  }
 }

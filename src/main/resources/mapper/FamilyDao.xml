@@ -5,6 +5,8 @@
         SELECT
             family.id,
             family.`name`,
+            family.create_time,
+            family.update_time,
             ( SELECT COUNT( id ) FROM floor ) AS floorCount,
             ( SELECT COUNT( id ) FROM room ) AS roomCount,
             ( SELECT COUNT( id ) FROM device ) AS deviceCount,

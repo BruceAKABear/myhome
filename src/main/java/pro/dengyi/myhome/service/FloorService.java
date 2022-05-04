@@ -2,7 +2,7 @@ package pro.dengyi.myhome.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import pro.dengyi.myhome.model.Floor;
-import pro.dengyi.myhome.model.dto.FloorDto;
+import pro.dengyi.myhome.model.dto.FloorPageDto;
 
 import java.util.List;
 
@@ -11,11 +11,12 @@ import java.util.List;
  * @date 2022-01-23
  */
 public interface FloorService {
-    void addUpdate(Floor floor);
 
-    void delete(String id);
+  void addUpdate(Floor floor);
 
-    List<FloorDto> floorList();
+  void delete(String id);
 
-    IPage<FloorDto> page(Integer pageNumber, Integer pageSize, String floorName);
+  List<FloorPageDto> floorList();
+
+  IPage<FloorPageDto> page(Integer pageNumber, Integer pageSize, String floorName);
 }

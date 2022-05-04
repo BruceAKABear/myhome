@@ -23,16 +23,18 @@ import java.util.List;
 @RestController
 @RequestMapping("/categoryField")
 public class CategoryFieldController {
-    @Autowired
-    private CategoryFieldService categoryFieldService;
+
+  @Autowired
+  private CategoryFieldService categoryFieldService;
 
 
-    @ApiOperation("根据设备ID查询所有字段")
-    @GetMapping("/fieldList")
-    public DataResponse<List<CategoryField>> fieldList(@NotBlank(message = "设备ID不能为空") String deviceId) {
-        List<CategoryField> categoryFieldList = categoryFieldService.fieldList(deviceId);
-        return new DataResponse<>(categoryFieldList);
-    }
+  @ApiOperation("根据设备ID查询所有字段")
+  @GetMapping("/fieldList")
+  public DataResponse<List<CategoryField>> fieldList(
+      @NotBlank(message = "设备ID不能为空") String deviceId) {
+    List<CategoryField> categoryFieldList = categoryFieldService.fieldList(deviceId);
+    return new DataResponse<>(categoryFieldList);
+  }
 
 
 }

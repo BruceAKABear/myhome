@@ -15,8 +15,8 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc;
 
 public class MyhomeApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(MyhomeApplication.class, args);
-    }
+  public static void main(String[] args) {
+    SpringApplication.run(MyhomeApplication.class, args);
+  }
 
 }

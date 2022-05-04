@@ -19,25 +19,26 @@ import pro.dengyi.myhome.model.Device;
 @Slf4j
 @Component
 public class RedisExpireListener extends KeyExpirationEventMessageListener {
-    @Autowired
-    private DeviceDao deviceDao;
 
-    public RedisExpireListener(RedisMessageListenerContainer listenerContainer) {
-        super(listenerContainer);
-    }
+  @Autowired
+  private DeviceDao deviceDao;
 
-    @Override
-    public void onMessage(Message message, byte[] pattern) {
-        String expiredKey = message.toString();
-        // 设备离线更新数据库
-        if (expiredKey.startsWith("onlineDevice:")) {
-            String deviceId = expiredKey.substring(expiredKey.lastIndexOf(":") + 1);
-            log.warn("设备离线：设备ID为{}", deviceId);
-            Device device = deviceDao.selectById(deviceId);
-            device.setOnline(false);
-            deviceDao.updateById(device);
-            // todo 如果设备绑定家庭且家庭有用户在线则推送离线消息
-            // todo 如果用户在设备页websocket推送设备离线状态
-        }
+  public RedisExpireListener(RedisMessageListenerContainer listenerContainer) {
+    super(listenerContainer);
+  }
+
+  @Override
+  public void onMessage(Message message, byte[] pattern) {
+    String expiredKey = message.toString();
+    // 设备离线更新数据库
+    if (expiredKey.startsWith("onlineDevice:")) {
+      String deviceId = expiredKey.substring(expiredKey.lastIndexOf(":") + 1);
+      log.warn("设备离线：设备ID为{}", deviceId);
+      Device device = deviceDao.selectById(deviceId);
+      device.setOnline(false);
+      deviceDao.updateById(device);
+      // todo 如果设备绑定家庭且家庭有用户在线则推送离线消息
+      // todo 如果用户在设备页websocket推送设备离线状态
     }
+  }
 }
