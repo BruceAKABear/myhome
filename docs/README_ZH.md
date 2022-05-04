@@ -1,5 +1,5 @@
 <h1 align="center" style="font-size:50px;font-weight:bold">MyHome-Community</h1>
-<p align="center">Home Automation System Based On Java</p>
+<p align="center">基于Java的开源智能家居系统</p>
 <p align="center">
     <a href="https://github.com/">
         <img src="https://img.shields.io/badge/license-GPL-blue" alt="GPL License" />
