@@ -1,7 +1,7 @@
 package pro.dengyi.myhome.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import pro.dengyi.myhome.model.Device;
+import pro.dengyi.myhome.model.device.Device;
 import pro.dengyi.myhome.model.dto.DeviceDto;
 
 import java.util.List;

@@ -11,3 +11,4 @@ system:
   default-avatar: https://image.dengyi.pro/dengyi/1625405280547962.jpg
   default-email: dengyi@dengyi.pro
   default-password: $2a$10$qoLZE501qBaWARUgH.HvMePjwZb84dej09ha08jlk4utMDpOtMTnq
+  default-salt: abc!@#

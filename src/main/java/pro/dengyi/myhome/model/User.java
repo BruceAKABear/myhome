@@ -1,28 +1,26 @@
 package pro.dengyi.myhome.model;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import java.time.LocalDateTime;
-import lombok.Data;
-import org.hibernate.validator.constraints.Length;
-
 import javax.validation.constraints.NotBlank;
-import java.util.Date;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+import org.hibernate.validator.constraints.Length;
+import pro.dengyi.myhome.model.base.BaseModel;
 
 /**
  * @author BLab
  */
 @Data
-@TableName("user")
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
+@TableName("system_user")
 @ApiModel("用户")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class User {
-
-  @ApiModelProperty(value = "用户ID")
-  private String id;
+public class User extends BaseModel {
 
   @ApiModelProperty(value = "是否是户主")
   private Boolean houseHolder;
@@ -62,10 +60,8 @@ public class User {
   @ApiModelProperty(value = "是否启用")
   private Boolean enable;
 
-  @ApiModelProperty(value = "创建时间", hidden = true)
-  private LocalDateTime createTime;
+  @ApiModelProperty(value = "超级管理员", hidden = true)
+  private Boolean superAdmin;
 
-  @ApiModelProperty(value = "更新时间", hidden = true)
-  private LocalDateTime updateTime;
 
 }

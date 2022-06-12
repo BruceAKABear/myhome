@@ -21,4 +21,6 @@ public interface UserService {
   IPage<User> page(Integer pageNumber, Integer pageSize, String name);
 
   void enable(User user);
+
+  void delete(String id);
 }

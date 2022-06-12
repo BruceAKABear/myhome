@@ -1,21 +1,28 @@
-package pro.dengyi.myhome.controller;
+package pro.dengyi.myhome.controller.device;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import java.util.List;
+import java.util.Map;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-import pro.dengyi.myhome.annotations.NeedHolderPermission;
-import pro.dengyi.myhome.model.Device;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import pro.dengyi.myhome.annotations.HolderPermission;
+import pro.dengyi.myhome.model.device.Device;
+import pro.dengyi.myhome.model.device.dto.DeviceLoginDto;
 import pro.dengyi.myhome.model.dto.DeviceDto;
 import pro.dengyi.myhome.response.CommonResponse;
 import pro.dengyi.myhome.response.DataResponse;
 import pro.dengyi.myhome.service.DeviceService;
-
-import javax.validation.constraints.NotBlank;
-import java.util.List;
-import java.util.Map;
 
 /**
  * 设备controller
@@ -32,13 +39,11 @@ public class DeviceController {
   @Autowired
   private DeviceService deviceService;
 
-
-  @ApiOperation("添加后修改设备")
+  @ApiOperation("分页查询")
   @GetMapping("/page")
-  public DataResponse<IPage<DeviceDto>> page(Integer pageNumber, Integer pageSize, String floorId,
-      String roomId, String categoryId) {
-    IPage<DeviceDto> pageRes = deviceService.page(pageNumber, pageSize, floorId, roomId,
-        categoryId);
+  public DataResponse<IPage<DeviceDto>> page(Integer page, Integer size, String floorId,
+      String roomId, String productId) {
+    IPage<DeviceDto> pageRes = deviceService.page(page, size, floorId, roomId, productId);
     return new DataResponse<>(pageRes);
   }
 
@@ -49,16 +54,15 @@ public class DeviceController {
     return new DataResponse<>(deviceList);
   }
 
-
-  @NeedHolderPermission
-  @ApiOperation("添加后修改设备")
+  @HolderPermission
+  @ApiOperation("添加或修改设备")
   @PostMapping("/addUpdate")
   public CommonResponse addUpdate(@RequestBody @Validated Device device) {
     deviceService.addUpdate(device);
     return CommonResponse.success();
   }
 
-  @NeedHolderPermission
+  @HolderPermission
   @ApiOperation("删除设备")
   @DeleteMapping("/delete/{id}")
   public CommonResponse delete(@PathVariable @NotBlank(message = "id不能为空") String id) {
@@ -66,13 +70,29 @@ public class DeviceController {
     return CommonResponse.success();
   }
 
-
-  @NeedHolderPermission
+  @HolderPermission
   @ApiOperation("下发debug命令")
   @PostMapping("/sendDebug")
   public CommonResponse sendDebug(@RequestBody Map<String, Object> orderMap) {
     deviceService.sendDebug(orderMap);
     return CommonResponse.success();
+  }
+
+
+  @PostMapping("/deviceLogin")
+  public void deviceLogin(HttpServletResponse response, @RequestBody DeviceLoginDto loginDto) {
+    Device device = deviceService.selectById(loginDto.getUserName());
+    if (device == null) {
+      //忽略
+      response.setStatus(HttpServletResponse.SC_OK);
+    } else {
+      if (loginDto.getPassword().equals(device.getLoginPassword())) {
+        response.setStatus(HttpServletResponse.SC_OK);
+      } else {
+        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+      }
+    }
+
   }
 
 }

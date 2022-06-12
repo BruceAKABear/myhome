@@ -10,7 +10,7 @@ import pro.dengyi.myhome.dao.CategoryFieldDao;
 import pro.dengyi.myhome.dao.DeviceDao;
 import pro.dengyi.myhome.dao.DeviceLogDao;
 import pro.dengyi.myhome.model.CategoryField;
-import pro.dengyi.myhome.model.Device;
+import pro.dengyi.myhome.model.device.Device;
 import pro.dengyi.myhome.model.DeviceLog;
 
 import java.util.Date;

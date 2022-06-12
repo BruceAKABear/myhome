@@ -4,24 +4,26 @@
 <mapper namespace="pro.dengyi.myhome.dao.RoomDao">
   <select id="selectCustomPage" resultType="pro.dengyi.myhome.model.dto.RoomDto">
     SELECT
-    room.id,
-    room.`name`,
-    ( SELECT count( id ) FROM device WHERE device.room_id = room.id ) AS deviceCount,
-    floor.`name` AS floorName,
-    floor.id AS floorId,
+    family_room.id,
+    family_room.`name`,
+    family_room.create_time,
+    family_room.update_time,
+    ( SELECT count( * ) FROM device_device WHERE device_device.room_id = family_room.id ) AS deviceCount,
+    family_floor.`name` AS floorName,
+    family_floor.id AS floorId,
     ( SELECT count( room_location_anchor.id ) FROM room_location_anchor WHERE
     room_location_anchor.room_id = room_id
     ) AS anchorCount
     FROM
-    room
-    INNER JOIN floor ON room.floor_id = floor.id
+    family_room
+    INNER JOIN family_floor ON family_room.floor_id = family_floor.id
     WHERE
     1=1
     <if test="floorId!=null and floorId!=''">
-      and floor.id = #{floorId}
+      and family_floor.id = #{floorId}
     </if>
     <if test="roomName!= null and roomName != ''">
-      and room.`name` like concat('%',#{roomName},'%')
+      and family_room.`name` like concat('%',#{roomName},'%')
     </if>
 
 

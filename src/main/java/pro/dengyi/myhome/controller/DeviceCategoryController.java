@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import pro.dengyi.myhome.annotations.NeedHolderPermission;
+import pro.dengyi.myhome.annotations.HolderPermission;
 import pro.dengyi.myhome.model.DeviceCategory;
 import pro.dengyi.myhome.response.CommonResponse;
 import pro.dengyi.myhome.response.DataResponse;
@@ -31,7 +31,7 @@ public class DeviceCategoryController {
   private DeviceCategoryService deviceCategoryService;
 
 
-  @NeedHolderPermission
+  @HolderPermission
   @ApiOperation("添加后修改分类")
   @PostMapping("/addUpdate")
   public CommonResponse addUpdate(@RequestBody @Validated DeviceCategory deviceCategory) {
@@ -39,7 +39,7 @@ public class DeviceCategoryController {
     return CommonResponse.success();
   }
 
-  @NeedHolderPermission
+  @HolderPermission
   @ApiOperation("删除分类")
   @DeleteMapping("/delete/{id}")
   public CommonResponse delete(@PathVariable @NotBlank(message = "id不能为空") String id) {
@@ -47,7 +47,7 @@ public class DeviceCategoryController {
     return CommonResponse.success();
   }
 
-  @NeedHolderPermission
+  @HolderPermission
   @ApiOperation("分页查询")
   @GetMapping("/page")
   public DataResponse<IPage<DeviceCategory>> page(Integer pageNumber, Integer pageSize,
@@ -56,7 +56,7 @@ public class DeviceCategoryController {
     return new DataResponse<>(pageResult);
   }
 
-  @NeedHolderPermission
+  @HolderPermission
   @ApiOperation("查询分类集合")
   @GetMapping("/categoryList")
   public DataResponse<List<DeviceCategory>> categoryList() {

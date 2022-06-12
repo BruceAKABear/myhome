@@ -1,31 +1,38 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="pro.dengyi.myhome.dao.DeviceDao">
-    <select id="selectCustomPage" resultType="pro.dengyi.myhome.model.dto.DeviceDto">
-        SELECT device.id,
-        device.room_id,
-        device.`online`,
-        device.`enable`,
-        device.category_id,
-        device.nick_name,
-        device.floor_id,
-        device.only_holder_can_see,
-        room.`name` AS roomName,
-        floor.`name` AS floorName,
-        device_category.`name` AS categoryName
-        FROM device
-        INNER JOIN room ON room.id = device.room_id
-        INNER JOIN floor ON device.floor_id = floor.id
-        INNER JOIN device_category ON device_category.id = device.category_id
-        where 1=1
-        <if test="floorId !=null and floorId!= ''">
-            and floor.id=#{floorId}
-        </if>
-        <if test="roomId !=null and roomId!= ''">
-            and room.id=#{roomId}
-        </if>
-        <if test="categoryId !=null and categoryId!= ''">
-            and device_category.id=#{categoryId}
-        </if>
-    </select>
+  <select id="selectCustomPage" resultType="pro.dengyi.myhome.model.dto.DeviceDto">
+    SELECT
+    device_device.id,
+    device_device.room_id,
+    device_device.`online`,
+    device_device.`enable`,
+    device_device.login_password,
+    device_device.nick_name,
+    device_device.floor_id,
+    device_device.product_id,
+    device_device.only_holder_can_see,
+    family_room.`name` AS roomName,
+    family_floor.`name` AS floorName,
+    device_product.`name` AS productName,
+    device_device.create_time,
+    device_device.update_time
+    FROM
+    device_device
+    INNER JOIN family_room ON family_room.id = device_device.room_id
+    INNER JOIN family_floor ON device_device.floor_id = family_floor.id
+    INNER JOIN device_product ON device_product.id = device_device.product_id
+    WHERE
+    1 = 1
+    <if test="floorId !=null and floorId!= ''">
+      and family_floor.id=#{floorId}
+    </if>
+    <if test="roomId !=null and roomId!= ''">
+      and family_room.id=#{roomId}
+    </if>
+    <if test="categoryId !=null and categoryId!= ''">
+      and device_product.id=#{categoryId}
+    </if>
+  </select>
 </mapper>

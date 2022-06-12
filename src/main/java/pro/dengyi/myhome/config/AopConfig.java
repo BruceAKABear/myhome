@@ -22,7 +22,7 @@ public class AopConfig {
   /**
    * 定义切点
    */
-  @Pointcut("@annotation(pro.dengyi.myhome.annotations.NeedHolderPermission)")
+  @Pointcut("@annotation(pro.dengyi.myhome.annotations.HolderPermission)")
   public void permissionPointCut() {
   }
 

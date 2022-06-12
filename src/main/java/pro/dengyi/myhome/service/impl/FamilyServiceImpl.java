@@ -1,6 +1,7 @@
 package pro.dengyi.myhome.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.github.benmanes.caffeine.cache.Cache;
 import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,7 +20,11 @@ import pro.dengyi.myhome.service.FamilyService;
 public class FamilyServiceImpl implements FamilyService {
 
   @Autowired
+  private Cache<String, Object> caffeineCache;
+
+  @Autowired
   private FamilyDao familyDao;
+
 
   @Transactional
   @Override
@@ -27,6 +32,7 @@ public class FamilyServiceImpl implements FamilyService {
     //只更新
     family.setUpdateTime(LocalDateTime.now());
     familyDao.updateById(family);
+    caffeineCache.invalidate("familyInfo");
   }
 
   @Override

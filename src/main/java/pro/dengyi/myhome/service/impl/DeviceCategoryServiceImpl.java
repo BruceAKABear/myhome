@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import java.util.Date;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,11 +16,9 @@ import pro.dengyi.myhome.dao.DeviceCategoryDao;
 import pro.dengyi.myhome.dao.DeviceDao;
 import pro.dengyi.myhome.exception.BusinessException;
 import pro.dengyi.myhome.model.CategoryField;
-import pro.dengyi.myhome.model.Device;
+import pro.dengyi.myhome.model.device.Device;
 import pro.dengyi.myhome.model.DeviceCategory;
 import pro.dengyi.myhome.service.DeviceCategoryService;
-
-import java.util.List;
 
 /**
  * @author dengyi (email:dengyi@dengyi.pro)
@@ -40,15 +40,18 @@ public class DeviceCategoryServiceImpl implements DeviceCategoryService {
   @Override
   public void addUpdate(DeviceCategory deviceCategory) {
     if (ObjectUtils.isEmpty(deviceCategory.getId())) {
-      DeviceCategory deviceCategorySaved = deviceCategoryDao.selectOne(
+      boolean exists = deviceCategoryDao.exists(
           new LambdaQueryWrapper<DeviceCategory>().eq(DeviceCategory::getName,
               deviceCategory.getName()));
-      if (deviceCategorySaved != null) {
+      if (exists) {
         throw new BusinessException(15001, "同名设备分类已存在");
       }
+//      deviceCategory.setCreateTime(new Date());
+//      deviceCategory.setUpdateTime(new Date());
       deviceCategoryDao.insert(deviceCategory);
 
     } else {
+//      deviceCategory.setUpdateTime(new Date());
       deviceCategoryDao.updateById(deviceCategory);
       categoryFieldDao.delete(
           new LambdaQueryWrapper<CategoryField>().eq(CategoryField::getCategoryId,
@@ -66,12 +69,15 @@ public class DeviceCategoryServiceImpl implements DeviceCategoryService {
   @Transactional
   @Override
   public void delete(String id) {
-    List<Device> devices = deviceDao.selectList(
-        new LambdaQueryWrapper<Device>().eq(Device::getCategoryId, id));
-    if (!CollectionUtils.isEmpty(devices)) {
-      throw new BusinessException(20001, "设备分类包含设备，不能删除");
-    }
+//    List<Device> devices = deviceDao.selectList(
+//        new LambdaQueryWrapper<Device>().eq(Device::getCategoryId, id));
+//    if (!CollectionUtils.isEmpty(devices)) {
+//      throw new BusinessException(20001, "设备分类包含设备，不能删除");
+//    }
     deviceCategoryDao.deleteById(id);
+    //删除字段
+    categoryFieldDao.delete(
+        new LambdaQueryWrapper<CategoryField>().eq(CategoryField::getCategoryId, id));
   }
 
   @Override
@@ -86,8 +92,8 @@ public class DeviceCategoryServiceImpl implements DeviceCategoryService {
     List<DeviceCategory> records = deviceCategoryIPage.getRecords();
     if (!CollectionUtils.isEmpty(records)) {
       for (DeviceCategory record : records) {
-        record.setDeviceCount(Math.toIntExact(deviceDao.selectCount(
-            new LambdaQueryWrapper<Device>().eq(Device::getCategoryId, record.getId()))));
+//        record.setDeviceCount(Math.toIntExact(deviceDao.selectCount(
+//            new LambdaQueryWrapper<Device>().eq(Device::getCategoryId, record.getId()))));
         record.setCategoryFieldList(categoryFieldDao.selectList(
             new LambdaQueryWrapper<CategoryField>().eq(CategoryField::getCategoryId,
                 record.getId())));

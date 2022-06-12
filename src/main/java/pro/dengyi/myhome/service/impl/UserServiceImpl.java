@@ -36,7 +36,7 @@ public class UserServiceImpl implements UserService {
       if (!user.getEnable()) {
         throw new BusinessException(11001, "用户已停用不能登录");
       }
-      if (PasswordUtil.match(loginVo.getPassword(),user.getPassw())) {
+      if (PasswordUtil.match(loginVo.getPassword(), user.getPassw())) {
         return TokenUtil.genToken(user);
       } else {
         throw new BusinessException(11002, "邮箱或密码错误");
@@ -68,6 +68,8 @@ public class UserServiceImpl implements UserService {
   @Override
   public void addOrUpdate(User user) {
     if (ObjectUtils.isEmpty(user.getId())) {
+      user.setEnable(true);
+      user.setSuperAdmin(false);
       LocalDateTime now = LocalDateTime.now();
       user.setCreateTime(now);
       user.setUpdateTime(now);
@@ -90,7 +92,11 @@ public class UserServiceImpl implements UserService {
         pageSize == null ? 10 : pageSize);
     return userDao.selectPage(pageParam,
         new LambdaQueryWrapper<User>().and(!(ObjectUtils.isEmpty(name)),
-            userLambdaQueryWrapper -> userLambdaQueryWrapper.like(User::getName, name)));
+                userLambdaQueryWrapper -> userLambdaQueryWrapper.like(User::getName, name))
+            .select(User::getId, User::getHouseHolder, User::getName, User::getAvatar,
+                User::getEmail, User::getSex, User::getHeight, User::getWeight, User::getAge,
+                User::getCreateTime, User::getUpdateTime,
+                User::getEnable, User::getSuperAdmin));
   }
 
   @Transactional
@@ -99,5 +105,15 @@ public class UserServiceImpl implements UserService {
     User userSaved = userDao.selectById(user.getId());
     userSaved.setEnable(!userSaved.getEnable());
     userDao.updateById(userSaved);
+  }
+
+  @Transactional
+  @Override
+  public void delete(String id) {
+    //不能删除
+    if (UserHolder.getUser().getId().equals(id)) {
+      throw new BusinessException(1, "不能删除自己");
+    }
+    userDao.deleteById(id);
   }
 }

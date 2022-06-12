@@ -3,7 +3,7 @@ package pro.dengyi.myhome.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,20 +35,18 @@ public class FloorServiceImpl implements FloorService {
   public void addUpdate(Floor floor) {
     if (ObjectUtils.isEmpty(floor.getId())) {
       //校验楼层名
-      Floor floorSaved = floorDao.selectOne(
+      boolean exists = floorDao.exists(
           new LambdaQueryWrapper<Floor>().eq(Floor::getName, floor.getName()));
-      if (floorSaved != null) {
+      if (exists) {
         throw new BusinessException(13001, "同名楼层已存在");
       }
-      LocalDateTime timeNow = LocalDateTime.now();
-      floor.setCreateTime(timeNow);
-      floor.setUpdateTime(timeNow);
+//      floor.setCreateTime(new Date());
+//      floor.setUpdateTime(new Date());
       floorDao.insert(floor);
     } else {
-      floor.setUpdateTime(LocalDateTime.now());
+//      floor.setUpdateTime(new Date());
       floorDao.updateById(floor);
     }
-
   }
 
   @Transactional

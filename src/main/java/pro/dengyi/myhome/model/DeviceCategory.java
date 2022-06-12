@@ -5,12 +5,14 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import org.hibernate.validator.constraints.Length;
-
+import java.util.List;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.List;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+import org.hibernate.validator.constraints.Length;
+import pro.dengyi.myhome.model.base.BaseModel;
 
 /**
  * 设备类型实体
@@ -19,13 +21,11 @@ import java.util.List;
  * @version v1.0
  */
 @Data
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 @TableName("device_category")
 @ApiModel("设备分类实体")
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class DeviceCategory {
-
-  @ApiModelProperty(value = "分类Id")
-  private String id;
+public class DeviceCategory extends BaseModel {
 
   @ApiModelProperty(value = "设备类型名")
   @NotBlank(message = "设备分类名不能为空")

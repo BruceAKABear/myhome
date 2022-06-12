@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
-import pro.dengyi.myhome.annotations.NeedHolderPermission;
+import pro.dengyi.myhome.annotations.HolderPermission;
 import pro.dengyi.myhome.exception.BusinessException;
 import pro.dengyi.myhome.model.User;
 import pro.dengyi.myhome.utils.TokenUtil;
@@ -40,9 +40,9 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
         UserHolder.setUser(user);
         //校验权限
         Method method = ((HandlerMethod) handler).getMethod();
-        NeedHolderPermission needHolderPermission = method.getAnnotation(
-            NeedHolderPermission.class);
-        if (needHolderPermission != null) {
+        HolderPermission holderPermission = method.getAnnotation(
+            HolderPermission.class);
+        if (holderPermission != null) {
           if (user.getHouseHolder()) {
             return true;
           } else {

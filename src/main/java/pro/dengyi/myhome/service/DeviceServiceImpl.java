@@ -1,10 +1,16 @@
 package pro.dengyi.myhome.service;
 
+import cn.hutool.crypto.digest.MD5;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
@@ -15,15 +21,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 import pro.dengyi.myhome.dao.DeviceDao;
 import pro.dengyi.myhome.dao.DeviceLogDao;
+import pro.dengyi.myhome.dao.ProductDao;
 import pro.dengyi.myhome.exception.BusinessException;
-import pro.dengyi.myhome.model.Device;
 import pro.dengyi.myhome.model.DeviceLog;
+import pro.dengyi.myhome.model.device.Device;
+import pro.dengyi.myhome.model.device.Product;
 import pro.dengyi.myhome.model.dto.DeviceDto;
-
-import java.nio.charset.StandardCharsets;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import pro.dengyi.myhome.properties.InitProperties;
 
 /**
  * @author dengyi (email:dengyi@dengyi.pro)
@@ -40,6 +44,10 @@ public class DeviceServiceImpl implements DeviceService {
   private MqttClient mqttClient;
   @Autowired
   private DeviceLogDao deviceLogDao;
+  @Autowired
+  private ProductDao productDao;
+  @Autowired
+  private InitProperties initProperties;
 
 
   @Override
@@ -55,10 +63,27 @@ public class DeviceServiceImpl implements DeviceService {
       //新增，默认离线，默认启用
       device.setEnable(true);
       device.setOnline(false);
-
+      device.setCreateTime(LocalDateTime.now());
+      device.setUpdateTime(LocalDateTime.now());
       deviceDao.insert(device);
+
+      Product product = productDao.selectById(device.getProductId());
+      String defaultSalt = initProperties.getDefaultSalt();
+      String pass;
+      if (product.getEncryptionType() == 1) {
+        //一机一密码
+        pass = MD5.create().digestHex(device.getId() + defaultSalt);
+      } else {
+        //一型一密
+        pass = MD5.create().digestHex(product.getId() + defaultSalt);
+      }
+      device.setLoginPassword(pass);
+      deviceDao.updateById(device);
+
+
     } else {
       //更新
+      device.setUpdateTime(LocalDateTime.now());
       deviceDao.updateById(device);
     }
 
@@ -74,9 +99,9 @@ public class DeviceServiceImpl implements DeviceService {
   @Override
   public IPage<DeviceDto> page(Integer pageNumber, Integer pageSize, String floorId, String roomId,
       String categoryId) {
-    IPage<DeviceDto> page = new Page<>(pageNumber == null ? 1 : pageNumber,
+    IPage<DeviceDto> pageParam = new Page<>(pageNumber == null ? 1 : pageNumber,
         pageSize == null ? 10 : pageSize);
-    return deviceDao.selectCustomPage(page, floorId, roomId, categoryId);
+    return deviceDao.selectCustomPage(pageParam, floorId, roomId, categoryId);
   }
 
   @Override

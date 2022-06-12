@@ -1,7 +1,7 @@
 package pro.dengyi.myhome.model.dto;
 
 import lombok.Data;
-import pro.dengyi.myhome.model.Device;
+import pro.dengyi.myhome.model.device.Device;
 
 /**
  * @author dengyi (email:dengyi@dengyi.pro)
@@ -12,5 +12,5 @@ public class DeviceDto extends Device {
 
   private String floorName;
   private String roomName;
-  private String categoryName;
+  private String productName;
 }

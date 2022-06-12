@@ -8,7 +8,7 @@ import pro.dengyi.myhome.dao.DeviceDao;
 import pro.dengyi.myhome.dao.FloorDao;
 import pro.dengyi.myhome.dao.RoomDao;
 import pro.dengyi.myhome.dao.UserDao;
-import pro.dengyi.myhome.model.Device;
+import pro.dengyi.myhome.model.device.Device;
 import pro.dengyi.myhome.model.dto.DashboardDto;
 import pro.dengyi.myhome.service.DashboardService;
 

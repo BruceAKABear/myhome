@@ -98,6 +98,22 @@
       <groupId>com.github.ben-manes.caffeine</groupId>
       <artifactId>caffeine</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.influxdb</groupId>
+      <artifactId>influxdb-java</artifactId>
+    </dependency>
+
+    <!--webSocket-->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-websocket</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>cn.hutool</groupId>
+      <artifactId>hutool-all</artifactId>
+      <version>5.8.3</version>
+    </dependency>
+
   </dependencies>
 
   <build>

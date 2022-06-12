@@ -1,4 +1,4 @@
-package pro.dengyi.myhome.controller;
+package pro.dengyi.myhome.controller.family;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.annotations.Api;
@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import pro.dengyi.myhome.annotations.NeedHolderPermission;
+import pro.dengyi.myhome.annotations.HolderPermission;
 import pro.dengyi.myhome.model.Room;
 import pro.dengyi.myhome.model.dto.RoomDto;
 import pro.dengyi.myhome.response.CommonResponse;
@@ -46,7 +46,7 @@ public class RoomController {
     return new DataResponse<>(roomList);
   }
 
-  @NeedHolderPermission
+  @HolderPermission
   @ApiOperation("新增或修改房间")
   @PostMapping("/addUpdate")
   public CommonResponse addUpdate(@RequestBody @Validated Room room) {
@@ -54,7 +54,7 @@ public class RoomController {
     return CommonResponse.success();
   }
 
-  @NeedHolderPermission
+  @HolderPermission
   @ApiOperation("删除房间")
   @DeleteMapping("/delete/{id}")
   public CommonResponse delete(@PathVariable @NotBlank(message = "id不能为空") String id) {

@@ -1,4 +1,4 @@
-package pro.dengyi.myhome.controller;
+package pro.dengyi.myhome.controller.family;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import io.swagger.annotations.Api;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pro.dengyi.myhome.annotations.NeedHolderPermission;
+import pro.dengyi.myhome.annotations.HolderPermission;
 import pro.dengyi.myhome.model.Family;
 import pro.dengyi.myhome.model.dto.FamilyDto;
 import pro.dengyi.myhome.response.CommonResponse;
@@ -34,9 +34,9 @@ public class FamilyController {
   @Autowired
   private FamilyService familyService;
 
-  @ApiOperation("新增或修改家庭")
+  @ApiOperation(value = "新增或修改家庭")
   @PostMapping("/addUpdate")
-  @NeedHolderPermission
+  @HolderPermission
   public CommonResponse addUpdate(@RequestBody @Validated Family family) {
     familyService.addUpdate(family);
     return CommonResponse.success();
@@ -51,7 +51,7 @@ public class FamilyController {
 
   @ApiOperation("查询是否是第一次登陆")
   @GetMapping("/checkIsFirst")
-  @NeedHolderPermission
+  @HolderPermission
   public DataResponse<Boolean> checkIsFirst() {
     Boolean flag = familyService.checkIsFirst();
     return new DataResponse<>(flag);

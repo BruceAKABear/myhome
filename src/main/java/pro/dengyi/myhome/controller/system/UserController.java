@@ -1,17 +1,20 @@
-package pro.dengyi.myhome.controller;
+package pro.dengyi.myhome.controller.system;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import javax.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pro.dengyi.myhome.annotations.NeedHolderPermission;
+import pro.dengyi.myhome.annotations.HolderPermission;
 import pro.dengyi.myhome.model.User;
 import pro.dengyi.myhome.model.vo.LoginVo;
 import pro.dengyi.myhome.response.CommonResponse;
@@ -34,8 +37,8 @@ public class UserController {
 
   @ApiOperation("分页查询")
   @GetMapping("/page")
-  public DataResponse<IPage<User>> page(Integer pageNumber, Integer pageSize, String name) {
-    IPage<User> pageR = userService.page(pageNumber, pageSize, name);
+  public DataResponse<IPage<User>> page(Integer page, Integer size, String name) {
+    IPage<User> pageR = userService.page(page, size, name);
     return new DataResponse<>(pageR);
   }
 
@@ -63,7 +66,7 @@ public class UserController {
 
   @ApiOperation("新增用户")
   @PostMapping("/addOrUpdate")
-  @NeedHolderPermission
+  @HolderPermission
   public CommonResponse addOrUpdate(@RequestBody @Validated User user) {
     userService.addOrUpdate(user);
     return CommonResponse.success();
@@ -71,9 +74,17 @@ public class UserController {
 
   @ApiOperation("成员启停")
   @PostMapping("/enable")
-  @NeedHolderPermission
+  @HolderPermission
   public CommonResponse enable(@RequestBody @Validated User user) {
     userService.enable(user);
+    return CommonResponse.success();
+  }
+
+  @ApiOperation("删除成员")
+  @DeleteMapping("/delete/{id}")
+  @HolderPermission
+  public CommonResponse delete(@PathVariable @NotBlank(message = "ID不能为空") String id) {
+    userService.delete(id);
     return CommonResponse.success();
   }
 

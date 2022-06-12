@@ -1,4 +1,4 @@
-package pro.dengyi.myhome.model;
+package pro.dengyi.myhome.model.device;
 
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -6,38 +6,37 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import org.hibernate.validator.constraints.Length;
-
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+import org.hibernate.validator.constraints.Length;
+import pro.dengyi.myhome.model.base.BaseModel;
 
 /**
  * @author BLab
  */
 @Data
-@TableName("device")
-@ApiModel("设备")
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
+@TableName("device_device")
+@ApiModel("设备实体")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Device {
+public class Device extends BaseModel {
 
-  @ApiModelProperty(value = "设备在系统中的ID,或者芯片的chipId")
-  private String id;
+  @ApiModelProperty(value = "产品ID")
+  @NotBlank(message = "所属产品必选")
+  private String productId;
+
+  @ApiModelProperty(value = "连接密码")
+  private String loginPassword;
 
   @ApiModelProperty(value = "是否在线")
   private Boolean online;
 
   @ApiModelProperty(value = "是否启用")
   private Boolean enable;
-
-  //网络图片是否需要？
-//    @ApiModelProperty(value = "图标地址")
-//    @TableField(exist = false)
-//    private String iconUrl;
-
-  @ApiModelProperty(value = "所属分类ID")
-  @NotBlank(message = "必须选择分类")
-  private String categoryId;
 
   @ApiModelProperty(value = "设备名", notes = "只是用户起的别名")
   @TableField(updateStrategy = FieldStrategy.IGNORED)
@@ -58,5 +57,6 @@ public class Device {
   @ApiModelProperty(value = "只能户主可见")
   @NotNull
   private Boolean onlyHolderCanSee;
+
 
 }

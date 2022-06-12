@@ -20,4 +20,6 @@ public class InitProperties {
   private String defaultAvatar;
   private String defaultEmail;
   private String defaultPassword;
+
+  private String defaultSalt;
 }

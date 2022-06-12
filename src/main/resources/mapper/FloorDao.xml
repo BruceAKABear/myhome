@@ -3,33 +3,35 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="pro.dengyi.myhome.dao.FloorDao">
   <select id="selectFloorDto" resultType="pro.dengyi.myhome.model.dto.FloorPageDto">
-    SELECT floor.id,
-           floor.`name`,
-           (SELECT COUNT(id) FROM room WHERE room.floor_id = floor.id) AS roomCount,
-           (SELECT COUNT(device.id)
-            FROM device
-                   INNER JOIN room ON device.room_id = room.id
-                   INNER JOIN floor ON floor.id = room.floor_id
-              AND floor.id = floor.id
-            WHERE device.room_id = room.id)                            AS deviceCount
-    FROM floor
+    SELECT family_floor.id,
+           family_floor.`name`,
+           (SELECT COUNT(id)
+            FROM family_room
+            WHERE family_room.floor_id = family_floor.id) AS roomCount,
+           (SELECT COUNT(*)
+            FROM device_device
+                   INNER JOIN family_room ON device_device.room_id = family_room.id
+                   INNER JOIN family_floor ON family_floor.id = family_room.floor_id
+              AND family_floor.id = family_floor.id
+            WHERE device_device.room_id = family_room.id) AS deviceCount
+    FROM family_floor
   </select>
   <select id="selectCustomPage" resultType="pro.dengyi.myhome.model.dto.FloorPageDto">
-    SELECT floor.id,
-    floor.`name`,
-    floor.create_time,
-    floor.update_time,
-    (SELECT COUNT(id) FROM room WHERE floor.id = room.floor_id) AS roomCount,
+    SELECT family_floor.id,
+    family_floor.`name`,
+    family_floor.create_time,
+    family_floor.update_time,
+    (SELECT COUNT(id) FROM family_room WHERE family_floor.id = family_room.floor_id) AS roomCount,
     (
-    SELECT COUNT(device.id)
-    FROM device
-    INNER JOIN room AS r ON device.room_id = r.id
-    WHERE floor.id = r.floor_id
+    SELECT COUNT(*)
+    FROM device_device
+    INNER JOIN family_room AS r ON device_device.room_id = r.id
+    WHERE family_floor.id = r.floor_id
     ) AS deviceCount
-    FROM floor
+    FROM family_floor AS family_floor
     WHERE 1 = 1
     <if test="floorName!=null and floorName!=''">
-      and floor.`name` LIKE concat('%',#{floorName},'%')
+      and family_floor.`name` LIKE concat('%',#{floorName},'%')
     </if>
 
   </select>

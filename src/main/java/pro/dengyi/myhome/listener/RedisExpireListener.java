@@ -7,7 +7,7 @@ import org.springframework.data.redis.listener.KeyExpirationEventMessageListener
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.stereotype.Component;
 import pro.dengyi.myhome.dao.DeviceDao;
-import pro.dengyi.myhome.model.Device;
+import pro.dengyi.myhome.model.device.Device;
 
 
 /**
