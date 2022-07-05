@@ -25,18 +25,24 @@ import pro.dengyi.myhome.model.base.BaseModel;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Device extends BaseModel {
 
+  @ApiModelProperty(value = "芯片ID")
+  private String chipId;
+
   @ApiModelProperty(value = "产品ID")
   @NotBlank(message = "所属产品必选")
   private String productId;
 
-  @ApiModelProperty(value = "连接密码")
-  private String loginPassword;
+//  @ApiModelProperty(value = "连接密码")
+//  private String loginPassword;
 
   @ApiModelProperty(value = "是否在线")
   private Boolean online;
 
   @ApiModelProperty(value = "是否启用")
   private Boolean enable;
+
+  @ApiModelProperty(value = "固件版本")
+  private Integer framewareVersion;
 
   @ApiModelProperty(value = "设备名", notes = "只是用户起的别名")
   @TableField(updateStrategy = FieldStrategy.IGNORED)

@@ -3,7 +3,7 @@ package pro.dengyi.myhome;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 /**
  * 启动类
@@ -12,7 +12,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc;
  */
 @SpringBootApplication
 @MapperScan("pro.dengyi.myhome.dao")
-
+@EnableAsync
 public class MyhomeApplication {
 
   public static void main(String[] args) {

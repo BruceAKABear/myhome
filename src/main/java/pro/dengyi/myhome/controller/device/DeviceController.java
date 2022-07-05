@@ -3,11 +3,15 @@ package pro.dengyi.myhome.controller.device;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.ObjectUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +24,7 @@ import pro.dengyi.myhome.annotations.HolderPermission;
 import pro.dengyi.myhome.model.device.Device;
 import pro.dengyi.myhome.model.device.dto.DeviceLoginDto;
 import pro.dengyi.myhome.model.dto.DeviceDto;
+import pro.dengyi.myhome.properties.SystemProperties;
 import pro.dengyi.myhome.response.CommonResponse;
 import pro.dengyi.myhome.response.DataResponse;
 import pro.dengyi.myhome.service.DeviceService;
@@ -38,6 +43,11 @@ public class DeviceController {
 
   @Autowired
   private DeviceService deviceService;
+  @Autowired
+  private SystemProperties systemProperties;
+  @Autowired
+  private MqttClient mqttClient;
+
 
   @ApiOperation("分页查询")
   @GetMapping("/page")
@@ -79,20 +89,50 @@ public class DeviceController {
   }
 
 
+  @ApiOperation("设备登录")
   @PostMapping("/deviceLogin")
-  public void deviceLogin(HttpServletResponse response, @RequestBody DeviceLoginDto loginDto) {
-    Device device = deviceService.selectById(loginDto.getUserName());
-    if (device == null) {
-      //忽略
-      response.setStatus(HttpServletResponse.SC_OK);
+  public Map<String, String> deviceLogin(@RequestBody DeviceLoginDto loginDto) {
+    Map<String, String> resMap = new HashMap<>(1);
+
+    //无clientId不进行逻辑
+    if (ObjectUtils.isEmpty(loginDto.getClientId())) {
+      resMap.put("result", "deny");
+    }
+    //有clientId进行查找设备是否在系统中
+    //1. 服务端
+    if (loginDto.getClientId().equals(systemProperties.getServerMqttClientId())) {
+      resMap.put("result", "allow");
     } else {
-      if (loginDto.getPassword().equals(device.getLoginPassword())) {
-        response.setStatus(HttpServletResponse.SC_OK);
+      Device device = deviceService.selectById(loginDto.getClientId());
+      if (device == null) {
+        resMap.put("result", "deny");
       } else {
-        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        resMap.put("result", "allow");
       }
     }
+    return resMap;
+  }
 
+  @ApiOperation("EMQ钩子")
+  @PostMapping("/emqHook")
+  public CommonResponse emqHook(@RequestBody Map<String, Object> params) {
+    deviceService.emqHook(params);
+    return CommonResponse.success();
+  }
+
+  @GetMapping("/doConnect")
+  public CommonResponse doConnect() throws MqttException {
+    MqttConnectOptions connOpts = new MqttConnectOptions();
+    connOpts.setUserName(systemProperties.getMqttUserName());
+    connOpts.setPassword(systemProperties.getMqttPassword().toCharArray());
+    // 保留会话
+    connOpts.setCleanSession(true);
+    // 建立连
+    mqttClient.connect(connOpts);
+    System.err.println(systemProperties.getMqttTopics());
+    mqttClient.subscribe(systemProperties.getMqttTopics());
+
+    return CommonResponse.success();
   }
 
 }

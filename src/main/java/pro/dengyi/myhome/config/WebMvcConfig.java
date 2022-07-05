@@ -46,6 +46,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
             "/swagger-resources/**",
             "/webjars/**",
             "/v2/**",
-            "/swagger-ui.html/**");
+            "/swagger-ui.html/**",
+            "/device/deviceLogin",
+            "/device/emqHook",
+            "/file/preview",
+            "/file/uploadFile"
+        );
   }
 }

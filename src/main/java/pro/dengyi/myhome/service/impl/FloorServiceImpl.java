@@ -3,7 +3,7 @@ package pro.dengyi.myhome.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,11 +40,11 @@ public class FloorServiceImpl implements FloorService {
       if (exists) {
         throw new BusinessException(13001, "同名楼层已存在");
       }
-//      floor.setCreateTime(new Date());
-//      floor.setUpdateTime(new Date());
+      floor.setCreateTime(LocalDateTime.now());
+      floor.setUpdateTime(LocalDateTime.now());
       floorDao.insert(floor);
     } else {
-//      floor.setUpdateTime(new Date());
+      floor.setUpdateTime(LocalDateTime.now());
       floorDao.updateById(floor);
     }
   }

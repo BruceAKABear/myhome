@@ -25,4 +25,6 @@ public interface DeviceService {
   List<Device> debugDeviceList();
 
   void sendDebug(Map<String, Object> orderMap);
+
+  void emqHook(Map<String, Object> params);
 }

@@ -10,7 +10,6 @@
     device_product.note,
     device_product.can_control,
     device_product.type,
-    device_product.encryption_type,
     device_product.create_time,
     device_product.update_time,
     ( SELECT COUNT(*) FROM device_device WHERE device_device.product_id = device_product.id ) AS

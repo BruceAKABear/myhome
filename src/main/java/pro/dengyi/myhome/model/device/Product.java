@@ -39,10 +39,6 @@ public class Product extends BaseModel {
   @NotNull(message = "产品类型不能为空")
   private Integer type;
 
-  @ApiModelProperty(value = "设备加密类型(1.一机一密，2.一型一密)")
-  @NotNull(message = "加密类型不能为空")
-  private Integer encryptionType;
-
 
 
 }

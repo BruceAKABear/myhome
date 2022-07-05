@@ -56,16 +56,6 @@ public class ProductServiceImpl implements ProductService {
       product.setUpdateTime(LocalDateTime.now());
       productDao.insert(product);
     } else {
-      Product productExist = productDao.selectById(product.getId());
-      //加密方式发生改变
-      if (!productExist.getEncryptionType().equals(product.getEncryptionType())) {
-        Long deviceCount = deviceDao.selectCount(
-            new LambdaQueryWrapper<Device>().eq(Device::getProductId, product.getId()));
-        if (deviceCount != 0) {
-          //下属设备不为0则不能修改
-          throw new BusinessException(20001, "产品下存在设备，不能修改加密类型");
-        }
-      }
       product.setUpdateTime(LocalDateTime.now());
       productDao.updateById(product);
       productFieldDao.delete(

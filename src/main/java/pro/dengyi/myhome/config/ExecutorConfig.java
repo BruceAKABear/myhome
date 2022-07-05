@@ -16,10 +16,10 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class ExecutorConfig {
 
   @Bean
-  public Executor serviceExecutor() {
+  public Executor executor() {
     ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
     // 配置核心线程数
-    executor.setCorePoolSize(10);
+    executor.setCorePoolSize(Runtime.getRuntime().availableProcessors());
     // 配置最大线程数
     executor.setMaxPoolSize(50);
     // 配置队列大小

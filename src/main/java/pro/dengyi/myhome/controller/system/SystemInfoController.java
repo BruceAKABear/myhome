@@ -6,6 +6,7 @@ import java.lang.management.ManagementFactory;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,6 +22,8 @@ import pro.dengyi.myhome.response.DataResponse;
 @RestController
 @RequestMapping("/systemInfo")
 public class SystemInfoController {
+  @Autowired
+  
 
   @GetMapping("/basicInfo")
   public DataResponse<Map<String, Object>> basicInfo() {
