@@ -1,15 +1,14 @@
-package pro.dengyi.myhome.model;
+package pro.dengyi.myhome.model.automation;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.Version;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import org.hibernate.validator.constraints.Length;
-
 import javax.validation.constraints.NotBlank;
-import java.util.List;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+import org.hibernate.validator.constraints.Length;
+import pro.dengyi.myhome.model.base.BaseModel;
 
 /**
  * 定时任务实体
@@ -18,16 +17,11 @@ import java.util.List;
  * @version v1.0
  */
 @Data
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 @ApiModel("定时任务实体")
-@TableName("schedule_task")
-public class ScheduleTask {
-
-  @ApiModelProperty("主键")
-  private String id;
-
-  @ApiModelProperty("家庭ID")
-  @NotBlank(message = "家庭ID不能为空")
-  private String familyId;
+@TableName("task_schedule")
+public class ScheduleTask extends BaseModel {
 
   @ApiModelProperty("任务名")
   @NotBlank(message = "任务名不能为空")
@@ -41,15 +35,14 @@ public class ScheduleTask {
   @ApiModelProperty(value = "类路径，固定值", hidden = true)
   private String beanClass = "pro.dengyi.myhome.servicescene.jobs.RealJob";
 
-  @ApiModelProperty("控制数据集合")
-  @TableField(exist = false)
-  private List<ControlData> datas;
+  @ApiModelProperty("被控制的设备ID")
+  private String targetDeviceId;
+
+  @ApiModelProperty("控制内容")
+  private String controlPayload;
 
   @ApiModelProperty("是否在运行中")
   private Boolean running;
-
-  @Version
-  private Integer version;
 
 
 }

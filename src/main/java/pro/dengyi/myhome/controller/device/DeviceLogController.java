@@ -1,4 +1,4 @@
-package pro.dengyi.myhome.controller;
+package pro.dengyi.myhome.controller.device;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.annotations.Api;
@@ -8,7 +8,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pro.dengyi.myhome.model.DeviceLog;
+import pro.dengyi.myhome.model.device.DeviceLog;
 import pro.dengyi.myhome.response.DataResponse;
 import pro.dengyi.myhome.service.DeviceLogService;
 
@@ -28,9 +28,9 @@ public class DeviceLogController {
 
   @ApiOperation("分页查询")
   @GetMapping("/page")
-  public DataResponse<IPage<DeviceLog>> page(Integer pageNumber, Integer pageSize,
+  public DataResponse<IPage<DeviceLog>> page(Integer page, Integer size,
       String deviceId) {
-    IPage<DeviceLog> pageRes = deviceLogService.page(pageNumber, pageSize, deviceId);
+    IPage<DeviceLog> pageRes = deviceLogService.page(page, size, deviceId);
     return new DataResponse<>(pageRes);
   }
 

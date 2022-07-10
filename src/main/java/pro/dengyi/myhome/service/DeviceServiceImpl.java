@@ -1,8 +1,6 @@
 package pro.dengyi.myhome.service;
 
-import cn.hutool.crypto.digest.MD5;
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -11,18 +9,18 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 import pro.dengyi.myhome.dao.DeviceDao;
 import pro.dengyi.myhome.dao.DeviceLogDao;
-import pro.dengyi.myhome.dao.ProductDao;
 import pro.dengyi.myhome.exception.BusinessException;
+import pro.dengyi.myhome.model.device.DeviceLog;
 import pro.dengyi.myhome.model.device.Device;
-import pro.dengyi.myhome.model.device.Product;
 import pro.dengyi.myhome.model.dto.DeviceDto;
 import pro.dengyi.myhome.properties.SystemProperties;
 
@@ -37,13 +35,9 @@ public class DeviceServiceImpl implements DeviceService {
   @Autowired
   private DeviceDao deviceDao;
   @Autowired
-  private StringRedisTemplate stringRedisTemplate;
-  //  @Autowired
-//  private MqttClient mqttClient;
+  private MqttClient mqttClient;
   @Autowired
   private DeviceLogDao deviceLogDao;
-  @Autowired
-  private ProductDao productDao;
   @Autowired
   private SystemProperties systemProperties;
 
@@ -56,33 +50,18 @@ public class DeviceServiceImpl implements DeviceService {
   @Transactional
   @Override
   public void addUpdate(Device device) {
-    //todo 其他什么处理？
     if (ObjectUtils.isEmpty(device.getId())) {
       //如果芯片ID存在，则芯片ID为设备id
       if (!ObjectUtils.isEmpty(device.getChipId())) {
         device.setId(device.getChipId());
       }
-      //新增，默认离线，默认启用
+      //新增，默认离线，默认启用,固件版本为1
       device.setEnable(true);
       device.setOnline(false);
+      device.setFramewareVersion(1);
       device.setCreateTime(LocalDateTime.now());
       device.setUpdateTime(LocalDateTime.now());
       deviceDao.insert(device);
-
-//      Product product = productDao.selectById(device.getProductId());
-//      String defaultSalt = systemProperties.getDefaultSalt();
-//      String pass;
-//      if (product.getEncryptionType() == 1) {
-//        //一机一密码
-//        pass = MD5.create().digestHex(device.getId() + defaultSalt);
-//      } else {
-//        //一型一密
-//        pass = MD5.create().digestHex(product.getId() + defaultSalt);
-//      }
-//      device.setLoginPassword(pass);
-//      deviceDao.updateById(device);
-
-
     } else {
       //更新
       device.setUpdateTime(LocalDateTime.now());
@@ -116,31 +95,31 @@ public class DeviceServiceImpl implements DeviceService {
   public void sendDebug(Map<String, Object> orderMap) {
 
     String deviceId = (String) orderMap.get("deviceId");
-    //判断设备是否在线
-    String onlineStatus = stringRedisTemplate.opsForValue().get("onlineDevice:" + deviceId);
-    if (!ObjectUtils.isEmpty(onlineStatus)) {
-      String pubTopic = "control/" + deviceId;
-      String content = (String) orderMap.get("content");
-      //todo 有问题
-      JSONObject jsonObject = JSON.parseObject(content);
+    String cmdContent = JSON.toJSONString(orderMap);
+    Device device = deviceDao.selectById(deviceId);
+    if (device.getOnline()) {
+
+      String controlTopic = "control/" + device.getProductId() + "/" + device.getId();
       MqttMessage message = new MqttMessage(
-          JSON.toJSONString(jsonObject).getBytes(StandardCharsets.UTF_8));
+          JSON.toJSONString(orderMap).getBytes(StandardCharsets.UTF_8));
       message.setQos(1);
-//      try {
-////        mqttClient.publish(pubTopic, message);
-//        DeviceLog deviceLog = new DeviceLog();
-//        deviceLog.setDeviceId(deviceId);
-//        deviceLog.setDirection(1);
-//        deviceLog.setPayload(content);
-//        deviceLog.setCreateTime(new Date());
-//        deviceLogDao.insert(deviceLog);
-//      } catch (MqttException e) {
-//        throw new BusinessException(18001, "下发debug命令异常");
-//      }
+      try {
+        mqttClient.publish(controlTopic, message);
+        DeviceLog deviceLog = new DeviceLog();
+        deviceLog.setProductId(device.getProductId());
+        deviceLog.setDeviceId(deviceId);
+        deviceLog.setTopicName(controlTopic);
+        deviceLog.setPayload(cmdContent);
+        deviceLog.setDirection(1);
+        deviceLog.setCreateTime(LocalDateTime.now());
+        deviceLog.setUpdateTime(LocalDateTime.now());
+        deviceLogDao.insert(deviceLog);
+      } catch (MqttException e) {
+        log.error("发送命令失败", e);
+      }
     } else {
       throw new BusinessException(18002, "设备离线不能发送命令");
     }
-
   }
 
   @Override

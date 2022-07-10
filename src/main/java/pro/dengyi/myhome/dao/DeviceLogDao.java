@@ -2,7 +2,7 @@ package pro.dengyi.myhome.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.springframework.stereotype.Repository;
-import pro.dengyi.myhome.model.DeviceLog;
+import pro.dengyi.myhome.model.device.DeviceLog;
 
 /**
  * @author dengyi (email:dengyi@dengyi.pro)

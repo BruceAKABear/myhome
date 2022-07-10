@@ -6,8 +6,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pro.dengyi.myhome.dao.DeviceLogDao;
-import pro.dengyi.myhome.model.DeviceLog;
 import pro.dengyi.myhome.service.DeviceLogService;
+import pro.dengyi.myhome.model.device.DeviceLog;
 
 /**
  * @author dengyi (email:dengyi@dengyi.pro)
@@ -20,10 +20,10 @@ public class DeviceLogServiceImpl implements DeviceLogService {
   private DeviceLogDao deviceLogDao;
 
   @Override
-  public IPage<DeviceLog> page(Integer pageNumber, Integer pageSize, String deviceId) {
-    IPage<DeviceLog> page = new Page<>(pageNumber == null ? 1 : pageNumber,
-        pageSize == null ? 10 : pageSize);
-    return deviceLogDao.selectPage(page,
+  public IPage<DeviceLog> page(Integer page, Integer size, String deviceId) {
+    IPage<DeviceLog> pageParam = new Page<>(page == null ? 1 : page,
+        size == null ? 10 : size);
+    return deviceLogDao.selectPage(pageParam,
         new LambdaQueryWrapper<DeviceLog>().eq(DeviceLog::getDeviceId, deviceId)
             .orderByDesc(DeviceLog::getCreateTime));
   }

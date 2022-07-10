@@ -7,9 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.validation.constraints.NotBlank;
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
-import org.eclipse.paho.client.mqttv3.MqttException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ObjectUtils;
 import org.springframework.validation.annotation.Validated;
@@ -45,9 +42,6 @@ public class DeviceController {
   private DeviceService deviceService;
   @Autowired
   private SystemProperties systemProperties;
-  @Autowired
-  private MqttClient mqttClient;
-
 
   @ApiOperation("分页查询")
   @GetMapping("/page")
@@ -117,21 +111,6 @@ public class DeviceController {
   @PostMapping("/emqHook")
   public CommonResponse emqHook(@RequestBody Map<String, Object> params) {
     deviceService.emqHook(params);
-    return CommonResponse.success();
-  }
-
-  @GetMapping("/doConnect")
-  public CommonResponse doConnect() throws MqttException {
-    MqttConnectOptions connOpts = new MqttConnectOptions();
-    connOpts.setUserName(systemProperties.getMqttUserName());
-    connOpts.setPassword(systemProperties.getMqttPassword().toCharArray());
-    // 保留会话
-    connOpts.setCleanSession(true);
-    // 建立连
-    mqttClient.connect(connOpts);
-    System.err.println(systemProperties.getMqttTopics());
-    mqttClient.subscribe(systemProperties.getMqttTopics());
-
     return CommonResponse.success();
   }
 

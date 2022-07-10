@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="pro.dengyi.myhome.dao.FramewareDao">
+  <select id="selectCustomPage" resultType="pro.dengyi.myhome.model.device.Frameware">
+    SELECT
+    device_frameware.id,
+    device_frameware.product_id,
+    device_frameware.note,
+    device_frameware.version,
+    device_frameware.url,
+    device_frameware.create_time,
+    device_frameware.update_time,
+    device_product.`name` AS productName
+    FROM
+    device_frameware
+    INNER JOIN device_product ON device_frameware.product_id = device_product.id
+    WHERE 1 = 1
+    <if test="productId!=null and productId!=''">
+      AND device_frameware.product_id = #{productId}
+    </if>
+  </select>
+</mapper>

@@ -1,4 +1,4 @@
-package pro.dengyi.myhome.model;
+package pro.dengyi.myhome.model.automation;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
@@ -8,6 +8,7 @@ import lombok.Data;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import pro.dengyi.myhome.model.base.BaseModel;
 
 /**
  * 倒计时实际
@@ -18,14 +19,7 @@ import java.util.Date;
 @Data
 @ApiModel("倒计时实体")
 @TableName("countdown_task")
-public class CountdownTask {
-
-  @ApiModelProperty("主键")
-  private String id;
-
-  @ApiModelProperty("家庭ID")
-  @NotBlank
-  private String familyId;
+public class CountdownTask extends BaseModel {
 
   @ApiModelProperty("名称")
   @NotBlank

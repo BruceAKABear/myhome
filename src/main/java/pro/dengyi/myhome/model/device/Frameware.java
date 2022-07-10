@@ -1,5 +1,6 @@
 package pro.dengyi.myhome.model.device;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
@@ -30,6 +31,10 @@ public class Frameware extends BaseModel {
   @ApiModelProperty(value = "产品ID")
   @NotBlank(message = "产品ID不能为空")
   private String productId;
+
+  @ApiModelProperty(hidden = true, value = "产品名称")
+  @TableField(exist = false)
+  private String productName;
 
   @ApiModelProperty(value = "固件描述")
   @NotBlank(message = "固件描述不能为空")

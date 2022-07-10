@@ -3,12 +3,13 @@ package pro.dengyi.myhome.listener;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -34,6 +35,10 @@ public class ApplicationRunListener implements ApplicationRunner {
   private UserDao userDao;
   @Autowired
   private FamilyDao familyDao;
+  @Autowired
+  private MqttClient mqttClient;
+  @Autowired
+  private Executor executor;
 
 
   @Transactional
@@ -63,6 +68,24 @@ public class ApplicationRunListener implements ApplicationRunner {
       user.setUpdateTime(now);
       userDao.insert(user);
     }
+
+    //连接mqtt服务器
+    executor.execute(() -> {
+      try {
+        TimeUnit.SECONDS.sleep(5);
+        MqttConnectOptions connOpts = new MqttConnectOptions();
+        connOpts.setKeepAliveInterval(60);
+        connOpts.setUserName("admin");
+        connOpts.setPassword("admin".toCharArray());
+        // 保留会话
+        connOpts.setCleanSession(true);
+        mqttClient.connect(connOpts);
+        mqttClient.subscribe("report/#", 1);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    });
   }
+
 
 }

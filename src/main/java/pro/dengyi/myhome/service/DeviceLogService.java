@@ -1,7 +1,7 @@
 package pro.dengyi.myhome.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import pro.dengyi.myhome.model.DeviceLog;
+import pro.dengyi.myhome.model.device.DeviceLog;
 
 /**
  * @author dengyi (email:dengyi@dengyi.pro)
@@ -9,5 +9,5 @@ import pro.dengyi.myhome.model.DeviceLog;
  */
 public interface DeviceLogService {
 
-  IPage<DeviceLog> page(Integer pageNumber, Integer pageSize, String deviceId);
+  IPage<DeviceLog> page(Integer page, Integer size, String deviceId);
 }

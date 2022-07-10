@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="pro.dengyi.myhome.dao.ProductFieldDao">
+  <select id="selectFieldListByDeviceId"
+    resultType="pro.dengyi.myhome.model.device.ProductField">
+    SELECT device_product_field.id,
+           device_product_field.product_id,
+           device_product_field.field,
+           device_product_field.field_type,
+           device_product_field.label,
+           device_product_field.create_time,
+           device_product_field.update_time
+    FROM device_product_field
+           INNER JOIN device_product ON device_product_field.product_id = device_product.id
+           INNER JOIN device_device ON device_device.product_id = device_product.id
+    WHERE device_device.id = #{deviceId}
+  </select>
+</mapper>

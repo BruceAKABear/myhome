@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.ObjectUtils;
 import pro.dengyi.myhome.dao.FramewareDao;
 import pro.dengyi.myhome.model.device.Frameware;
 import pro.dengyi.myhome.service.FramewareService;
@@ -28,11 +27,7 @@ public class FramewareServiceImpl implements FramewareService {
   @Override
   public IPage<Frameware> page(Integer page, Integer size, String productId) {
     IPage<Frameware> pageParam = new Page<>(page == null ? 1 : page, size == null ? 10 : size);
-    LambdaQueryWrapper<Frameware> queryWrapper = new LambdaQueryWrapper<>();
-    if (!ObjectUtils.isEmpty(productId)) {
-      queryWrapper.eq(Frameware::getProductId, productId);
-    }
-    return framewareDao.selectPage(pageParam, queryWrapper);
+    return framewareDao.selectCustomPage(pageParam, productId);
   }
 
   @Transactional

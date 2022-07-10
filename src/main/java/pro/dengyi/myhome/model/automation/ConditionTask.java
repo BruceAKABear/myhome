@@ -1,4 +1,4 @@
-package pro.dengyi.myhome.model;
+package pro.dengyi.myhome.model.automation;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
@@ -15,7 +15,7 @@ import javax.validation.constraints.NotBlank;
  */
 @Data
 @ApiModel("条件任务实体")
-@TableName("schedule_task")
+@TableName("task_condition")
 public class ConditionTask {
 
   @ApiModelProperty("主键")

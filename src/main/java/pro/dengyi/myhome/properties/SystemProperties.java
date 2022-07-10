@@ -21,20 +21,6 @@ public class SystemProperties {
   private String defaultEmail;
   private String defaultPassword;
 
-  private String defaultSalt;
-
   private String serverMqttClientId;
-
-  /**
-   * 服务端mqtt clientId
-   */
-  private String mqttUserName;
-  /**
-   * 服务端mqtt 连接密码
-   */
-  private String mqttPassword;
-  /**
-   * mqtt订阅队列
-   */
-  private String[] mqttTopics;
+  private String serverMqttHost;
 }
