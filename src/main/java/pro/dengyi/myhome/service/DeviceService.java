@@ -22,7 +22,7 @@ public interface DeviceService {
   IPage<DeviceDto> page(Integer pageNumber, Integer pageSize, String floorId, String roomId,
       String categoryId);
 
-  List<Device> debugDeviceList();
+  List<Device> debugDeviceList(String productId);
 
   void sendDebug(Map<String, Object> orderMap);
 

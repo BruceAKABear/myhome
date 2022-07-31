@@ -12,4 +12,10 @@ public interface ScheduleTaskService {
   void addOrUpdate(ScheduleTask scheduleTask);
 
   IPage<ScheduleTask> page(Integer page, Integer size, String name);
+
+  void delete(String id);
+
+  void changeStatus(String id);
+
+  void triggerImmediately(String id);
 }

@@ -5,8 +5,18 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
+import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.quartz.CronScheduleBuilder;
+import org.quartz.JobBuilder;
+import org.quartz.JobDetail;
+import org.quartz.JobKey;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
+import org.quartz.TriggerKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -14,10 +24,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
+import pro.dengyi.myhome.config.MyScheduleJob;
 import pro.dengyi.myhome.dao.FamilyDao;
+import pro.dengyi.myhome.dao.ScheduleTaskDao;
 import pro.dengyi.myhome.dao.UserDao;
 import pro.dengyi.myhome.model.Family;
 import pro.dengyi.myhome.model.User;
+import pro.dengyi.myhome.model.automation.ScheduleTask;
 import pro.dengyi.myhome.properties.SystemProperties;
 
 /**
@@ -26,6 +39,7 @@ import pro.dengyi.myhome.properties.SystemProperties;
  * @author dengyi (email:dengyi@dengyi.pro)
  * @date 2022-01-22
  */
+@Slf4j
 @Component
 public class ApplicationRunListener implements ApplicationRunner {
 
@@ -40,11 +54,16 @@ public class ApplicationRunListener implements ApplicationRunner {
   @Autowired
   private Executor executor;
 
+  @Autowired
+  private Scheduler scheduler;
+
+  @Autowired
+  private ScheduleTaskDao scheduleTaskDao;
+
 
   @Transactional
   @Override
   public void run(ApplicationArguments args) throws Exception {
-    System.err.println("系统已经初始化");
     //项目初始化
     Family family = familyDao.selectOne(new LambdaQueryWrapper<>());
     if (ObjectUtils.isEmpty(family)) {
@@ -81,6 +100,22 @@ public class ApplicationRunListener implements ApplicationRunner {
         connOpts.setCleanSession(true);
         mqttClient.connect(connOpts);
         mqttClient.subscribe("report/#", 1);
+        //加载任务
+        scheduleTaskDao.selectList(
+                new LambdaQueryWrapper<ScheduleTask>().eq(ScheduleTask::getEnable, true))
+            .forEach(task -> {
+
+              JobDetail jobDetail = JobBuilder.newJob(MyScheduleJob.class)
+                  .withIdentity(JobKey.jobKey(task.getId())).build();
+              Trigger jobTrigger = TriggerBuilder.newTrigger().startNow()
+                  .withIdentity(TriggerKey.triggerKey(task.getId()))
+                  .withSchedule(CronScheduleBuilder.cronSchedule(task.getCron())).build();
+              try {
+                scheduler.scheduleJob(jobDetail, jobTrigger);
+              } catch (SchedulerException e) {
+                log.error("加载任务失败", e);
+              }
+            });
       } catch (Exception e) {
         e.printStackTrace();
       }

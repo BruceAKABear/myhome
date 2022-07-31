@@ -1,8 +1,11 @@
 package pro.dengyi.myhome.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 import pro.dengyi.myhome.dao.ProductFieldDao;
 import pro.dengyi.myhome.model.device.ProductField;
 import pro.dengyi.myhome.service.ProductFieldService;
@@ -18,7 +21,16 @@ public class ProductFieldServiceImpl implements ProductFieldService {
   private ProductFieldDao productFieldDao;
 
   @Override
-  public List<ProductField> fieldList(String deviceId) {
-    return productFieldDao.selectFieldListByDeviceId(deviceId);
+  public List<ProductField> fieldList(String deviceId, String productId) {
+    if (!ObjectUtils.isEmpty(productId)) {
+      return productFieldDao.selectList(
+          new LambdaQueryWrapper<ProductField>().eq(ProductField::getProductId, productId));
+
+    }
+    if (!ObjectUtils.isEmpty(deviceId)) {
+      return productFieldDao.selectFieldListByDeviceId(deviceId);
+    }
+    return new ArrayList<>(0);
+
   }
 }

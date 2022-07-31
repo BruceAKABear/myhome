@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.validation.constraints.NotBlank;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ObjectUtils;
 import org.springframework.validation.annotation.Validated;
@@ -32,6 +33,7 @@ import pro.dengyi.myhome.service.DeviceService;
  * @author dengyi (email:dengyi@dengyi.pro)
  * @date 2022-01-23
  */
+@Slf4j
 @Api(tags = "设备接口")
 @Validated
 @RestController
@@ -53,8 +55,8 @@ public class DeviceController {
 
   @ApiOperation("查询调试所有设备")
   @GetMapping("/debugDeviceList")
-  public DataResponse<List<Device>> debugDeviceList() {
-    List<Device> deviceList = deviceService.debugDeviceList();
+  public DataResponse<List<Device>> debugDeviceList(String productId) {
+    List<Device> deviceList = deviceService.debugDeviceList(productId);
     return new DataResponse<>(deviceList);
   }
 
@@ -86,6 +88,7 @@ public class DeviceController {
   @ApiOperation("设备登录")
   @PostMapping("/deviceLogin")
   public Map<String, String> deviceLogin(@RequestBody DeviceLoginDto loginDto) {
+    log.info("设备登录：{}", loginDto);
     Map<String, String> resMap = new HashMap<>(1);
 
     //无clientId不进行逻辑

@@ -1,4 +1,4 @@
-<h1 align="center" style="font-size:50px;font-weight:bold">MyHome-Community</h1>
+<h1 align="center" style="font-size:50px;font-weight:bold">MyHome</h1>
 <p align="center">Home Automation System Based On Java</p>
 <p align="center">
     <a href="https://github.com/">
@@ -12,6 +12,21 @@
     </a>
 </p>
 
+## What is MyHome?
+
+MyHome is a fully opensource Home-Automation control system,it based on language Java and Javascript.
+in order to ensure the system safety,I make it running in local server,that means you need to install and running it in you local server which can run JVM(java virtual machine) and other environment.
+
+MyHome core backend is build with Java version 8, dashboard and Android application are build with Javascript. The database I use mariadb for storing data, in order to connect devices,I use EMQX for device communication.
+so, if you want to use MyHome,you need to install mariadb,EMQX,Java8
+
+## For Users
+
+### How to use MyHome?
+
+## For Developers
+
+## How to contact me?
 ## 相关项目
 [MyHome后台系统开源地址](https://github.com/BearLaboratory/myhome-community)
 

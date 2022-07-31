@@ -3,12 +3,10 @@ package pro.dengyi.myhome.controller.device;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import java.util.List;
-import javax.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pro.dengyi.myhome.annotations.HolderPermission;
 import pro.dengyi.myhome.model.device.ProductField;
@@ -33,9 +31,8 @@ public class ProductFieldController {
   @HolderPermission
   @ApiOperation("查询产品字段集合")
   @GetMapping("/fieldList")
-  public DataResponse<List<ProductField>> fieldList(
-      @RequestParam @NotBlank(message = "产品ID不能为空") String deviceId) {
-    List<ProductField> fieldList = productFieldService.fieldList(deviceId);
+  public DataResponse<List<ProductField>> fieldList(String deviceId, String productId) {
+    List<ProductField> fieldList = productFieldService.fieldList(deviceId, productId);
     return new DataResponse<>(fieldList);
   }
 

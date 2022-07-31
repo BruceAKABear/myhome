@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="pro.dengyi.myhome.dao.ScheduleTaskDeviceDao">
+
+  <select id="selectOnlineDeviceByTaskId"
+    resultType="pro.dengyi.myhome.model.device.Device">
+    SELECT device_device.id,
+           device_device.chip_id,
+           device_device.room_id,
+           device_device.`online`,
+           device_device.`enable`,
+           device_device.frameware_version,
+           device_device.product_id,
+           device_device.nick_name,
+           device_device.floor_id,
+           device_device.only_holder_can_see,
+           device_device.create_time,
+           device_device.update_time
+    FROM device_device
+           INNER JOIN task_schedule_device ON task_schedule_device.device_id = device_device.id
+    WHERE device_device.`online` = TRUE
+      AND task_schedule_device.task_id = #{taskId}
+  </select>
+</mapper>

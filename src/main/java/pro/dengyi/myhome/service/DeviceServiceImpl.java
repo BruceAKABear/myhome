@@ -19,8 +19,8 @@ import org.springframework.util.ObjectUtils;
 import pro.dengyi.myhome.dao.DeviceDao;
 import pro.dengyi.myhome.dao.DeviceLogDao;
 import pro.dengyi.myhome.exception.BusinessException;
-import pro.dengyi.myhome.model.device.DeviceLog;
 import pro.dengyi.myhome.model.device.Device;
+import pro.dengyi.myhome.model.device.DeviceLog;
 import pro.dengyi.myhome.model.dto.DeviceDto;
 import pro.dengyi.myhome.properties.SystemProperties;
 
@@ -86,8 +86,13 @@ public class DeviceServiceImpl implements DeviceService {
   }
 
   @Override
-  public List<Device> debugDeviceList() {
-    return deviceDao.selectList(new LambdaQueryWrapper<>());
+  public List<Device> debugDeviceList(String productId) {
+
+    LambdaQueryWrapper<Device> wrapper = new LambdaQueryWrapper<>();
+    if (!ObjectUtils.isEmpty(productId)) {
+      wrapper.eq(Device::getProductId, productId);
+    }
+    return deviceDao.selectList(wrapper);
   }
 
   @Transactional
@@ -126,6 +131,10 @@ public class DeviceServiceImpl implements DeviceService {
   public void emqHook(Map<String, Object> params) {
     log.warn("设备状态发生改变，数据为:{}", params);
     String clientId = (String) params.get("clientid");
+    //排除掉后台
+    if ("916295934".equals(clientId)) {
+      return;
+    }
     String eventType = (String) params.get("event");
     Device device = deviceDao.selectById(clientId);
     if ("client.connected".equals(eventType)) {

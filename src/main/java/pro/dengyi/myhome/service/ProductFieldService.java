@@ -9,5 +9,5 @@ import pro.dengyi.myhome.model.device.ProductField;
  */
 public interface ProductFieldService {
 
-  List<ProductField> fieldList(String deviceId);
+  List<ProductField> fieldList(String deviceId, String productId);
 }

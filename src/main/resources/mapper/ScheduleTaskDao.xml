@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="pro.dengyi.myhome.dao.ScheduleTaskDao">
+  <select id="selectCustomPage"
+    resultType="pro.dengyi.myhome.model.automation.dto.ScheduleTaskPageDto">
+    SELECT task_schedule.id,
+           task_schedule.`name`,
+           task_schedule.cron,
+           task_schedule.control_payload,
+           task_schedule.create_time,
+           task_schedule.update_time
+    FROM task_schedule
+
+
+  </select>
+</mapper>
