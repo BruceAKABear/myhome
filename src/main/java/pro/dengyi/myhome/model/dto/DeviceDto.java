@@ -13,4 +13,6 @@ public class DeviceDto extends Device {
   private String floorName;
   private String roomName;
   private String productName;
+
+  private Boolean canUpdateFirmware;
 }

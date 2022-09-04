@@ -12,7 +12,7 @@ import pro.dengyi.myhome.dao.DeviceDao;
 import pro.dengyi.myhome.dao.RoomDao;
 import pro.dengyi.myhome.exception.BusinessException;
 import pro.dengyi.myhome.model.device.Device;
-import pro.dengyi.myhome.model.Room;
+import pro.dengyi.myhome.model.system.Room;
 import pro.dengyi.myhome.model.dto.RoomDto;
 import pro.dengyi.myhome.service.RoomService;
 

@@ -1,4 +1,4 @@
-package pro.dengyi.myhome.model;
+package pro.dengyi.myhome.model.system;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;

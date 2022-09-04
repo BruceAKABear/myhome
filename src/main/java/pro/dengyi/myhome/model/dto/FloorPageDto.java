@@ -1,7 +1,7 @@
 package pro.dengyi.myhome.model.dto;
 
 import lombok.Data;
-import pro.dengyi.myhome.model.Floor;
+import pro.dengyi.myhome.model.system.Floor;
 
 /**
  * 家庭dto

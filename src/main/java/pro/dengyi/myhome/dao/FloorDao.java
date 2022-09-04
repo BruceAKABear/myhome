@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
-import pro.dengyi.myhome.model.Floor;
+import pro.dengyi.myhome.model.system.Floor;
 import pro.dengyi.myhome.model.dto.FloorPageDto;
 
 import java.util.List;

@@ -1,7 +1,8 @@
 package pro.dengyi.myhome.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import pro.dengyi.myhome.model.User;
+import java.util.Map;
+import pro.dengyi.myhome.model.system.User;
 import pro.dengyi.myhome.model.vo.LoginVo;
 
 /**
@@ -23,4 +24,6 @@ public interface UserService {
   void enable(User user);
 
   void delete(String id);
+
+  void updateSelectLang(Map<String, String> langParam);
 }

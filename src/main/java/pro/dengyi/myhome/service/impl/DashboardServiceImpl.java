@@ -39,6 +39,8 @@ public class DashboardServiceImpl implements DashboardService {
     dashboardDto.setDeviceCount(Math.toIntExact(deviceDao.selectCount(new QueryWrapper<>())));
     dashboardDto.setOnlineDeviceCount(Math.toIntExact(
         deviceDao.selectCount(new LambdaQueryWrapper<Device>().eq(Device::getOnline, true))));
+    dashboardDto.setOfflineDeviceCount(Math.toIntExact(
+        deviceDao.selectCount(new LambdaQueryWrapper<Device>().eq(Device::getOnline, false))));
     return dashboardDto;
   }
 }

@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.Date;
 import lombok.extern.slf4j.Slf4j;
-import pro.dengyi.myhome.model.User;
+import pro.dengyi.myhome.model.system.User;
 
 /**
  * token工具类

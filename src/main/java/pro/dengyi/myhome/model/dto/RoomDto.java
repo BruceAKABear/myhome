@@ -1,7 +1,7 @@
 package pro.dengyi.myhome.model.dto;
 
 import lombok.Data;
-import pro.dengyi.myhome.model.Room;
+import pro.dengyi.myhome.model.system.Room;
 
 /**
  * 房间数据传输实体

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pro.dengyi.myhome.annotations.HolderPermission;
-import pro.dengyi.myhome.model.Family;
+import pro.dengyi.myhome.model.system.Family;
 import pro.dengyi.myhome.model.dto.FamilyDto;
 import pro.dengyi.myhome.response.CommonResponse;
 import pro.dengyi.myhome.response.DataResponse;

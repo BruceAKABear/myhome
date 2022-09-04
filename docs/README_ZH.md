@@ -12,6 +12,8 @@
     </a>
 </p>
 
+[readme in english](../README.md)
+
 ## 相关项目
 
 [MyHome后台系统开源地址](https://github.com/BearLaboratory/myhome-community)
@@ -22,7 +24,8 @@
 
 ## 什么是MyHome
 
-MyHome是一套开源的智能家居控制系统，整个系统使用Java语言开发。使用的开发框架为springboot 2.6.3，使用的中间件包括但不限于MySQL、Redis、EMQX等。
+MyHome是一套开源的智能家居控制系统，整个系统使用Java语言开发。使用的开发框架为springboot
+2.6.3，使用的中间件包括但不限于MySQL、Redis、EMQX等。
 
 MyHome的基础概念是以家庭为中心进行私有化部署，私有化部署的目的是减少中心化部署带来的安全等缺陷。但是私有化部署也带来了其他不便捷的地方，如需要部署以家庭为单位的内网穿透
 、需要手动修改硬件设备的配置等。但是在我看来，智能家居的安全性是最重要的，而MyHome只针对于小面积极客圈子使用，因此多方权衡下

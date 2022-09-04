@@ -28,8 +28,8 @@ import pro.dengyi.myhome.config.MyScheduleJob;
 import pro.dengyi.myhome.dao.FamilyDao;
 import pro.dengyi.myhome.dao.ScheduleTaskDao;
 import pro.dengyi.myhome.dao.UserDao;
-import pro.dengyi.myhome.model.Family;
-import pro.dengyi.myhome.model.User;
+import pro.dengyi.myhome.model.system.Family;
+import pro.dengyi.myhome.model.system.User;
 import pro.dengyi.myhome.model.automation.ScheduleTask;
 import pro.dengyi.myhome.properties.SystemProperties;
 

@@ -3,6 +3,7 @@ package pro.dengyi.myhome.controller.system;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import java.util.Map;
 import javax.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -13,9 +14,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pro.dengyi.myhome.annotations.HolderPermission;
-import pro.dengyi.myhome.model.User;
+import pro.dengyi.myhome.model.system.User;
 import pro.dengyi.myhome.model.vo.LoginVo;
 import pro.dengyi.myhome.response.CommonResponse;
 import pro.dengyi.myhome.response.DataResponse;
@@ -61,6 +63,13 @@ public class UserController {
   public DataResponse<User> info() {
     User user = userService.info();
     return new DataResponse<>(user);
+  }
+
+  @ApiOperation("更新选择的语言")
+  @PostMapping("/updateSelectLang")
+  public CommonResponse updateSelectLang(@RequestBody Map<String, String> langParam) {
+    userService.updateSelectLang(langParam);
+    return CommonResponse.success();
   }
 
 

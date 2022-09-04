@@ -12,6 +12,7 @@
     </a>
 </p>
 
+[中文文档](./docs/README_ZH.md)
 ## What is MyHome?
 
 MyHome is a fully opensource Home-Automation control system,it based on language Java and Javascript.
@@ -21,6 +22,16 @@ MyHome core backend is build with Java version 8, dashboard and Android applicat
 so, if you want to use MyHome,you need to install mariadb,EMQX,Java8
 
 ## For Users
+
+in myhome system we hava two different roles,one is householder and annother is normal users,the householder hava all permissions to control all devices,
+and the normal users just hava the right to control the device except the permission one.
+so when the householder add the device need to figure out the device need to be others control or not.
+
+the householder login in to the backend control system to add device or debug device,make sure the device is running well for others,
+the normal users use cell phone to control all the system functions
+
+## For householder
+
 
 ### How to use MyHome?
 

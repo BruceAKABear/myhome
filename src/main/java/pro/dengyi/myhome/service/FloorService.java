@@ -1,7 +1,7 @@
 package pro.dengyi.myhome.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import pro.dengyi.myhome.model.Floor;
+import pro.dengyi.myhome.model.system.Floor;
 import pro.dengyi.myhome.model.dto.FloorPageDto;
 
 import java.util.List;

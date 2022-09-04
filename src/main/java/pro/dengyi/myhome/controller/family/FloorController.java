@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pro.dengyi.myhome.annotations.HolderPermission;
-import pro.dengyi.myhome.model.Floor;
+import pro.dengyi.myhome.model.system.Floor;
 import pro.dengyi.myhome.model.dto.FloorPageDto;
 import pro.dengyi.myhome.response.CommonResponse;
 import pro.dengyi.myhome.response.DataResponse;

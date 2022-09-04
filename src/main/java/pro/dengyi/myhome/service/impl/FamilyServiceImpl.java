@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import pro.dengyi.myhome.dao.FamilyDao;
-import pro.dengyi.myhome.model.Family;
+import pro.dengyi.myhome.model.system.Family;
 import pro.dengyi.myhome.model.dto.FamilyDto;
 import pro.dengyi.myhome.service.FamilyService;
 

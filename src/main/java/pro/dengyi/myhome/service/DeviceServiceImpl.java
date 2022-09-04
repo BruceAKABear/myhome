@@ -18,9 +18,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 import pro.dengyi.myhome.dao.DeviceDao;
 import pro.dengyi.myhome.dao.DeviceLogDao;
+import pro.dengyi.myhome.dao.FramewareDao;
 import pro.dengyi.myhome.exception.BusinessException;
 import pro.dengyi.myhome.model.device.Device;
 import pro.dengyi.myhome.model.device.DeviceLog;
+import pro.dengyi.myhome.model.device.Frameware;
+import pro.dengyi.myhome.model.device.dto.OtaParam;
 import pro.dengyi.myhome.model.dto.DeviceDto;
 import pro.dengyi.myhome.properties.SystemProperties;
 
@@ -40,6 +43,8 @@ public class DeviceServiceImpl implements DeviceService {
   private DeviceLogDao deviceLogDao;
   @Autowired
   private SystemProperties systemProperties;
+  @Autowired
+  private FramewareDao framewareDao;
 
 
   @Override
@@ -144,5 +149,47 @@ public class DeviceServiceImpl implements DeviceService {
     }
     device.setUpdateTime(LocalDateTime.now());
     deviceDao.updateById(device);
+  }
+
+  @Override
+  public void deviceOnline(String clientId) {
+    Device device = deviceDao.selectById(clientId);
+    device.setOnline(true);
+    deviceDao.updateById(device);
+  }
+
+  @Override
+  public void singleDeviceFirmwareUpdate(DeviceDto deviceDto) {
+    String otaTopic = "ota/" + deviceDto.getProductId() + "/" + deviceDto.getId();
+    //查询最新的固件
+    Frameware frameware = framewareDao.selectOne(
+        new LambdaQueryWrapper<Frameware>().eq(Frameware::getProductId, deviceDto.getProductId())
+            .orderByDesc(Frameware::getVersion).last("limit 1"));
+
+    OtaParam otaParam = new OtaParam();
+    otaParam.setDeviceId(deviceDto.getId());
+    otaParam.setTargetVersion(frameware.getVersion());
+    otaParam.setTargetUrl(frameware.getUrl());
+
+    String otaString = JSON.toJSONString(otaParam);
+
+    MqttMessage message = new MqttMessage(
+        otaString.getBytes(StandardCharsets.UTF_8));
+    message.setQos(1);
+    try {
+      mqttClient.publish(otaTopic, message);
+      DeviceLog deviceLog = new DeviceLog();
+      deviceLog.setProductId(deviceDto.getProductId());
+      deviceLog.setDeviceId(deviceDto.getId());
+      deviceLog.setTopicName(otaTopic);
+      deviceLog.setPayload(otaString);
+      deviceLog.setDirection(1);
+      deviceLog.setCreateTime(LocalDateTime.now());
+      deviceLog.setUpdateTime(LocalDateTime.now());
+      deviceLogDao.insert(deviceLog);
+    } catch (MqttException e) {
+      log.error("发送命令失败", e);
+    }
+
   }
 }

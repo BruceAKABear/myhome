@@ -4,13 +4,14 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import java.time.LocalDateTime;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 import pro.dengyi.myhome.dao.UserDao;
 import pro.dengyi.myhome.exception.BusinessException;
-import pro.dengyi.myhome.model.User;
+import pro.dengyi.myhome.model.system.User;
 import pro.dengyi.myhome.model.vo.LoginVo;
 import pro.dengyi.myhome.service.UserService;
 import pro.dengyi.myhome.utils.PasswordUtil;
@@ -69,7 +70,6 @@ public class UserServiceImpl implements UserService {
   public void addOrUpdate(User user) {
     if (ObjectUtils.isEmpty(user.getId())) {
       user.setEnable(true);
-      user.setSuperAdmin(false);
       LocalDateTime now = LocalDateTime.now();
       user.setCreateTime(now);
       user.setUpdateTime(now);
@@ -95,8 +95,7 @@ public class UserServiceImpl implements UserService {
                 userLambdaQueryWrapper -> userLambdaQueryWrapper.like(User::getName, name))
             .select(User::getId, User::getHouseHolder, User::getName, User::getAvatar,
                 User::getEmail, User::getSex, User::getHeight, User::getWeight, User::getAge,
-                User::getCreateTime, User::getUpdateTime,
-                User::getEnable, User::getSuperAdmin));
+                User::getCreateTime, User::getUpdateTime));
   }
 
   @Transactional
@@ -115,5 +114,13 @@ public class UserServiceImpl implements UserService {
       throw new BusinessException(1, "不能删除自己");
     }
     userDao.deleteById(id);
+  }
+
+  @Transactional
+  @Override
+  public void updateSelectLang(Map<String, String> langParam) {
+    User user = userDao.selectById(UserHolder.getUserId());
+    user.setSelectLang(langParam.get("lang"));
+    userDao.updateById(user);
   }
 }

@@ -27,4 +27,8 @@ public interface DeviceService {
   void sendDebug(Map<String, Object> orderMap);
 
   void emqHook(Map<String, Object> params);
+
+  void deviceOnline(String clientId);
+
+  void singleDeviceFirmwareUpdate(DeviceDto deviceDto);
 }

@@ -2,6 +2,7 @@ package pro.dengyi.myhome.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -61,8 +62,11 @@ public class FileController {
   @GetMapping("/preview")
   public void preview(String fileName, HttpServletResponse response) throws IOException {
     String path = System.getProperties().get("user.dir") + "/files/" + fileName;
+    File file = new File(path);
     FileInputStream fileInputStream = new FileInputStream(path);
     ServletOutputStream outputStream = response.getOutputStream();
+    response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
+    response.setContentLength((int) file.length());
     byte[] buffer = new byte[1024 * 8];
     int bytesRead;
     while ((bytesRead = fileInputStream.read(buffer)) != -1) {

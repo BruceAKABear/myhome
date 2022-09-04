@@ -9,7 +9,7 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import pro.dengyi.myhome.annotations.HolderPermission;
 import pro.dengyi.myhome.exception.BusinessException;
-import pro.dengyi.myhome.model.User;
+import pro.dengyi.myhome.model.system.User;
 import pro.dengyi.myhome.utils.TokenUtil;
 import pro.dengyi.myhome.utils.UserHolder;
 

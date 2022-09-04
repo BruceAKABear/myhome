@@ -1,6 +1,6 @@
 package pro.dengyi.myhome.service;
 
-import pro.dengyi.myhome.model.Family;
+import pro.dengyi.myhome.model.system.Family;
 import pro.dengyi.myhome.model.dto.FamilyDto;
 
 /**

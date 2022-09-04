@@ -1,4 +1,4 @@
-package pro.dengyi.myhome.model;
+package pro.dengyi.myhome.model.system;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -19,15 +19,17 @@ import pro.dengyi.myhome.model.base.BaseModel;
 @Data
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-@TableName("family_floor")
-@ApiModel("楼层")
+@TableName("family_room")
+@ApiModel("房间")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Floor extends BaseModel {
+public class Room extends BaseModel {
 
-  @ApiModelProperty(value = "楼层名")
-  @NotBlank
+  @ApiModelProperty(value = "楼层ID")
+  @NotBlank(message = "楼层ID不能为空")
+  private String floorId;
+
+  @ApiModelProperty(value = "房间名")
   @Length(min = 2, max = 10)
+  @NotBlank(message = "房间名不能为空")
   private String name;
-
-
 }

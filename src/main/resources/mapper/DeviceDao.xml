@@ -18,7 +18,26 @@
     family_floor.`name` AS floorName,
     device_product.`name` AS productName,
     device_device.create_time,
-    device_device.update_time
+    device_device.update_time,
+    (
+    IF
+    (((
+    SELECT
+    id
+    FROM
+    device_frameware
+    WHERE
+    device_frameware.product_id = device_product.id
+    AND device_frameware.version > device_device.frameware_version
+    ORDER BY
+    device_frameware.version
+    LIMIT 1
+    ) != ''
+    ),
+    TRUE,
+    FALSE
+    )
+    ) AS canUpdateFirmware
     FROM
     device_device
     INNER JOIN family_room ON family_room.id = device_device.room_id

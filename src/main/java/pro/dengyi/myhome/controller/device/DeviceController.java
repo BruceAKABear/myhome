@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.validation.constraints.NotBlank;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -105,15 +106,25 @@ public class DeviceController {
         resMap.put("result", "deny");
       } else {
         resMap.put("result", "allow");
+        //更新在线
+        deviceService.deviceOnline(loginDto.getClientId());
       }
     }
     return resMap;
   }
 
+  @Transactional
   @ApiOperation("EMQ钩子")
   @PostMapping("/emqHook")
   public CommonResponse emqHook(@RequestBody Map<String, Object> params) {
     deviceService.emqHook(params);
+    return CommonResponse.success();
+  }
+
+  @ApiOperation("单个设备固件升级")
+  @PostMapping("/singleDeviceFirmwareUpdate")
+  public CommonResponse singleDeviceFirmwareUpdate(@RequestBody DeviceDto deviceDto) {
+    deviceService.singleDeviceFirmwareUpdate(deviceDto);
     return CommonResponse.success();
   }
 

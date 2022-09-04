@@ -15,4 +15,5 @@ public class DashboardDto {
   private Integer roomCount;
   private Integer deviceCount;
   private Integer onlineDeviceCount;
+  private Integer offlineDeviceCount;
 }

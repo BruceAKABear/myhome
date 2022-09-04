@@ -1,7 +1,6 @@
-package pro.dengyi.myhome.model;
+package pro.dengyi.myhome.model.system;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import javax.validation.constraints.NotBlank;
@@ -19,7 +18,6 @@ import pro.dengyi.myhome.model.base.BaseModel;
 @EqualsAndHashCode(callSuper = true)
 @TableName("system_user")
 @ApiModel("用户")
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class User extends BaseModel {
 
   @ApiModelProperty(value = "是否是户主")
@@ -60,8 +58,8 @@ public class User extends BaseModel {
   @ApiModelProperty(value = "是否启用")
   private Boolean enable;
 
-  @ApiModelProperty(value = "超级管理员", hidden = true)
-  private Boolean superAdmin;
+  @ApiModelProperty(value = "选中的语言")
+  private String selectLang;
 
 
 }

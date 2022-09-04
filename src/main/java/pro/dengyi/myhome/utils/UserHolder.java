@@ -1,6 +1,6 @@
 package pro.dengyi.myhome.utils;
 
-import pro.dengyi.myhome.model.User;
+import pro.dengyi.myhome.model.system.User;
 
 /**
  * @author DengYi
