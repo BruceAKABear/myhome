@@ -1,4 +1,4 @@
-package pro.dengyi.myhome.controller;
+package pro.dengyi.myhome.controller.common;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

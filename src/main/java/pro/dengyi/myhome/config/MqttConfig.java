@@ -30,7 +30,6 @@ public class MqttConfig {
   private SystemProperties systemProperties;
   @Autowired
   private Executor executor;
-
   @Autowired
   private MqttMessageHandleThread mqttMessageHandleThread;
 
