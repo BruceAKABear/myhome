@@ -89,37 +89,37 @@ public class ApplicationRunListener implements ApplicationRunner {
     }
 
     //连接mqtt服务器
-    executor.execute(() -> {
-      try {
-        TimeUnit.SECONDS.sleep(5);
-        MqttConnectOptions connOpts = new MqttConnectOptions();
-        connOpts.setKeepAliveInterval(60);
-        connOpts.setUserName("admin");
-        connOpts.setPassword("admin".toCharArray());
-        // 保留会话
-        connOpts.setCleanSession(true);
-        mqttClient.connect(connOpts);
-        mqttClient.subscribe("report/#", 1);
-        //加载任务
-        scheduleTaskDao.selectList(
-                new LambdaQueryWrapper<ScheduleTask>().eq(ScheduleTask::getEnable, true))
-            .forEach(task -> {
-
-              JobDetail jobDetail = JobBuilder.newJob(MyScheduleJob.class)
-                  .withIdentity(JobKey.jobKey(task.getId())).build();
-              Trigger jobTrigger = TriggerBuilder.newTrigger().startNow()
-                  .withIdentity(TriggerKey.triggerKey(task.getId()))
-                  .withSchedule(CronScheduleBuilder.cronSchedule(task.getCron())).build();
-              try {
-                scheduler.scheduleJob(jobDetail, jobTrigger);
-              } catch (SchedulerException e) {
-                log.error("加载任务失败", e);
-              }
-            });
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-    });
+//    executor.execute(() -> {
+//      try {
+//        TimeUnit.SECONDS.sleep(5);
+//        MqttConnectOptions connOpts = new MqttConnectOptions();
+//        connOpts.setKeepAliveInterval(60);
+//        connOpts.setUserName("admin");
+//        connOpts.setPassword("admin".toCharArray());
+//        // 保留会话
+//        connOpts.setCleanSession(true);
+//        mqttClient.connect(connOpts);
+//        mqttClient.subscribe("report/#", 1);
+//        //加载任务
+//        scheduleTaskDao.selectList(
+//                new LambdaQueryWrapper<ScheduleTask>().eq(ScheduleTask::getEnable, true))
+//            .forEach(task -> {
+//
+//              JobDetail jobDetail = JobBuilder.newJob(MyScheduleJob.class)
+//                  .withIdentity(JobKey.jobKey(task.getId())).build();
+//              Trigger jobTrigger = TriggerBuilder.newTrigger().startNow()
+//                  .withIdentity(TriggerKey.triggerKey(task.getId()))
+//                  .withSchedule(CronScheduleBuilder.cronSchedule(task.getCron())).build();
+//              try {
+//                scheduler.scheduleJob(jobDetail, jobTrigger);
+//              } catch (SchedulerException e) {
+//                log.error("加载任务失败", e);
+//              }
+//            });
+//      } catch (Exception e) {
+//        e.printStackTrace();
+//      }
+//    });
   }
 
 

@@ -1,4 +1,4 @@
-package pro.dengyi.myhome.service;
+package pro.dengyi.myhome.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -26,6 +26,7 @@ import pro.dengyi.myhome.model.device.Frameware;
 import pro.dengyi.myhome.model.device.dto.OtaParam;
 import pro.dengyi.myhome.model.dto.DeviceDto;
 import pro.dengyi.myhome.properties.SystemProperties;
+import pro.dengyi.myhome.service.DeviceService;
 
 /**
  * @author dengyi (email:dengyi@dengyi.pro)

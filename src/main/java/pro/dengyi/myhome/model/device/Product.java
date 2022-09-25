@@ -27,6 +27,9 @@ public class Product extends BaseModel {
   @Length(min = 1, max = 30)
   private String name;
 
+  @NotBlank(message = "code不能为空")
+  private String code;
+
   @ApiModelProperty(value = "产品描述")
   @Length(max = 250)
   private String note;
