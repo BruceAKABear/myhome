@@ -1,5 +1,5 @@
 <h1 align="center" style="font-size:50px;font-weight:bold">MyHome</h1>
-<p align="center">Home Automation System Based On Java</p>
+<p align="center">Fully Open-Source Home Automation System Based On Java</p>
 <p align="center">
     <a href="https://github.com/">
         <img src="https://img.shields.io/badge/license-GPL-blue" alt="GPL License" />

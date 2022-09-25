@@ -85,6 +85,13 @@ public class DeviceController {
     return CommonResponse.success();
   }
 
+  @ApiOperation("下发命令(严格校验)")
+  @PostMapping("/sendCmd")
+  public CommonResponse sendCmd(@RequestBody Map<String, Object> orderMap) {
+    deviceService.sendCmd(orderMap);
+    return CommonResponse.success();
+  }
+
 
   @ApiOperation("设备登录")
   @PostMapping("/deviceLogin")

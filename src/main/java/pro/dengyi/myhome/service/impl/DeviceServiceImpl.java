@@ -193,4 +193,9 @@ public class DeviceServiceImpl implements DeviceService {
     }
 
   }
+
+  @Override
+  public void sendCmd(Map<String, Object> orderMap) {
+
+  }
 }

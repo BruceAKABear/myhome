@@ -31,4 +31,6 @@ public interface DeviceService {
   void deviceOnline(String clientId);
 
   void singleDeviceFirmwareUpdate(DeviceDto deviceDto);
+
+  void sendCmd(Map<String, Object> orderMap);
 }
