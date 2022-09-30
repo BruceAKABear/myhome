@@ -60,7 +60,7 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public User info() {
-    User user = userDao.selectById(UserHolder.getUserId());
+    User user = userDao.selectById(UserHolder.getUser().getId());
     user.setPassw(null);
     return user;
   }
@@ -119,7 +119,7 @@ public class UserServiceImpl implements UserService {
   @Transactional
   @Override
   public void updateSelectLang(Map<String, String> langParam) {
-    User user = userDao.selectById(UserHolder.getUserId());
+    User user = userDao.selectById(UserHolder.getUser().getId());
     user.setSelectLang(langParam.get("lang"));
     userDao.updateById(user);
   }

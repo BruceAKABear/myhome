@@ -4,33 +4,20 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.Executor;
-import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
-import org.quartz.CronScheduleBuilder;
-import org.quartz.JobBuilder;
-import org.quartz.JobDetail;
-import org.quartz.JobKey;
 import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.Trigger;
-import org.quartz.TriggerBuilder;
-import org.quartz.TriggerKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
-import pro.dengyi.myhome.config.MyScheduleJob;
 import pro.dengyi.myhome.dao.FamilyDao;
 import pro.dengyi.myhome.dao.ScheduleTaskDao;
 import pro.dengyi.myhome.dao.UserDao;
 import pro.dengyi.myhome.model.system.Family;
 import pro.dengyi.myhome.model.system.User;
-import pro.dengyi.myhome.model.automation.ScheduleTask;
 import pro.dengyi.myhome.properties.SystemProperties;
 
 /**
@@ -40,7 +27,7 @@ import pro.dengyi.myhome.properties.SystemProperties;
  * @date 2022-01-22
  */
 @Slf4j
-@Component
+//@Component
 public class ApplicationRunListener implements ApplicationRunner {
 
   @Autowired

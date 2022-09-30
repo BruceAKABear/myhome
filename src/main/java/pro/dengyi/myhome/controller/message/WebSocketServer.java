@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Slf4j
-@ServerEndpoint("/messageServer")
+@ServerEndpoint("/messageServer/{userId}")
 public class WebSocketServer {
 
   /**
@@ -45,6 +45,8 @@ public class WebSocketServer {
    */
   @OnOpen
   public void onOpen(Session session, @PathParam("userId") String userId) {
+    //todo 用户校验
+
     this.session = session;
     this.userId = userId;
     if (webSocketMap.containsKey(userId)) {
@@ -81,7 +83,7 @@ public class WebSocketServer {
    **/
   @OnMessage
   public void onMessage(String message, Session session) {
-    log.info("用户消息:" + userId + ",报文:" + message);
+    log.info("用户:" + userId + ",消息:" + message);
     //可以群发消息
     //消息保存到数据库、redis
     if (StringUtils.isNotBlank(message)) {
@@ -130,8 +132,8 @@ public class WebSocketServer {
   /**
    * 发送自定 义消息
    **/
-  public static void sendInfo(String message, String userId) {
-    log.info("发送消息到:" + userId + "，报文:" + message);
+  public static void sendMessage(String message, String userId) {
+    log.info("服务端发送消息到客户端，用户：" + userId + "，消息:" + message);
     if (StringUtils.isNotBlank(userId) && webSocketMap.containsKey(userId)) {
       webSocketMap.get(userId).sendMessage(message);
     } else {
