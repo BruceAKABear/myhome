@@ -61,5 +61,7 @@ public class User extends BaseModel {
   @ApiModelProperty(value = "选中的语言")
   private String selectLang;
 
+  private boolean superAdmin;
+
 
 }

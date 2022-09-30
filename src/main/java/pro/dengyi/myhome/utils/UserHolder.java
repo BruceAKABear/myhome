@@ -11,24 +11,6 @@ public class UserHolder {
   private static final ThreadLocal<User> LOCAL = new ThreadLocal<>();
 
   /**
-   * 获取当前用户的用户id
-   *
-   * @return 用户id
-   */
-  public static String getUserId() {
-    return LOCAL.get().getId();
-  }
-
-  /**
-   * 获取用户是否是户主
-   *
-   * @return boolean
-   */
-  public static Boolean getHouseHolder() {
-    return LOCAL.get().getHouseHolder();
-  }
-
-  /**
    * 获取用户完整信息 注意：暂时不用，项目中不需要
    *
    * @return 用户信息实体

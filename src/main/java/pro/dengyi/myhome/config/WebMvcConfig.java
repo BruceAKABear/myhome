@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import pro.dengyi.myhome.interceptors.LoginInterceptor;
+import pro.dengyi.myhome.interceptors.FrameworkInterceptor;
 
 /**
  * web基础配置
@@ -18,8 +18,14 @@ import pro.dengyi.myhome.interceptors.LoginInterceptor;
 public class WebMvcConfig implements WebMvcConfigurer {
 
   @Autowired
-  private LoginInterceptor loginInterceptor;
+  private FrameworkInterceptor frameworkInterceptor;
 
+
+  /**
+   * 跨域配置，注意这只是针对基础配置，如果涉及到自定义拦截器自行处理
+   *
+   * @param registry
+   */
   @Override
   public void addCorsMappings(CorsRegistry registry) {
     registry.addMapping("/**")
@@ -30,27 +36,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
         .allowedHeaders("*");
   }
 
-  /**
-   * 跨域配置，注意这只是针对基础配置，如果涉及到自定义拦截器自行处理
-   *
-   * @param registry
-   */
   @Override
   public void addInterceptors(InterceptorRegistry registry) {
     registry
-        .addInterceptor(loginInterceptor)
-        .addPathPatterns("/**")
-        .excludePathPatterns(
-            "/ui/**",
-            "/user/login",
-            "/swagger-resources/**",
-            "/webjars/**",
-            "/v2/**",
-            "/swagger-ui.html/**",
-            "/device/deviceLogin",
-            "/device/emqHook",
-            "/file/preview",
-            "/file/uploadFile"
-        );
+        .addInterceptor(frameworkInterceptor)
+        .addPathPatterns("/**");
   }
 }
