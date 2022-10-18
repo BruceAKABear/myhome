@@ -16,7 +16,7 @@ import pro.dengyi.myhome.model.base.BaseModel;
 @Data
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-@TableName("perm_role_permission")
+@TableName("perm_role_permission_function")
 @ApiModel("功能权限")
 public class RolePermission extends BaseModel {
 

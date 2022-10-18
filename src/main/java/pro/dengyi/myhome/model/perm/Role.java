@@ -1,8 +1,10 @@
 package pro.dengyi.myhome.model.perm;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import java.util.List;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -28,5 +30,11 @@ public class Role extends BaseModel {
 
   @ApiModelProperty("描述")
   private String describ;
+
+  @TableField(exist = false)
+  private List<Object> permIds;
+
+  @TableField(exist = false)
+  private long userCount;
 
 }

@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import java.time.LocalDateTime;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
@@ -74,6 +75,9 @@ public class UserServiceImpl implements UserService {
       user.setCreateTime(now);
       user.setUpdateTime(now);
       user.setPassw(PasswordUtil.encodePassword(user.getPassw()));
+      String language = LocaleContextHolder.getLocale().getLanguage();
+      user.setSelectLang(language);
+      //默认语言，获取当前的语言
       userDao.insert(user);
     } else {
       user.setUpdateTime(LocalDateTime.now());
@@ -93,9 +97,9 @@ public class UserServiceImpl implements UserService {
     return userDao.selectPage(pageParam,
         new LambdaQueryWrapper<User>().and(!(ObjectUtils.isEmpty(name)),
                 userLambdaQueryWrapper -> userLambdaQueryWrapper.like(User::getName, name))
-            .select(User::getId, User::getHouseHolder, User::getName, User::getAvatar,
+            .select(User::getId, User::getName, User::getAvatar,
                 User::getEmail, User::getSex, User::getHeight, User::getWeight, User::getAge,
-                User::getCreateTime, User::getUpdateTime));
+                User::getCreateTime, User::getUpdateTime, User::isSuperAdmin));
   }
 
   @Transactional

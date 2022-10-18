@@ -4,18 +4,31 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.quartz.CronScheduleBuilder;
+import org.quartz.JobBuilder;
+import org.quartz.JobDetail;
+import org.quartz.JobKey;
 import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
+import org.quartz.TriggerKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
+import pro.dengyi.myhome.config.MyScheduleJob;
 import pro.dengyi.myhome.dao.FamilyDao;
 import pro.dengyi.myhome.dao.ScheduleTaskDao;
 import pro.dengyi.myhome.dao.UserDao;
+import pro.dengyi.myhome.model.automation.ScheduleTask;
 import pro.dengyi.myhome.model.system.Family;
 import pro.dengyi.myhome.model.system.User;
 import pro.dengyi.myhome.properties.SystemProperties;
@@ -27,7 +40,7 @@ import pro.dengyi.myhome.properties.SystemProperties;
  * @date 2022-01-22
  */
 @Slf4j
-//@Component
+@Component
 public class ApplicationRunListener implements ApplicationRunner {
 
   @Autowired
@@ -58,55 +71,55 @@ public class ApplicationRunListener implements ApplicationRunner {
       newFamily.setName("我的家");
       familyDao.insert(newFamily);
     }
-    List<User> userList = userDao.selectList(
-        new LambdaQueryWrapper<User>().eq(User::getHouseHolder, true));
-    if (CollectionUtils.isEmpty(userList)) {
-      //初始化一个默认家庭
-      //默认用户不存在，新增一个
-      User user = new User();
-      user.setName(systemProperties.getDefaultName());
-      user.setAvatar(systemProperties.getDefaultAvatar());
-      user.setEmail(systemProperties.getDefaultEmail());
-      user.setPassw(systemProperties.getDefaultPassword());
-      user.setHouseHolder(true);
-      LocalDateTime now = LocalDateTime.now();
-      user.setCreateTime(now);
-      user.setUpdateTime(now);
-      userDao.insert(user);
-    }
+//    List<User> userList = userDao.selectList(
+//        new LambdaQueryWrapper<User>().eq(User::getHouseHolder, true));
+//    if (CollectionUtils.isEmpty(userList)) {
+//      //初始化一个默认家庭
+//      //默认用户不存在，新增一个
+//      User user = new User();
+//      user.setName(systemProperties.getDefaultName());
+//      user.setAvatar(systemProperties.getDefaultAvatar());
+//      user.setEmail(systemProperties.getDefaultEmail());
+//      user.setPassw(systemProperties.getDefaultPassword());
+//      user.setHouseHolder(true);
+//      LocalDateTime now = LocalDateTime.now();
+//      user.setCreateTime(now);
+//      user.setUpdateTime(now);
+//      userDao.insert(user);
+//    }
 
     //连接mqtt服务器
-//    executor.execute(() -> {
-//      try {
-//        TimeUnit.SECONDS.sleep(5);
-//        MqttConnectOptions connOpts = new MqttConnectOptions();
-//        connOpts.setKeepAliveInterval(60);
-//        connOpts.setUserName("admin");
-//        connOpts.setPassword("admin".toCharArray());
-//        // 保留会话
-//        connOpts.setCleanSession(true);
-//        mqttClient.connect(connOpts);
-//        mqttClient.subscribe("report/#", 1);
-//        //加载任务
-//        scheduleTaskDao.selectList(
-//                new LambdaQueryWrapper<ScheduleTask>().eq(ScheduleTask::getEnable, true))
-//            .forEach(task -> {
-//
-//              JobDetail jobDetail = JobBuilder.newJob(MyScheduleJob.class)
-//                  .withIdentity(JobKey.jobKey(task.getId())).build();
-//              Trigger jobTrigger = TriggerBuilder.newTrigger().startNow()
-//                  .withIdentity(TriggerKey.triggerKey(task.getId()))
-//                  .withSchedule(CronScheduleBuilder.cronSchedule(task.getCron())).build();
-//              try {
-//                scheduler.scheduleJob(jobDetail, jobTrigger);
-//              } catch (SchedulerException e) {
-//                log.error("加载任务失败", e);
-//              }
-//            });
-//      } catch (Exception e) {
-//        e.printStackTrace();
-//      }
-//    });
+    executor.execute(() -> {
+      try {
+        TimeUnit.SECONDS.sleep(5);
+        MqttConnectOptions connOpts = new MqttConnectOptions();
+        connOpts.setKeepAliveInterval(60);
+        connOpts.setUserName("admin");
+        connOpts.setPassword("admin".toCharArray());
+        // 保留会话
+        connOpts.setCleanSession(true);
+        mqttClient.connect(connOpts);
+        mqttClient.subscribe("report/#", 1);
+        //加载任务
+        scheduleTaskDao.selectList(
+                new LambdaQueryWrapper<ScheduleTask>().eq(ScheduleTask::getEnable, true))
+            .forEach(task -> {
+
+              JobDetail jobDetail = JobBuilder.newJob(MyScheduleJob.class)
+                  .withIdentity(JobKey.jobKey(task.getId())).build();
+              Trigger jobTrigger = TriggerBuilder.newTrigger().startNow()
+                  .withIdentity(TriggerKey.triggerKey(task.getId()))
+                  .withSchedule(CronScheduleBuilder.cronSchedule(task.getCron())).build();
+              try {
+                scheduler.scheduleJob(jobDetail, jobTrigger);
+              } catch (SchedulerException e) {
+                log.error("加载任务失败", e);
+              }
+            });
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    });
   }
 
 

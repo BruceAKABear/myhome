@@ -20,9 +20,6 @@ import pro.dengyi.myhome.model.base.BaseModel;
 @ApiModel("用户")
 public class User extends BaseModel {
 
-  @ApiModelProperty(value = "是否是户主")
-  private Boolean houseHolder;
-
   @ApiModelProperty(value = "用户名")
   @Length(min = 2, max = 10)
   @NotBlank
@@ -62,6 +59,9 @@ public class User extends BaseModel {
   private String selectLang;
 
   private boolean superAdmin;
+
+
+  private String roleId;
 
 
 }

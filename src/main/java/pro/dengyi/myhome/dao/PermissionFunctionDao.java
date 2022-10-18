@@ -16,5 +16,13 @@ import pro.dengyi.myhome.model.system.User;
 @Repository
 public interface PermissionFunctionDao extends BaseMapper<PermissionFunction> {
 
-  List<String> selecAllPermSymbol(@Param("user") User user);
+  List<String> selecAllPermUris(@Param("user") User user);
+
+  List<PermissionFunction> selectAllMenuFunction();
+
+  List<String> selectAllButton();
+
+  List<PermissionFunction> selectAllMenuFunctionByPermission(@Param("user") User user);
+
+  List<String> selectAllButtonByPermission(@Param("user") User user);
 }

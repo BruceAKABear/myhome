@@ -2,8 +2,76 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="pro.dengyi.myhome.dao.PermissionFunctionDao">
-  <select id="selecAllPermSymbol" resultType="java.lang.String">
+  <select id="selecAllPermUris" resultType="java.lang.String">
 
+    SELECT
+      perm_permission_function.uris
+    FROM
+      perm_permission_function
+        INNER JOIN perm_role_permission_function ON perm_permission_function.id = perm_role_permission_function.permission_id
+    WHERE
+      perm_role_permission_function.role_id = #{user.roleId}
+  </select>
 
+  <select id="selectAllButton" resultType="java.lang.String">
+
+    SELECT perm_permission_function.id,
+           perm_permission_function.parent_id,
+           perm_permission_function.type,
+           perm_permission_function.symbol,
+           perm_permission_function.menu_icon,
+           perm_permission_function.uris,
+           perm_permission_function.create_time,
+           perm_permission_function.update_time
+    FROM perm_permission_function
+    WHERE perm_permission_function.type = 'button'
+  </select>
+  <select id="selectAllMenuFunction"
+    resultType="pro.dengyi.myhome.model.perm.PermissionFunction">
+
+    SELECT perm_permission_function.id,
+           perm_permission_function.parent_id,
+           perm_permission_function.type,
+           perm_permission_function.symbol,
+           perm_permission_function.menu_icon,
+           perm_permission_function.uris,
+           perm_permission_function.create_time,
+           perm_permission_function.update_time
+    FROM perm_permission_function
+    WHERE perm_permission_function.type = 'menu'
+  </select>
+  <select id="selectAllMenuFunctionByPermission"
+    resultType="pro.dengyi.myhome.model.perm.PermissionFunction">
+
+    SELECT perm_permission_function.id,
+           perm_permission_function.parent_id,
+           perm_permission_function.type,
+           perm_permission_function.symbol,
+           perm_permission_function.menu_icon,
+           perm_permission_function.uris,
+           perm_permission_function.create_time,
+           perm_permission_function.update_time
+    FROM perm_permission_function
+           INNER JOIN perm_role_permission_function
+                      ON perm_permission_function.id = perm_role_permission_function.permission_id
+    WHERE perm_permission_function.type = 'menu'
+      AND perm_role_permission_function.role_id = #{user.roleId}
+
+  </select>
+  <select id="selectAllButtonByPermission" resultType="java.lang.String">
+
+    SELECT perm_permission_function.id,
+           perm_permission_function.parent_id,
+           perm_permission_function.type,
+           perm_permission_function.symbol,
+           perm_permission_function.menu_icon,
+           perm_permission_function.uris,
+           perm_permission_function.create_time,
+           perm_permission_function.update_time
+    FROM perm_permission_function
+           INNER JOIN perm_role_permission_function
+                      ON perm_permission_function.id = perm_role_permission_function.permission_id
+    WHERE perm_permission_function.type = 'button'
+      AND perm_role_permission_function.role_id = #{user.roleId}
   </select>
 </mapper>

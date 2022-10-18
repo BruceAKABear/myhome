@@ -1,8 +1,12 @@
 package pro.dengyi.myhome.model.perm;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import java.util.List;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -19,7 +23,10 @@ import pro.dengyi.myhome.model.base.BaseModel;
 @EqualsAndHashCode(callSuper = true)
 @TableName("perm_permission_function")
 @ApiModel("功能权限")
+@JsonInclude(Include.NON_NULL)
 public class PermissionFunction extends BaseModel {
+
+  private String parentId;
 
   @ApiModelProperty("类型 menu、button、api")
   private String type;
@@ -27,7 +34,13 @@ public class PermissionFunction extends BaseModel {
   @ApiModelProperty("标识")
   private String symbol;
 
+  @ApiModelProperty("菜单权限前端icon")
+  private String menuIcon;
+
   @ApiModelProperty("接口地址,分割")
   private String uris;
+
+  @TableField(exist = false)
+  private List<PermissionFunction> children;
 
 }

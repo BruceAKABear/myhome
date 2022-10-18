@@ -33,6 +33,8 @@ public class FrameworkInterceptor implements HandlerInterceptor {
   @Autowired
   private PermissionFunctionDao permissionFunctionDao;
 
+  String[] noValidateUris = {"/permission/getPerm","/user/info","/user/updateSelectLang"};
+
 
   /**
    * 1. 通用参数封装
@@ -93,9 +95,10 @@ public class FrameworkInterceptor implements HandlerInterceptor {
       throw new BusinessException(1, "未登录");
     }
     User user = TokenUtil.decToken(token);
-    if (!user.isSuperAdmin()) {
+    UserHolder.setUser(user);
+    if (!user.isSuperAdmin() && !Arrays.asList(noValidateUris).contains(requestURI)) {
       //非超管，校验权限
-      List<String> permURIs = permissionFunctionDao.selecAllPermSymbol(user);
+      List<String> permURIs = permissionFunctionDao.selecAllPermUris(user);
       Set<String> realPermURIs = new HashSet<>();
       permURIs.forEach(item -> {
         realPermURIs.addAll(Arrays.asList(item.split(",")));

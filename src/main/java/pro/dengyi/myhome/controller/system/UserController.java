@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pro.dengyi.myhome.annotations.HolderPermission;
+import pro.dengyi.myhome.annotations.Permission;
 import pro.dengyi.myhome.model.system.User;
 import pro.dengyi.myhome.model.vo.LoginVo;
 import pro.dengyi.myhome.response.CommonResponse;
@@ -39,6 +40,7 @@ public class UserController {
 
   @ApiOperation("分页查询")
   @GetMapping("/page")
+  @Permission
   public DataResponse<IPage<User>> page(Integer page, Integer size, String name) {
     IPage<User> pageR = userService.page(page, size, name);
     return new DataResponse<>(pageR);
@@ -53,6 +55,7 @@ public class UserController {
 
   @ApiOperation("更新个人信息")
   @PutMapping("/update")
+  @Permission
   public CommonResponse update(@RequestBody @Validated User user) {
     userService.update(user);
     return CommonResponse.success();
@@ -60,6 +63,7 @@ public class UserController {
 
   @ApiOperation("查询个人信息")
   @GetMapping("/info")
+  @Permission
   public DataResponse<User> info() {
     User user = userService.info();
     return new DataResponse<>(user);
@@ -67,6 +71,7 @@ public class UserController {
 
   @ApiOperation("更新选择的语言")
   @PostMapping("/updateSelectLang")
+  @Permission
   public CommonResponse updateSelectLang(@RequestBody Map<String, String> langParam) {
     userService.updateSelectLang(langParam);
     return CommonResponse.success();
@@ -75,7 +80,7 @@ public class UserController {
 
   @ApiOperation("新增用户")
   @PostMapping("/addOrUpdate")
-  @HolderPermission
+  @Permission
   public CommonResponse addOrUpdate(@RequestBody @Validated User user) {
     userService.addOrUpdate(user);
     return CommonResponse.success();
@@ -83,7 +88,7 @@ public class UserController {
 
   @ApiOperation("成员启停")
   @PostMapping("/enable")
-  @HolderPermission
+  @Permission
   public CommonResponse enable(@RequestBody @Validated User user) {
     userService.enable(user);
     return CommonResponse.success();
@@ -91,7 +96,7 @@ public class UserController {
 
   @ApiOperation("删除成员")
   @DeleteMapping("/delete/{id}")
-  @HolderPermission
+  @Permission
   public CommonResponse delete(@PathVariable @NotBlank(message = "ID不能为空") String id) {
     userService.delete(id);
     return CommonResponse.success();
