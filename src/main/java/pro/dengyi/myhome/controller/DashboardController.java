@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pro.dengyi.myhome.annotations.HolderPermission;
 import pro.dengyi.myhome.model.dto.DashboardDto;
 import pro.dengyi.myhome.response.DataResponse;
 import pro.dengyi.myhome.service.DashboardService;
@@ -28,7 +27,6 @@ public class DashboardController {
 
   @ApiOperation("查询dashboard信息")
   @GetMapping("/dashboardInfo")
-  @HolderPermission
   public DataResponse<DashboardDto> dashboardInfo() {
     DashboardDto dashboardDto = dashboardService.dashboardInfo();
     return new DataResponse<>(dashboardDto);

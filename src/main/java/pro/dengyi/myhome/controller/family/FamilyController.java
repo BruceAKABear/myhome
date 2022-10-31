@@ -10,9 +10,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pro.dengyi.myhome.annotations.HolderPermission;
-import pro.dengyi.myhome.model.system.Family;
 import pro.dengyi.myhome.model.dto.FamilyDto;
+import pro.dengyi.myhome.model.system.Family;
 import pro.dengyi.myhome.response.CommonResponse;
 import pro.dengyi.myhome.response.DataResponse;
 import pro.dengyi.myhome.service.FamilyService;
@@ -36,7 +35,6 @@ public class FamilyController {
 
   @ApiOperation(value = "新增或修改家庭")
   @PostMapping("/addUpdate")
-  @HolderPermission
   public CommonResponse addUpdate(@RequestBody @Validated Family family) {
     familyService.addUpdate(family);
     return CommonResponse.success();
@@ -51,7 +49,6 @@ public class FamilyController {
 
   @ApiOperation("查询是否是第一次登陆")
   @GetMapping("/checkIsFirst")
-  @HolderPermission
   public DataResponse<Boolean> checkIsFirst() {
     Boolean flag = familyService.checkIsFirst();
     return new DataResponse<>(flag);

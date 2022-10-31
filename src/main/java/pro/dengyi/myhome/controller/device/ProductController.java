@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pro.dengyi.myhome.annotations.HolderPermission;
 import pro.dengyi.myhome.model.device.Product;
 import pro.dengyi.myhome.model.device.dto.ProductAddDto;
 import pro.dengyi.myhome.model.device.dto.ProductPageDto;
@@ -38,7 +37,6 @@ public class ProductController {
   private ProductService productService;
 
 
-  @HolderPermission
   @ApiOperation("新增或修改产品")
   @PostMapping("/addUpdate")
   public CommonResponse addUpdate(@RequestBody @Validated ProductAddDto productAddDto) {
@@ -46,7 +44,6 @@ public class ProductController {
     return CommonResponse.success();
   }
 
-  @HolderPermission
   @ApiOperation("删除分类")
   @DeleteMapping("/delete/{id}")
   public CommonResponse delete(@PathVariable @NotBlank(message = "id不能为空") String id) {
@@ -54,7 +51,6 @@ public class ProductController {
     return CommonResponse.success();
   }
 
-  @HolderPermission
   @ApiOperation("分页查询")
   @GetMapping("/page")
   public DataResponse<IPage<ProductPageDto>> page(Integer page, Integer size, String name) {
@@ -62,7 +58,6 @@ public class ProductController {
     return new DataResponse<>(pageResult);
   }
 
-  @HolderPermission
   @ApiOperation("查询产品下拉")
   @GetMapping("/list")
   public DataResponse<List<Product>> categoryList() {

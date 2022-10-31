@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pro.dengyi.myhome.annotations.HolderPermission;
 import pro.dengyi.myhome.model.device.Device;
 import pro.dengyi.myhome.model.device.dto.DeviceLoginDto;
 import pro.dengyi.myhome.model.dto.DeviceDto;
@@ -61,7 +60,6 @@ public class DeviceController {
     return new DataResponse<>(deviceList);
   }
 
-  @HolderPermission
   @ApiOperation("添加或修改设备")
   @PostMapping("/addUpdate")
   public CommonResponse addUpdate(@RequestBody @Validated Device device) {
@@ -69,7 +67,6 @@ public class DeviceController {
     return CommonResponse.success();
   }
 
-  @HolderPermission
   @ApiOperation("删除设备")
   @DeleteMapping("/delete/{id}")
   public CommonResponse delete(@PathVariable @NotBlank(message = "id不能为空") String id) {
@@ -77,7 +74,6 @@ public class DeviceController {
     return CommonResponse.success();
   }
 
-  @HolderPermission
   @ApiOperation("下发debug命令")
   @PostMapping("/sendDebug")
   public CommonResponse sendDebug(@RequestBody Map<String, Object> orderMap) {

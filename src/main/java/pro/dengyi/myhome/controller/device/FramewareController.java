@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pro.dengyi.myhome.annotations.HolderPermission;
 import pro.dengyi.myhome.model.device.Frameware;
 import pro.dengyi.myhome.response.CommonResponse;
 import pro.dengyi.myhome.response.DataResponse;
@@ -42,7 +41,6 @@ public class FramewareController {
     return new DataResponse<>(pageRes);
   }
 
-  @HolderPermission
   @ApiOperation("添加固件")
   @PostMapping("/add")
   public CommonResponse add(@RequestBody @Validated Frameware frameware) {
@@ -51,7 +49,6 @@ public class FramewareController {
   }
 
 
-  @HolderPermission
   @ApiOperation("删除固件")
   @DeleteMapping("/delete/{id}")
   public CommonResponse delete(@PathVariable @NotBlank(message = "id不能为空") String id) {

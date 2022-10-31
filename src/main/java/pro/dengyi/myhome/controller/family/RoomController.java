@@ -3,18 +3,22 @@ package pro.dengyi.myhome.controller.family;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import java.util.List;
+import javax.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-import pro.dengyi.myhome.annotations.HolderPermission;
-import pro.dengyi.myhome.model.system.Room;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import pro.dengyi.myhome.model.dto.RoomDto;
+import pro.dengyi.myhome.model.system.Room;
 import pro.dengyi.myhome.response.CommonResponse;
 import pro.dengyi.myhome.response.DataResponse;
 import pro.dengyi.myhome.service.RoomService;
-
-import javax.validation.constraints.NotBlank;
-import java.util.List;
 
 /**
  * 楼层controller
@@ -46,7 +50,6 @@ public class RoomController {
     return new DataResponse<>(roomList);
   }
 
-  @HolderPermission
   @ApiOperation("新增或修改房间")
   @PostMapping("/addUpdate")
   public CommonResponse addUpdate(@RequestBody @Validated Room room) {
@@ -54,7 +57,6 @@ public class RoomController {
     return CommonResponse.success();
   }
 
-  @HolderPermission
   @ApiOperation("删除房间")
   @DeleteMapping("/delete/{id}")
   public CommonResponse delete(@PathVariable @NotBlank(message = "id不能为空") String id) {
