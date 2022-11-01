@@ -23,7 +23,7 @@ public class CaffeineConfig {
         // 初始的缓存空间大小
         .initialCapacity(100)
         // 缓存的最大条数
-        .maximumSize(1000).build();
+        .maximumSize(10000).build();
   }
 
 }

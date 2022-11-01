@@ -60,7 +60,6 @@ public class User extends BaseModel {
 
   private boolean superAdmin;
 
-
   private String roleId;
 
 

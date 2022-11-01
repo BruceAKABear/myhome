@@ -45,8 +45,6 @@ public class WebSocketServer {
    */
   @OnOpen
   public void onOpen(Session session, @PathParam("userId") String userId) {
-    //todo 用户校验
-
     this.session = session;
     this.userId = userId;
     if (webSocketMap.containsKey(userId)) {

@@ -15,4 +15,9 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface Permission {
 
+  boolean needLogIn() default true;
+
+  boolean needValidate() default true;
+
+
 }
