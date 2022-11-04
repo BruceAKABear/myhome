@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -59,10 +58,6 @@ public class Device extends BaseModel {
   @TableField(updateStrategy = FieldStrategy.IGNORED)
   @NotBlank(message = "必须选择分类")
   private String roomId;
-
-  @ApiModelProperty(value = "只能户主可见")
-  @NotNull
-  private Boolean onlyHolderCanSee;
 
 
 }

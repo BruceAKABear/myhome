@@ -2,6 +2,7 @@ package pro.dengyi.myhome.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import pro.dengyi.myhome.model.device.Device;
+import pro.dengyi.myhome.model.device.dto.RoomDeviceTree;
 import pro.dengyi.myhome.model.dto.DeviceDto;
 
 import java.util.List;
@@ -33,4 +34,6 @@ public interface DeviceService {
   void singleDeviceFirmwareUpdate(DeviceDto deviceDto);
 
   void sendCmd(Map<String, Object> orderMap);
+
+  List<RoomDeviceTree> roomDeviceTree(String floorId);
 }

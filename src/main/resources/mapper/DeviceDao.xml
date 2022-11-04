@@ -13,7 +13,6 @@
     device_device.nick_name,
     device_device.floor_id,
     device_device.product_id,
-    device_device.only_holder_can_see,
     family_room.`name` AS roomName,
     family_floor.`name` AS floorName,
     device_product.`name` AS productName,

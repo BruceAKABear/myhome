@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pro.dengyi.myhome.model.device.Device;
 import pro.dengyi.myhome.model.device.dto.DeviceLoginDto;
+import pro.dengyi.myhome.model.device.dto.RoomDeviceTree;
 import pro.dengyi.myhome.model.dto.DeviceDto;
 import pro.dengyi.myhome.properties.SystemProperties;
 import pro.dengyi.myhome.response.CommonResponse;
@@ -58,6 +59,13 @@ public class DeviceController {
   public DataResponse<List<Device>> debugDeviceList(String productId) {
     List<Device> deviceList = deviceService.debugDeviceList(productId);
     return new DataResponse<>(deviceList);
+  }
+
+  @ApiOperation("根据楼层id查询房间设备树")
+  @GetMapping("/roomDeviceTree")
+  public DataResponse<List<RoomDeviceTree>> roomDeviceTree(String floorId) {
+    List<RoomDeviceTree> roomDeviceTrees = deviceService.roomDeviceTree(floorId);
+    return new DataResponse<>(roomDeviceTrees);
   }
 
   @ApiOperation("添加或修改设备")

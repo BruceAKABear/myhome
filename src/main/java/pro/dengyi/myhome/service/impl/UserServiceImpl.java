@@ -4,14 +4,18 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
+import pro.dengyi.myhome.dao.PermUserDeviceDao;
 import pro.dengyi.myhome.dao.UserDao;
 import pro.dengyi.myhome.exception.BusinessException;
+import pro.dengyi.myhome.model.perm.PermUserDevice;
 import pro.dengyi.myhome.model.system.User;
 import pro.dengyi.myhome.model.vo.LoginVo;
 import pro.dengyi.myhome.service.UserService;
@@ -28,6 +32,8 @@ public class UserServiceImpl implements UserService {
 
   @Autowired
   private UserDao userDao;
+  @Autowired
+  private PermUserDeviceDao permUserDeviceDao;
 
 
   @Override
@@ -86,7 +92,17 @@ public class UserServiceImpl implements UserService {
       }
       userDao.updateById(user);
     }
-
+    //设备管理
+    permUserDeviceDao.delete(
+        new LambdaQueryWrapper<PermUserDevice>().eq(PermUserDevice::getUserId, user.getId()));
+    for (String deviceId : user.getDeviceIds()) {
+      PermUserDevice permUserDevice = new PermUserDevice();
+      permUserDevice.setDeviceId(deviceId);
+      permUserDevice.setUserId(user.getId());
+      permUserDevice.setCreateTime(LocalDateTime.now());
+      permUserDevice.setUpdateTime(LocalDateTime.now());
+      permUserDeviceDao.insert(permUserDevice);
+    }
 
   }
 
@@ -94,12 +110,28 @@ public class UserServiceImpl implements UserService {
   public IPage<User> page(Integer pageNumber, Integer pageSize, String name) {
     IPage<User> pageParam = new Page<>(pageNumber == null ? 1 : pageNumber,
         pageSize == null ? 10 : pageSize);
-    return userDao.selectPage(pageParam,
+    IPage<User> userIPage = userDao.selectPage(pageParam,
         new LambdaQueryWrapper<User>().and(!(ObjectUtils.isEmpty(name)),
                 userLambdaQueryWrapper -> userLambdaQueryWrapper.like(User::getName, name))
-            .select(User::getId, User::getName, User::getAvatar,
-                User::getEmail, User::getSex, User::getHeight, User::getWeight, User::getAge,
-                User::getCreateTime, User::getUpdateTime, User::isSuperAdmin));
+            .select(User::getId, User::getName, User::getAvatar, User::getEmail, User::getSex,
+                User::getHeight, User::getWeight, User::getAge, User::getCreateTime,
+                User::getUpdateTime, User::isSuperAdmin,User::getRoleId));
+
+    for (User user : userIPage.getRecords()) {
+
+      List<Object> objects = permUserDeviceDao.selectObjs(
+          new LambdaQueryWrapper<PermUserDevice>().eq(PermUserDevice::getUserId, user.getId())
+              .select(PermUserDevice::getDeviceId));
+      for (Object object : objects) {
+        if (user.getDeviceIds() == null) {
+          user.setDeviceIds(new ArrayList<>());
+        }
+        user.getDeviceIds().add((String) object);
+      }
+
+    }
+
+    return userIPage;
   }
 
   @Transactional

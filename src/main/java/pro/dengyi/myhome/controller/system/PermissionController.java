@@ -3,6 +3,7 @@ package pro.dengyi.myhome.controller.system;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.github.benmanes.caffeine.cache.Cache;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -38,6 +39,7 @@ public class PermissionController {
   private PermissionService permissionService;
 
 
+  @ApiOperation("获取个人权限")
   @GetMapping("/getPerm")
   @Permission
   public DataResponse<PermissionDto> getPerm() {
@@ -45,6 +47,7 @@ public class PermissionController {
     return new DataResponse<>(permissionDto);
   }
 
+  @ApiOperation("权限树")
   @GetMapping("/allPermTree")
   @Permission
   public DataResponse<List<PermissionFunction>> allPermTree() {
@@ -55,6 +58,8 @@ public class PermissionController {
     return new DataResponse<>(permissionFunctions);
   }
 
+
+  @ApiOperation("角色分页查询")
   @GetMapping("/rolePage")
   @Permission
   public DataResponse<IPage<Role>> rolePage(Integer page, Integer size, String roleName) {
@@ -62,6 +67,8 @@ public class PermissionController {
     return new DataResponse<>(pageR);
   }
 
+
+  @ApiOperation("角色下拉列表")
   @GetMapping("/roleList")
   @Permission
   public DataResponse<List<Role>> roleList() {
@@ -69,6 +76,8 @@ public class PermissionController {
     return new DataResponse<>(pageR);
   }
 
+
+  @ApiOperation("添加角色")
   @PostMapping("/roleAdd")
   @Permission
   public CommonResponse roleAdd(@RequestBody Role role) {
@@ -76,6 +85,8 @@ public class PermissionController {
     return CommonResponse.success();
   }
 
+
+  @ApiOperation("删除角色")
   @DeleteMapping("/roleDel/{roleId}")
   @Permission
   public CommonResponse roleDel(@PathVariable String roleId) {

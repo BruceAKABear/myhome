@@ -1,6 +1,7 @@
 package pro.dengyi.myhome.controller.family;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.github.benmanes.caffeine.cache.Cache;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import java.util.List;
@@ -34,6 +35,8 @@ public class FloorController {
 
   @Autowired
   private FloorService floorService;
+  @Autowired
+  private Cache cache;
 
   @ApiOperation("楼层分页查询")
   @GetMapping("/page")
@@ -53,7 +56,8 @@ public class FloorController {
   @ApiOperation("楼层集合")
   @GetMapping("/floorList")
   public DataResponse<List<FloorPageDto>> floorList() {
-    List<FloorPageDto> floorPageDtoList = floorService.floorList();
+    List<FloorPageDto> floorPageDtoList = (List<FloorPageDto>) cache.get("floorList",
+        k -> floorService.floorList());
     return new DataResponse<>(floorPageDtoList);
   }
 

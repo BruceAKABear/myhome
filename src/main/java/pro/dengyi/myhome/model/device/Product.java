@@ -38,9 +38,9 @@ public class Product extends BaseModel {
   @NotNull(message = "必须选择是否可控")
   private Boolean canControl;
 
-  @ApiModelProperty(value = "产品类型(1.普通产品，2.网关产品)")
+  @ApiModelProperty(value = "产品类型(normal.普通产品，gateway.网关产品)")
   @NotNull(message = "产品类型不能为空")
-  private Integer type;
+  private String type;
 
 
 

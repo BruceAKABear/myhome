@@ -1,6 +1,8 @@
 package pro.dengyi.myhome.interceptors;
 
+import io.swagger.annotations.ApiOperation;
 import java.lang.reflect.Method;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -8,6 +10,7 @@ import java.util.Locale;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
@@ -15,9 +18,12 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import pro.dengyi.myhome.annotations.Permission;
+import pro.dengyi.myhome.dao.OperationLogDao;
 import pro.dengyi.myhome.dao.PermissionFunctionDao;
 import pro.dengyi.myhome.exception.BusinessException;
+import pro.dengyi.myhome.model.system.OperationLog;
 import pro.dengyi.myhome.model.system.User;
+import pro.dengyi.myhome.utils.IpUtil;
 import pro.dengyi.myhome.utils.TokenUtil;
 import pro.dengyi.myhome.utils.UserHolder;
 
@@ -27,13 +33,16 @@ import pro.dengyi.myhome.utils.UserHolder;
  * @description：框架拦截器
  * @modified By：
  */
+@Slf4j
 @Component
 public class FrameworkInterceptor implements HandlerInterceptor {
 
   @Autowired
   private PermissionFunctionDao permissionFunctionDao;
+  @Autowired
+  private OperationLogDao operationLogDao;
 
-  String[] noValidateUris = {"/permission/getPerm","/user/info","/user/updateSelectLang"};
+  String[] noValidateUris = {"/permission/getPerm", "/user/info", "/user/updateSelectLang"};
 
 
   /**
@@ -62,12 +71,35 @@ public class FrameworkInterceptor implements HandlerInterceptor {
       String requestURI = request.getRequestURI();
       Permission permissionInMethod = method.getAnnotation(Permission.class);
       Permission permissionInClass = method.getDeclaringClass().getAnnotation(Permission.class);
+      handleOpLog(method, token, request);
       if (permissionInMethod != null || permissionInClass != null) {
         //需要进行权限校验
         validatePermission(token, requestURI);
       }
     }
     return throughFlag;
+  }
+
+  private void handleOpLog(Method method, String token, HttpServletRequest request) {
+
+    ApiOperation apiOperation = method.getAnnotation(ApiOperation.class);
+    String opName = apiOperation.value();
+    String uIP = IpUtil.remoteIP(request);
+    String uId = null;
+    if (!ObjectUtils.isEmpty(token)) {
+      try {
+        User user = TokenUtil.decToken(token);
+        uId = user.getId();
+      } catch (Exception e) {
+        //token异常了
+        log.error("日志记录时发现token异常");
+      }
+    }
+    OperationLog operationLog = OperationLog.builder().uId(uId).opName(opName).opIp(uIP).build();
+    operationLog.setCreateTime(LocalDateTime.now());
+    operationLog.setUpdateTime(LocalDateTime.now());
+    operationLogDao.insert(operationLog);
+
   }
 
   /**

@@ -15,6 +15,7 @@ import pro.dengyi.myhome.model.base.BaseModel;
  * @date 2022-02-05
  */
 @Data
+@Builder
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 @TableName("device_log")
@@ -34,8 +35,8 @@ public class DeviceLog extends BaseModel {
   @ApiModelProperty(value = "数据内容")
   private String payload;
 
-  @ApiModelProperty(value = "数据流向：1平台下发，2设备上报")
-  private Integer direction;
+  @ApiModelProperty(value = "数据流向：down平台下发，up设备上报")
+  private String direction;
 
 
 }

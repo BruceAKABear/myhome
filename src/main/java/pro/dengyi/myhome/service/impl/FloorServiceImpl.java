@@ -3,6 +3,7 @@ package pro.dengyi.myhome.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.benmanes.caffeine.cache.Cache;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,9 +13,9 @@ import org.springframework.util.ObjectUtils;
 import pro.dengyi.myhome.dao.FloorDao;
 import pro.dengyi.myhome.dao.RoomDao;
 import pro.dengyi.myhome.exception.BusinessException;
+import pro.dengyi.myhome.model.dto.FloorPageDto;
 import pro.dengyi.myhome.model.system.Floor;
 import pro.dengyi.myhome.model.system.Room;
-import pro.dengyi.myhome.model.dto.FloorPageDto;
 import pro.dengyi.myhome.service.FloorService;
 
 /**
@@ -28,6 +29,8 @@ public class FloorServiceImpl implements FloorService {
   private FloorDao floorDao;
   @Autowired
   private RoomDao roomDao;
+  @Autowired
+  private Cache cache;
 
 
   @Transactional
@@ -47,6 +50,8 @@ public class FloorServiceImpl implements FloorService {
       floor.setUpdateTime(LocalDateTime.now());
       floorDao.updateById(floor);
     }
+
+    cache.invalidate("floorList");
   }
 
   @Transactional
@@ -57,6 +62,8 @@ public class FloorServiceImpl implements FloorService {
       throw new BusinessException(13002, "楼层下存在房间不能删除");
     }
     floorDao.deleteById(id);
+
+    cache.invalidate("floorList");
   }
 
   @Override

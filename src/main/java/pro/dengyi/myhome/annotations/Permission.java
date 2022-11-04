@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
  * @date 2022-01-27
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
+@Target({ElementType.METHOD, ElementType.TYPE})
 public @interface Permission {
 
   boolean needLogIn() default true;

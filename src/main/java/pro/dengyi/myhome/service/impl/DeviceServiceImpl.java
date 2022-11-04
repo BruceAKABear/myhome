@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
@@ -15,16 +16,21 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import pro.dengyi.myhome.dao.DeviceDao;
 import pro.dengyi.myhome.dao.DeviceLogDao;
+import pro.dengyi.myhome.dao.FloorDao;
 import pro.dengyi.myhome.dao.FramewareDao;
+import pro.dengyi.myhome.dao.RoomDao;
 import pro.dengyi.myhome.exception.BusinessException;
 import pro.dengyi.myhome.model.device.Device;
-import pro.dengyi.myhome.model.device.DeviceLog;
 import pro.dengyi.myhome.model.device.Frameware;
 import pro.dengyi.myhome.model.device.dto.OtaParam;
+import pro.dengyi.myhome.model.device.dto.RoomDeviceTree;
 import pro.dengyi.myhome.model.dto.DeviceDto;
+import pro.dengyi.myhome.model.system.Floor;
+import pro.dengyi.myhome.model.system.Room;
 import pro.dengyi.myhome.properties.SystemProperties;
 import pro.dengyi.myhome.service.DeviceService;
 
@@ -43,9 +49,13 @@ public class DeviceServiceImpl implements DeviceService {
   @Autowired
   private DeviceLogDao deviceLogDao;
   @Autowired
+  private FloorDao floorDao;
+  @Autowired
   private SystemProperties systemProperties;
   @Autowired
   private FramewareDao framewareDao;
+  @Autowired
+  private RoomDao roomDao;
 
 
   @Override
@@ -116,15 +126,16 @@ public class DeviceServiceImpl implements DeviceService {
       message.setQos(1);
       try {
         mqttClient.publish(controlTopic, message);
-        DeviceLog deviceLog = new DeviceLog();
-        deviceLog.setProductId(device.getProductId());
-        deviceLog.setDeviceId(deviceId);
-        deviceLog.setTopicName(controlTopic);
-        deviceLog.setPayload(cmdContent);
-        deviceLog.setDirection(1);
-        deviceLog.setCreateTime(LocalDateTime.now());
-        deviceLog.setUpdateTime(LocalDateTime.now());
-        deviceLogDao.insert(deviceLog);
+//        todo
+//        DeviceLog deviceLog = new DeviceLog();
+//        deviceLog.setProductId(device.getProductId());
+//        deviceLog.setDeviceId(deviceId);
+//        deviceLog.setTopicName(controlTopic);
+//        deviceLog.setPayload(cmdContent);
+//        deviceLog.setDirection(1);
+//        deviceLog.setCreateTime(LocalDateTime.now());
+//        deviceLog.setUpdateTime(LocalDateTime.now());
+//        deviceLogDao.insert(deviceLog);
       } catch (MqttException e) {
         log.error("发送命令失败", e);
       }
@@ -174,20 +185,19 @@ public class DeviceServiceImpl implements DeviceService {
 
     String otaString = JSON.toJSONString(otaParam);
 
-    MqttMessage message = new MqttMessage(
-        otaString.getBytes(StandardCharsets.UTF_8));
+    MqttMessage message = new MqttMessage(otaString.getBytes(StandardCharsets.UTF_8));
     message.setQos(1);
     try {
       mqttClient.publish(otaTopic, message);
-      DeviceLog deviceLog = new DeviceLog();
-      deviceLog.setProductId(deviceDto.getProductId());
-      deviceLog.setDeviceId(deviceDto.getId());
-      deviceLog.setTopicName(otaTopic);
-      deviceLog.setPayload(otaString);
-      deviceLog.setDirection(1);
-      deviceLog.setCreateTime(LocalDateTime.now());
-      deviceLog.setUpdateTime(LocalDateTime.now());
-      deviceLogDao.insert(deviceLog);
+//      DeviceLog deviceLog = new DeviceLog();
+//      deviceLog.setProductId(deviceDto.getProductId());
+//      deviceLog.setDeviceId(deviceDto.getId());
+//      deviceLog.setTopicName(otaTopic);
+//      deviceLog.setPayload(otaString);
+//      deviceLog.setDirection(1);
+//      deviceLog.setCreateTime(LocalDateTime.now());
+//      deviceLog.setUpdateTime(LocalDateTime.now());
+//      deviceLogDao.insert(deviceLog);
     } catch (MqttException e) {
       log.error("发送命令失败", e);
     }
@@ -197,5 +207,53 @@ public class DeviceServiceImpl implements DeviceService {
   @Override
   public void sendCmd(Map<String, Object> orderMap) {
 
+  }
+
+  @Override
+  public List<RoomDeviceTree> roomDeviceTree(String floorId) {
+
+    List<String> floorIds = new ArrayList<>();
+    if (ObjectUtils.isEmpty(floorId)) {
+      List<Object> floorIdList = floorDao.selectObjs(
+          new LambdaQueryWrapper<Floor>().select(Floor::getId));
+      if (!CollectionUtils.isEmpty(floorIdList)) {
+        for (Object obj : floorIdList) {
+          floorIds.add((String) obj);
+        }
+      }
+    } else {
+      floorIds.add(floorId);
+    }
+    List<Room> rooms = roomDao.selectList(
+        new LambdaQueryWrapper<Room>().in(Room::getFloorId, floorIds));
+    List<RoomDeviceTree> roomDeviceTreeList = new ArrayList<>();
+    if (!CollectionUtils.isEmpty(rooms)) {
+      for (Room room : rooms) {
+        RoomDeviceTree root = new RoomDeviceTree();
+        root.setFloorId(room.getFloorId());
+        root.setId(room.getId());
+        root.setName(room.getName());
+        List<Device> devices = deviceDao.selectList(
+            new LambdaQueryWrapper<Device>().eq(Device::getRoomId, room.getId()));
+        List<RoomDeviceTree> leaf = genLeaf(devices);
+        root.setChildren(leaf);
+        roomDeviceTreeList.add(root);
+      }
+    }
+    return roomDeviceTreeList;
+  }
+
+  private List<RoomDeviceTree> genLeaf(List<Device> devices) {
+    List<RoomDeviceTree> list = new ArrayList<>();
+    if (!CollectionUtils.isEmpty(devices)) {
+      for (Device device : devices) {
+        RoomDeviceTree tree = new RoomDeviceTree();
+        tree.setFloorId(device.getFloorId());
+        tree.setId(device.getId());
+        tree.setName(device.getNickName());
+        list.add(tree);
+      }
+    }
+    return list;
   }
 }

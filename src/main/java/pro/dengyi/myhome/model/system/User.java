@@ -1,9 +1,12 @@
 package pro.dengyi.myhome.model.system;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import java.util.List;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -61,6 +64,10 @@ public class User extends BaseModel {
   private boolean superAdmin;
 
   private String roleId;
+
+  @TableField(exist = false)
+  @NotNull(message = "可控设备不能为空")
+  private List<String> deviceIds;
 
 
 }

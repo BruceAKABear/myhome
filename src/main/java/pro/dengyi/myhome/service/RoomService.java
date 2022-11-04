@@ -20,4 +20,5 @@ public interface RoomService {
 
   List<Room> roomList();
 
+  Object roomListByFloorId(String floorId);
 }

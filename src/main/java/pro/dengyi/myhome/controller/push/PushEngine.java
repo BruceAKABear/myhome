@@ -1,4 +1,4 @@
-package pro.dengyi.myhome.controller.message;
+package pro.dengyi.myhome.controller.push;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -20,8 +20,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Slf4j
-@ServerEndpoint("/messageServer/{userId}")
-public class WebSocketServer {
+@ServerEndpoint("/pushEngine/{userId}")
+public class PushEngine {
 
   /**
    * 静态变量，用来记录当前在线连接数。应该把它设计成线程安全的。
@@ -30,7 +30,7 @@ public class WebSocketServer {
   /**
    * concurrent包的线程安全Set，用来存放每个客户端对应的WebSocket对象。
    */
-  private static ConcurrentHashMap<String, WebSocketServer> webSocketMap = new ConcurrentHashMap<>();
+  private static ConcurrentHashMap<String, PushEngine> webSocketMap = new ConcurrentHashMap<>();
   /**
    * 与某个客户端的连接会话，需要通过它来给客户端发送数据
    */
@@ -152,14 +152,14 @@ public class WebSocketServer {
    * 在线人 数加1
    */
   public static synchronized void addOnlineCount() {
-    WebSocketServer.onlineCount++;
+    PushEngine.onlineCount++;
   }
 
   /**
    * 在线人 数减1
    */
   public static synchronized void subOnlineCount() {
-    WebSocketServer.onlineCount--;
+    PushEngine.onlineCount--;
   }
 
 }

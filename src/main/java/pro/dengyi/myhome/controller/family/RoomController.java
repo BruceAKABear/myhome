@@ -1,6 +1,7 @@
 package pro.dengyi.myhome.controller.family;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.github.benmanes.caffeine.cache.Cache;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import java.util.List;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pro.dengyi.myhome.model.dto.RoomDto;
 import pro.dengyi.myhome.model.system.Room;
@@ -34,6 +36,9 @@ public class RoomController {
 
   @Autowired
   private RoomService roomService;
+  @Autowired
+  private Cache cache;
+
 
   @ApiOperation("分页查询")
   @GetMapping("/page")
@@ -46,9 +51,19 @@ public class RoomController {
   @ApiOperation("查询房间列表")
   @GetMapping("/roomList")
   public DataResponse<List<Room>> roomList() {
-    List<Room> roomList = roomService.roomList();
+    List<Room> roomList = (List<Room>) cache.get("roomList", k -> roomService.roomList());
     return new DataResponse<>(roomList);
   }
+
+  @ApiOperation("根据楼层id查询房间列表")
+  @GetMapping("/roomListByFloorId")
+  public DataResponse<List<Room>> roomListByFloorId(
+      @RequestParam @NotBlank(message = "楼层id不能为空") String floorId) {
+    List<Room> roomList = (List<Room>) cache.get("roomListByFloorId:" + floorId,
+        k -> roomService.roomListByFloorId(floorId));
+    return new DataResponse<>(roomList);
+  }
+
 
   @ApiOperation("新增或修改房间")
   @PostMapping("/addUpdate")
