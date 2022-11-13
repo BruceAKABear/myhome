@@ -31,8 +31,10 @@ import pro.dengyi.myhome.model.device.dto.RoomDeviceTree;
 import pro.dengyi.myhome.model.dto.DeviceDto;
 import pro.dengyi.myhome.model.system.Floor;
 import pro.dengyi.myhome.model.system.Room;
+import pro.dengyi.myhome.model.system.User;
 import pro.dengyi.myhome.properties.SystemProperties;
 import pro.dengyi.myhome.service.DeviceService;
+import pro.dengyi.myhome.utils.UserHolder;
 
 /**
  * @author dengyi (email:dengyi@dengyi.pro)
@@ -241,6 +243,12 @@ public class DeviceServiceImpl implements DeviceService {
       }
     }
     return roomDeviceTreeList;
+  }
+
+  @Override
+  public List<Device> listByRoomId(String roomId) {
+    User user = UserHolder.getUser();
+    return deviceDao.listByRoomId(roomId, UserHolder.getUser());
   }
 
   private List<RoomDeviceTree> genLeaf(List<Device> devices) {

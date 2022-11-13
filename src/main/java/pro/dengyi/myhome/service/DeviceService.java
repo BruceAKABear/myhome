@@ -36,4 +36,6 @@ public interface DeviceService {
   void sendCmd(Map<String, Object> orderMap);
 
   List<RoomDeviceTree> roomDeviceTree(String floorId);
+
+  List<Device> listByRoomId(String roomId);
 }

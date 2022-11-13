@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import pro.dengyi.myhome.annotations.Permission;
 import pro.dengyi.myhome.model.device.Device;
 import pro.dengyi.myhome.model.device.dto.DeviceLoginDto;
 import pro.dengyi.myhome.model.device.dto.RoomDeviceTree;
@@ -39,6 +41,7 @@ import pro.dengyi.myhome.service.DeviceService;
 @Validated
 @RestController
 @RequestMapping("/device")
+@Permission
 public class DeviceController {
 
   @Autowired
@@ -58,6 +61,14 @@ public class DeviceController {
   @GetMapping("/debugDeviceList")
   public DataResponse<List<Device>> debugDeviceList(String productId) {
     List<Device> deviceList = deviceService.debugDeviceList(productId);
+    return new DataResponse<>(deviceList);
+  }
+
+  @ApiOperation("根据房间id查询所有可控设备列表")
+  @GetMapping("/listByRoomId")
+  public DataResponse<List<Device>> listByRoomId(
+      @RequestParam @NotBlank(message = "房间id不能为空") String roomId) {
+    List<Device> deviceList = deviceService.listByRoomId(roomId);
     return new DataResponse<>(deviceList);
   }
 
