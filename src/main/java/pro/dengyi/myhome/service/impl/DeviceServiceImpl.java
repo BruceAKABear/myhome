@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.benmanes.caffeine.cache.Cache;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -20,20 +21,28 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import pro.dengyi.myhome.dao.DeviceDao;
 import pro.dengyi.myhome.dao.DeviceLogDao;
+import pro.dengyi.myhome.dao.DeviceUserFavoriteDao;
 import pro.dengyi.myhome.dao.FloorDao;
 import pro.dengyi.myhome.dao.FramewareDao;
+import pro.dengyi.myhome.dao.ProductDao;
+import pro.dengyi.myhome.dao.ProductFieldDao;
 import pro.dengyi.myhome.dao.RoomDao;
 import pro.dengyi.myhome.exception.BusinessException;
 import pro.dengyi.myhome.model.device.Device;
+import pro.dengyi.myhome.model.device.DeviceLog;
+import pro.dengyi.myhome.model.device.DeviceUserFavorite;
 import pro.dengyi.myhome.model.device.Frameware;
+import pro.dengyi.myhome.model.device.Product;
+import pro.dengyi.myhome.model.device.ProductField;
+import pro.dengyi.myhome.model.device.dto.DeviceDto;
 import pro.dengyi.myhome.model.device.dto.OtaParam;
 import pro.dengyi.myhome.model.device.dto.RoomDeviceTree;
-import pro.dengyi.myhome.model.dto.DeviceDto;
+import pro.dengyi.myhome.model.dto.ChangeFavoriteDto;
 import pro.dengyi.myhome.model.system.Floor;
 import pro.dengyi.myhome.model.system.Room;
-import pro.dengyi.myhome.model.system.User;
 import pro.dengyi.myhome.properties.SystemProperties;
 import pro.dengyi.myhome.service.DeviceService;
+import pro.dengyi.myhome.utils.PushUtil;
 import pro.dengyi.myhome.utils.UserHolder;
 
 /**
@@ -58,6 +67,14 @@ public class DeviceServiceImpl implements DeviceService {
   private FramewareDao framewareDao;
   @Autowired
   private RoomDao roomDao;
+  @Autowired
+  private DeviceUserFavoriteDao deviceUserFavoriteDao;
+  @Autowired
+  private ProductDao productDao;
+  @Autowired
+  private ProductFieldDao productFieldDao;
+  @Autowired
+  private Cache cache;
 
 
   @Override
@@ -68,6 +85,9 @@ public class DeviceServiceImpl implements DeviceService {
   @Transactional
   @Override
   public void addUpdate(Device device) {
+
+    Product product = productDao.selectById(device.getProductId());
+
     if (ObjectUtils.isEmpty(device.getId())) {
       //如果芯片ID存在，则芯片ID为设备id
       if (!ObjectUtils.isEmpty(device.getChipId())) {
@@ -75,13 +95,15 @@ public class DeviceServiceImpl implements DeviceService {
       }
       //新增，默认离线，默认启用,固件版本为1
       device.setEnable(true);
-      device.setOnline(false);
+      //不可控设备默认在线
+      device.setOnline(!product.getCanControl());
       device.setFramewareVersion(1);
       device.setCreateTime(LocalDateTime.now());
       device.setUpdateTime(LocalDateTime.now());
       deviceDao.insert(device);
     } else {
       //更新
+      device.setOnline(!product.getCanControl());
       device.setUpdateTime(LocalDateTime.now());
       deviceDao.updateById(device);
     }
@@ -118,7 +140,6 @@ public class DeviceServiceImpl implements DeviceService {
   public void sendDebug(Map<String, Object> orderMap) {
 
     String deviceId = (String) orderMap.get("deviceId");
-    String cmdContent = JSON.toJSONString(orderMap);
     Device device = deviceDao.selectById(deviceId);
     if (device.getOnline()) {
 
@@ -128,16 +149,9 @@ public class DeviceServiceImpl implements DeviceService {
       message.setQos(1);
       try {
         mqttClient.publish(controlTopic, message);
-//        todo
-//        DeviceLog deviceLog = new DeviceLog();
-//        deviceLog.setProductId(device.getProductId());
-//        deviceLog.setDeviceId(deviceId);
-//        deviceLog.setTopicName(controlTopic);
-//        deviceLog.setPayload(cmdContent);
-//        deviceLog.setDirection(1);
-//        deviceLog.setCreateTime(LocalDateTime.now());
-//        deviceLog.setUpdateTime(LocalDateTime.now());
-//        deviceLogDao.insert(deviceLog);
+        DeviceLog deviceLog = new DeviceLog(device.getProductId(), deviceId, controlTopic,
+            JSON.toJSONString(orderMap), "down");
+        deviceLogDao.insert(deviceLog);
       } catch (MqttException e) {
         log.error("发送命令失败", e);
       }
@@ -150,16 +164,18 @@ public class DeviceServiceImpl implements DeviceService {
   public void emqHook(Map<String, Object> params) {
     log.warn("设备状态发生改变，数据为:{}", params);
     String clientId = (String) params.get("clientid");
-    //排除掉后台
-    if ("916295934".equals(clientId)) {
+    //排除管理后台改变
+    if (systemProperties.getMqttClientIds().contains(clientId)) {
       return;
     }
     String eventType = (String) params.get("event");
     Device device = deviceDao.selectById(clientId);
     if ("client.connected".equals(eventType)) {
       device.setOnline(true);
+      PushUtil.onOffLinePush(device.getId(), true);
     } else {
       device.setOnline(false);
+      PushUtil.onOffLinePush(device.getId(), false);
     }
     device.setUpdateTime(LocalDateTime.now());
     deviceDao.updateById(device);
@@ -208,6 +224,26 @@ public class DeviceServiceImpl implements DeviceService {
 
   @Override
   public void sendCmd(Map<String, Object> orderMap) {
+    String deviceId = (String) orderMap.get("deviceId");
+    Device device = deviceDao.selectById(deviceId);
+    String cmdContent = (String) orderMap.get("cmdContent");
+    //todo 严格校验
+    if (device.getOnline()) {
+
+      String controlTopic = "control/" + device.getProductId() + "/" + device.getId();
+      MqttMessage message = new MqttMessage(cmdContent.getBytes(StandardCharsets.UTF_8));
+      message.setQos(1);
+      try {
+        mqttClient.publish(controlTopic, message);
+        DeviceLog deviceLog = new DeviceLog(device.getProductId(), device.getId(), controlTopic,
+            cmdContent, "down");
+        deviceLogDao.insert(deviceLog);
+      } catch (MqttException e) {
+        log.error("发送命令失败", e);
+      }
+
+    }
+
 
   }
 
@@ -246,9 +282,48 @@ public class DeviceServiceImpl implements DeviceService {
   }
 
   @Override
-  public List<Device> listByRoomId(String roomId) {
-    User user = UserHolder.getUser();
-    return deviceDao.listByRoomId(roomId, UserHolder.getUser());
+  public List<DeviceDto> listByRoomId(String roomId, Boolean favorite) {
+    //todo 缓存
+    List<DeviceDto> deviceDtos = deviceDao.listByRoomId(roomId, UserHolder.getUser(), favorite);
+
+    if (!CollectionUtils.isEmpty(deviceDtos)) {
+      for (DeviceDto deviceDto : deviceDtos) {
+        Product product = productDao.selectById(deviceDto.getProductId());
+        deviceDto.setProduct(product);
+        List<ProductField> productFieldList = productFieldDao.selectList(
+            new LambdaQueryWrapper<ProductField>().eq(ProductField::getProductId, product.getId()));
+        deviceDto.setProductFieldList(productFieldList);
+        DeviceLog deviceLog = deviceLogDao.selectOne(
+            new LambdaQueryWrapper<DeviceLog>().eq(DeviceLog::getDeviceId, deviceDto.getId())
+                .orderByDesc(DeviceLog::getCreateTime).eq(DeviceLog::getDirection, "up")
+                .last("limit 1"));
+        deviceDto.setCurrentStatus(deviceLog != null ? deviceLog.getPayload() : null);
+      }
+    }
+    return deviceDtos;
+  }
+
+  @Override
+  public void changeFavorite(ChangeFavoriteDto favoriteDto) {
+
+    if (favoriteDto.getFavorite()) {
+      DeviceUserFavorite favorite = new DeviceUserFavorite();
+      favorite.setDeviceId(favoriteDto.getDeviceId());
+      favorite.setUserId(UserHolder.getUser().getId());
+      favorite.setCreateTime(LocalDateTime.now());
+      favorite.setUpdateTime(LocalDateTime.now());
+      deviceUserFavoriteDao.insert(favorite);
+    } else {
+      deviceUserFavoriteDao.delete(
+          new LambdaQueryWrapper<DeviceUserFavorite>().eq(DeviceUserFavorite::getDeviceId,
+                  favoriteDto.getDeviceId())
+              .eq(DeviceUserFavorite::getUserId, UserHolder.getUser().getId()));
+    }
+
+//    Device device = deviceDao.selectById(favoriteDto.getDeviceId());
+//    cache.invalidate("listByRoomId:" + UserHolder.getUser().getId() + ":" + device.getRoomId() + ":"
+//        + favoriteDto.getFavorite());
+
   }
 
   private List<RoomDeviceTree> genLeaf(List<Device> devices) {

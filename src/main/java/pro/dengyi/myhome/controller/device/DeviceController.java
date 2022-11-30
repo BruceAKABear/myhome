@@ -1,6 +1,7 @@
 package pro.dengyi.myhome.controller.device;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.github.benmanes.caffeine.cache.Cache;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import java.util.HashMap;
@@ -22,9 +23,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pro.dengyi.myhome.annotations.Permission;
 import pro.dengyi.myhome.model.device.Device;
+import pro.dengyi.myhome.model.device.dto.DeviceDto;
 import pro.dengyi.myhome.model.device.dto.DeviceLoginDto;
 import pro.dengyi.myhome.model.device.dto.RoomDeviceTree;
-import pro.dengyi.myhome.model.dto.DeviceDto;
+import pro.dengyi.myhome.model.dto.ChangeFavoriteDto;
 import pro.dengyi.myhome.properties.SystemProperties;
 import pro.dengyi.myhome.response.CommonResponse;
 import pro.dengyi.myhome.response.DataResponse;
@@ -48,6 +50,9 @@ public class DeviceController {
   private DeviceService deviceService;
   @Autowired
   private SystemProperties systemProperties;
+  @Autowired
+  private Cache cache;
+
 
   @ApiOperation("分页查询")
   @GetMapping("/page")
@@ -66,9 +71,11 @@ public class DeviceController {
 
   @ApiOperation("根据房间id查询所有可控设备列表")
   @GetMapping("/listByRoomId")
-  public DataResponse<List<Device>> listByRoomId(
-      @RequestParam @NotBlank(message = "房间id不能为空") String roomId) {
-    List<Device> deviceList = deviceService.listByRoomId(roomId);
+  @Permission(needValidate = false)
+  public DataResponse<List<DeviceDto>> listByRoomId(
+      @RequestParam @NotBlank(message = "房间id不能为空") String roomId,
+      @RequestParam Boolean favorite) {
+    List<DeviceDto> deviceList = deviceService.listByRoomId(roomId, favorite);
     return new DataResponse<>(deviceList);
   }
 
@@ -102,27 +109,29 @@ public class DeviceController {
 
   @ApiOperation("下发命令(严格校验)")
   @PostMapping("/sendCmd")
+  @Permission(needValidate = false)
   public CommonResponse sendCmd(@RequestBody Map<String, Object> orderMap) {
     deviceService.sendCmd(orderMap);
     return CommonResponse.success();
   }
 
 
+  @Permission(needLogIn = false, needValidate = false)
   @ApiOperation("设备登录")
   @PostMapping("/deviceLogin")
   public Map<String, String> deviceLogin(@RequestBody DeviceLoginDto loginDto) {
-    log.info("设备登录：{}", loginDto);
+    log.info("设备登录，设备登录信息为：{}", loginDto);
     Map<String, String> resMap = new HashMap<>(1);
-
     //无clientId不进行逻辑
     if (ObjectUtils.isEmpty(loginDto.getClientId())) {
       resMap.put("result", "deny");
     }
     //有clientId进行查找设备是否在系统中
-    //1. 服务端
-    if (loginDto.getClientId().equals(systemProperties.getServerMqttClientId())) {
+    if (systemProperties.getMqttClientIds().contains(loginDto.getClientId())) {
+      //1. 服务端
       resMap.put("result", "allow");
     } else {
+      //2. 普通设备
       Device device = deviceService.selectById(loginDto.getClientId());
       if (device == null) {
         resMap.put("result", "deny");
@@ -135,6 +144,7 @@ public class DeviceController {
     return resMap;
   }
 
+  @Permission(needLogIn = false, needValidate = false)
   @Transactional
   @ApiOperation("EMQ钩子")
   @PostMapping("/emqHook")
@@ -147,6 +157,13 @@ public class DeviceController {
   @PostMapping("/singleDeviceFirmwareUpdate")
   public CommonResponse singleDeviceFirmwareUpdate(@RequestBody DeviceDto deviceDto) {
     deviceService.singleDeviceFirmwareUpdate(deviceDto);
+    return CommonResponse.success();
+  }
+
+  @ApiOperation("改变收藏设备")
+  @PostMapping("/changeFavorite")
+  public CommonResponse changeFavorite(@RequestBody ChangeFavoriteDto favoriteDto) {
+    deviceService.changeFavorite(favoriteDto);
     return CommonResponse.success();
   }
 

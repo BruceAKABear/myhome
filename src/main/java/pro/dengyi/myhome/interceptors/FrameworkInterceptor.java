@@ -2,7 +2,6 @@ package pro.dengyi.myhome.interceptors;
 
 import io.swagger.annotations.ApiOperation;
 import java.lang.reflect.Method;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -18,12 +17,12 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import pro.dengyi.myhome.annotations.Permission;
-import pro.dengyi.myhome.dao.OperationLogDao;
 import pro.dengyi.myhome.dao.PermissionFunctionDao;
 import pro.dengyi.myhome.exception.BusinessException;
 import pro.dengyi.myhome.model.system.OperationLog;
 import pro.dengyi.myhome.model.system.User;
 import pro.dengyi.myhome.utils.IpUtil;
+import pro.dengyi.myhome.utils.LogQueueUtil;
 import pro.dengyi.myhome.utils.TokenUtil;
 import pro.dengyi.myhome.utils.UserHolder;
 
@@ -39,10 +38,6 @@ public class FrameworkInterceptor implements HandlerInterceptor {
 
   @Autowired
   private PermissionFunctionDao permissionFunctionDao;
-  @Autowired
-  private OperationLogDao operationLogDao;
-
-  String[] noValidateUris = {"/permission/getPerm", "/user/info", "/user/updateSelectLang"};
 
 
   /**
@@ -68,22 +63,25 @@ public class FrameworkInterceptor implements HandlerInterceptor {
       handleLanguage(request);
       String token = request.getHeader("token");
       Method method = ((HandlerMethod) handler).getMethod();
-      String requestURI = request.getRequestURI();
       Permission permissionInMethod = method.getAnnotation(Permission.class);
       Permission permissionInClass = method.getDeclaringClass().getAnnotation(Permission.class);
-      handleOpLog(method, token, request);
       if (permissionInMethod != null || permissionInClass != null) {
-        //需要进行权限校验
-        validatePermission(token, requestURI);
+        validatePermission(token,
+            permissionInMethod == null ? permissionInClass : permissionInMethod, method, request);
       }
+
     }
     return throughFlag;
   }
 
   private void handleOpLog(Method method, String token, HttpServletRequest request) {
-
     ApiOperation apiOperation = method.getAnnotation(ApiOperation.class);
-    String opName = apiOperation.value();
+    String requestURI = request.getRequestURI();
+    String requestMethod = request.getMethod();
+    String opName = null;
+    if (apiOperation != null) {
+      opName = apiOperation.value();
+    }
     String uIP = IpUtil.remoteIP(request);
     String uId = null;
     if (!ObjectUtils.isEmpty(token)) {
@@ -92,14 +90,11 @@ public class FrameworkInterceptor implements HandlerInterceptor {
         uId = user.getId();
       } catch (Exception e) {
         //token异常了
-        log.error("日志记录时发现token异常");
+        log.error("日记记录时用户token异常");
       }
     }
-    OperationLog operationLog = OperationLog.builder().uId(uId).opName(opName).opIp(uIP).build();
-    operationLog.setCreateTime(LocalDateTime.now());
-    operationLog.setUpdateTime(LocalDateTime.now());
-    operationLogDao.insert(operationLog);
-
+    OperationLog operationLog = new OperationLog(uId, opName, uIP, requestURI, requestMethod);
+    LogQueueUtil.publish(operationLog);
   }
 
   /**
@@ -119,28 +114,45 @@ public class FrameworkInterceptor implements HandlerInterceptor {
   /**
    * 校验权限方法
    *
-   * @param token      登录token
-   * @param requestURI 接口路径
+   * @param token   登录token
+   * @param method
+   * @param request
    */
-  private void validatePermission(String token, String requestURI) {
-    if (ObjectUtils.isEmpty(token)) {
-      throw new BusinessException(1, "未登录");
-    }
-    User user = TokenUtil.decToken(token);
-    UserHolder.setUser(user);
-    if (!user.isSuperAdmin() && !Arrays.asList(noValidateUris).contains(requestURI)) {
-      //非超管，校验权限
-      List<String> permURIs = permissionFunctionDao.selecAllPermUris(user);
-      Set<String> realPermURIs = new HashSet<>();
-      permURIs.forEach(item -> {
-        realPermURIs.addAll(Arrays.asList(item.split(",")));
-      });
-      if (!realPermURIs.contains(requestURI)) {
-        //无权限
-        throw new BusinessException(1, "无权限");
+  private void validatePermission(String token, Permission permission, Method method,
+      HttpServletRequest request) {
+    handleOpLog(method, token, request);
+    String requestURI = request.getRequestURI();
+    if (permission.needLogIn()) {
+      //校验登录
+      if (ObjectUtils.isEmpty(token)) {
+        log.error("permission module>>>>>> user not login!,uri:{}", requestURI);
+        throw new BusinessException(1, "未登录");
+      }
+      //校验token
+      User user = null;
+      try {
+        user = TokenUtil.decToken(token);
+      } catch (Exception e) {
+        log.error("try to decode login token error,the error is:{}", e);
+        throw new BusinessException(1, "token异常");
+      }
+      UserHolder.setUser(user);
+      if (permission.needValidate()) {
+        if (!user.isSuperAdmin()) {
+          //非超管，校验权限
+          List<String> permURIs = permissionFunctionDao.selecAllPermUris(user);
+          Set<String> realPermURIs = new HashSet<>();
+          permURIs.forEach(item -> {
+            realPermURIs.addAll(Arrays.asList(item.split(",")));
+          });
+          if (!realPermURIs.contains(requestURI)) {
+            //无权限
+            throw new BusinessException(1, "无权限");
+          }
+        }
+
       }
     }
-
   }
 
   @Override

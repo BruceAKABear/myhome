@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import pro.dengyi.myhome.controller.push.AppWebsocket;
 import pro.dengyi.myhome.dao.DeviceDao;
 import pro.dengyi.myhome.dao.FloorDao;
 import pro.dengyi.myhome.dao.RoomDao;
@@ -33,6 +34,7 @@ public class DashboardServiceImpl implements DashboardService {
   public DashboardDto dashboardInfo() {
     DashboardDto dashboardDto = new DashboardDto();
     dashboardDto.setUserCount(Math.toIntExact(userDao.selectCount(new QueryWrapper<>())));
+    dashboardDto.setOnlineUserCount(AppWebsocket.ONLINE_DEVICES_COUNT.get());
     dashboardDto.setFamilyCount(1);
     dashboardDto.setFloorCount(Math.toIntExact(floorDao.selectCount(new QueryWrapper<>())));
     dashboardDto.setRoomCount(Math.toIntExact(roomDao.selectCount(new QueryWrapper<>())));
@@ -41,6 +43,7 @@ public class DashboardServiceImpl implements DashboardService {
         deviceDao.selectCount(new LambdaQueryWrapper<Device>().eq(Device::getOnline, true))));
     dashboardDto.setOfflineDeviceCount(Math.toIntExact(
         deviceDao.selectCount(new LambdaQueryWrapper<Device>().eq(Device::getOnline, false))));
+
     return dashboardDto;
   }
 }

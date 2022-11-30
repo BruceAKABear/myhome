@@ -26,8 +26,8 @@
   <!--生产环境  -->
   <springProfile name="prod">
     <logger name="org.springframework" level="WARN"/>
-    <logger name="com.zaxxer.hikari.pool" level="INFO"/>
-    <root level="WARN">
+    <logger name="com.zaxxer.hikari.pool" level="WARN"/>
+    <root level="debug">
       <appender-ref ref="FILE"/>
     </root>
   </springProfile>

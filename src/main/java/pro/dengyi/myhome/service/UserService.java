@@ -26,4 +26,6 @@ public interface UserService {
   void delete(String id);
 
   void updateSelectLang(Map<String, String> langParam);
+
+  void updateUserInfo(Map<String, Object> updateUserInfo);
 }

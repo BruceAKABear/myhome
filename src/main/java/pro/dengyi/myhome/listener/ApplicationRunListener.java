@@ -2,20 +2,35 @@ package pro.dengyi.myhome.listener;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.quartz.CronScheduleBuilder;
+import org.quartz.JobBuilder;
+import org.quartz.JobDetail;
+import org.quartz.JobKey;
 import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
+import org.quartz.TriggerKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
+import pro.dengyi.myhome.config.MyScheduleJob;
 import pro.dengyi.myhome.dao.FamilyDao;
+import pro.dengyi.myhome.dao.OperationLogDao;
 import pro.dengyi.myhome.dao.ScheduleTaskDao;
 import pro.dengyi.myhome.dao.UserDao;
+import pro.dengyi.myhome.model.automation.ScheduleTask;
 import pro.dengyi.myhome.model.system.Family;
+import pro.dengyi.myhome.model.system.OperationLog;
 import pro.dengyi.myhome.properties.SystemProperties;
+import pro.dengyi.myhome.utils.LogQueueUtil;
 
 /**
  * 项目启动监听
@@ -43,6 +58,9 @@ public class ApplicationRunListener implements ApplicationRunner {
 
   @Autowired
   private ScheduleTaskDao scheduleTaskDao;
+
+  @Autowired
+  private OperationLogDao operationLogDao;
 
 
   @Transactional
@@ -73,37 +91,45 @@ public class ApplicationRunListener implements ApplicationRunner {
 //    }
 
     //连接mqtt服务器
-//    executor.execute(() -> {
-//      try {
-//        TimeUnit.SECONDS.sleep(5);
-//        MqttConnectOptions connOpts = new MqttConnectOptions();
-//        connOpts.setKeepAliveInterval(60);
-//        connOpts.setUserName("admin");
-//        connOpts.setPassword("admin".toCharArray());
-//        // 保留会话
-//        connOpts.setCleanSession(true);
-//        mqttClient.connect(connOpts);
-//        mqttClient.subscribe("report/#", 1);
-//        //加载任务
-//        scheduleTaskDao.selectList(
-//                new LambdaQueryWrapper<ScheduleTask>().eq(ScheduleTask::getEnable, true))
-//            .forEach(task -> {
-//
-//              JobDetail jobDetail = JobBuilder.newJob(MyScheduleJob.class)
-//                  .withIdentity(JobKey.jobKey(task.getId())).build();
-//              Trigger jobTrigger = TriggerBuilder.newTrigger().startNow()
-//                  .withIdentity(TriggerKey.triggerKey(task.getId()))
-//                  .withSchedule(CronScheduleBuilder.cronSchedule(task.getCron())).build();
-//              try {
-//                scheduler.scheduleJob(jobDetail, jobTrigger);
-//              } catch (SchedulerException e) {
-//                log.error("加载任务失败", e);
-//              }
-//            });
-//      } catch (Exception e) {
-//        e.printStackTrace();
-//      }
-//    });
+    executor.execute(() -> {
+      try {
+        TimeUnit.SECONDS.sleep(5);
+        MqttConnectOptions connOpts = new MqttConnectOptions();
+        connOpts.setKeepAliveInterval(60);
+        connOpts.setUserName("admin");
+        connOpts.setPassword("admin".toCharArray());
+        // 保留会话
+        connOpts.setCleanSession(true);
+        mqttClient.connect(connOpts);
+        mqttClient.subscribe("report/#", 2);
+//        加载任务
+        scheduleTaskDao.selectList(
+                new LambdaQueryWrapper<ScheduleTask>().eq(ScheduleTask::getEnable, true))
+            .forEach(task -> {
+
+              JobDetail jobDetail = JobBuilder.newJob(MyScheduleJob.class)
+                  .withIdentity(JobKey.jobKey(task.getId())).build();
+              Trigger jobTrigger = TriggerBuilder.newTrigger().startNow()
+                  .withIdentity(TriggerKey.triggerKey(task.getId()))
+                  .withSchedule(CronScheduleBuilder.cronSchedule(task.getCron())).build();
+              try {
+                scheduler.scheduleJob(jobDetail, jobTrigger);
+              } catch (SchedulerException e) {
+                log.error("加载任务失败", e);
+              }
+            });
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    });
+
+    //操作日志处理线程
+    executor.execute(() -> {
+      while (true) {
+        OperationLog operationLog = LogQueueUtil.consume();
+        operationLogDao.insert(operationLog);
+      }
+    });
   }
 
 

@@ -63,6 +63,9 @@ public class User extends BaseModel {
 
   private boolean superAdmin;
 
+  @TableField(exist = false)
+  private boolean admin;
+
   private String roleId;
 
   @TableField(exist = false)

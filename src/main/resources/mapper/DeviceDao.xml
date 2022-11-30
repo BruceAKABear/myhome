@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="pro.dengyi.myhome.dao.DeviceDao">
-  <select id="selectCustomPage" resultType="pro.dengyi.myhome.model.dto.DeviceDto">
+  <select id="selectCustomPage" resultType="pro.dengyi.myhome.model.device.dto.DeviceDto">
     SELECT
     device_device.id,
     device_device.chip_id,
@@ -18,25 +18,7 @@
     device_product.`name` AS productName,
     device_device.create_time,
     device_device.update_time,
-    (
-    IF
-    (((
-    SELECT
-    id
-    FROM
-    device_frameware
-    WHERE
-    device_frameware.product_id = device_product.id
-    AND device_frameware.version > device_device.frameware_version
-    ORDER BY
-    device_frameware.version
-    LIMIT 1
-    ) != ''
-    ),
-    TRUE,
-    FALSE
-    )
-    ) AS canUpdateFirmware
+    device_device.gateway
     FROM
     device_device
     INNER JOIN family_room ON family_room.id = device_device.room_id
@@ -54,7 +36,7 @@
       and device_product.id=#{categoryId}
     </if>
   </select>
-  <select id="listByRoomId" resultType="pro.dengyi.myhome.model.device.Device">
+  <select id="listByRoomId" resultType="pro.dengyi.myhome.model.device.dto.DeviceDto">
 
     SELECT device_device.id,
     device_device.chip_id,
@@ -66,14 +48,33 @@
     device_device.nick_name,
     device_device.floor_id,
     device_device.create_time,
-    device_device.update_time
+    device_device.update_time,
+    (
+    SELECT
+    COUNT( 1 )
+    FROM
+    device_user_favorite
+    WHERE
+    device_user_favorite.device_id = device_device.id
+    <if test="!user.superAdmin">
+      and device_user_favorite.user_id= #{user.id}
+    </if>
+    ) AS favorite
     FROM device_device
-    <if test="user.superAdmin">
+    <if test="!user.superAdmin">
       INNER JOIN perm_user_device ON device_device.id = perm_user_device.device_id
     </if>
     WHERE device_device.room_id = #{roomId}
     <if test="!user.superAdmin">
       AND perm_user_device.user_id = #{user.id}
+    </if>
+    <if test="favorite != null and favorite">
+      AND ( SELECT COUNT( 1 ) FROM device_user_favorite WHERE device_user_favorite.device_id =
+      device_device.id
+    <if test="!user.superAdmin">
+      and device_user_favorite.user_id= #{user.id}
+    </if>
+     )=#{favorite}
     </if>
 
   </select>

@@ -12,6 +12,7 @@
     device_product.type,
     device_product.create_time,
     device_product.update_time,
+    device_product.detail_page,
     ( SELECT COUNT(*) FROM device_device WHERE device_device.product_id = device_product.id ) AS
     deviceCount
     FROM

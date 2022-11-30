@@ -115,7 +115,7 @@ public class UserServiceImpl implements UserService {
                 userLambdaQueryWrapper -> userLambdaQueryWrapper.like(User::getName, name))
             .select(User::getId, User::getName, User::getAvatar, User::getEmail, User::getSex,
                 User::getHeight, User::getWeight, User::getAge, User::getCreateTime,
-                User::getUpdateTime, User::isSuperAdmin,User::getRoleId));
+                User::getUpdateTime, User::isSuperAdmin, User::getRoleId, User::getEnable));
 
     for (User user : userIPage.getRecords()) {
 
@@ -150,6 +150,9 @@ public class UserServiceImpl implements UserService {
       throw new BusinessException(1, "不能删除自己");
     }
     userDao.deleteById(id);
+    //删除设备关联
+    permUserDeviceDao.delete(
+        new LambdaQueryWrapper<PermUserDevice>().eq(PermUserDevice::getUserId, id));
   }
 
   @Transactional
@@ -157,6 +160,20 @@ public class UserServiceImpl implements UserService {
   public void updateSelectLang(Map<String, String> langParam) {
     User user = userDao.selectById(UserHolder.getUser().getId());
     user.setSelectLang(langParam.get("lang"));
+    userDao.updateById(user);
+  }
+
+  @Transactional
+  @Override
+  public void updateUserInfo(Map<String, Object> updateUserInfo) {
+    User user = userDao.selectById((String) updateUserInfo.get("id"));
+    user.setAvatar((String) updateUserInfo.get("avatar"));
+    user.setName((String) updateUserInfo.get("name"));
+    String pass = (String) updateUserInfo.get("passw");
+    if (!ObjectUtils.isEmpty(pass)) {
+      String encodePassword = PasswordUtil.encodePassword(pass);
+      user.setPassw(encodePassword);
+    }
     userDao.updateById(user);
   }
 }

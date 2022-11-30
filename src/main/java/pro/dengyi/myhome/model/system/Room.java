@@ -32,4 +32,7 @@ public class Room extends BaseModel {
   @Length(min = 2, max = 10)
   @NotBlank(message = "房间名不能为空")
   private String name;
+
+  @ApiModelProperty(value = "beacon-uuid")
+  private String beaconUuid;
 }

@@ -2,8 +2,9 @@ package pro.dengyi.myhome.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import pro.dengyi.myhome.model.device.Device;
+import pro.dengyi.myhome.model.device.dto.DeviceDto;
 import pro.dengyi.myhome.model.device.dto.RoomDeviceTree;
-import pro.dengyi.myhome.model.dto.DeviceDto;
+import pro.dengyi.myhome.model.dto.ChangeFavoriteDto;
 
 import java.util.List;
 import java.util.Map;
@@ -37,5 +38,7 @@ public interface DeviceService {
 
   List<RoomDeviceTree> roomDeviceTree(String floorId);
 
-  List<Device> listByRoomId(String roomId);
+  List<DeviceDto> listByRoomId(String roomId, Boolean favorite);
+
+  void changeFavorite(ChangeFavoriteDto favoriteDto);
 }

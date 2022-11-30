@@ -51,7 +51,6 @@ public class ProductServiceImpl implements ProductService {
       if (exists) {
         throw new BusinessException(1, "同名产品已存在，不能继续新增");
       }
-
       product.setCreateTime(LocalDateTime.now());
       product.setUpdateTime(LocalDateTime.now());
       productDao.insert(product);

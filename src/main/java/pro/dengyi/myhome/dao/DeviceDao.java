@@ -6,7 +6,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 import pro.dengyi.myhome.model.device.Device;
-import pro.dengyi.myhome.model.dto.DeviceDto;
+import pro.dengyi.myhome.model.device.dto.DeviceDto;
 import pro.dengyi.myhome.model.system.User;
 
 /**
@@ -19,5 +19,6 @@ public interface DeviceDao extends BaseMapper<Device> {
   IPage<DeviceDto> selectCustomPage(IPage<DeviceDto> page, @Param("floorId") String floorId,
       @Param("roomId") String roomId, @Param("categoryId") String categoryId);
 
-  List<Device> listByRoomId(@Param("roomId") String roomId, @Param("user") User user);
+  List<DeviceDto> listByRoomId(@Param("roomId") String roomId, @Param("user") User user,
+      @Param("favorite") Boolean favorite);
 }

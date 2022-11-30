@@ -11,6 +11,7 @@ public class DashboardDto {
 
   private Integer familyCount;
   private Integer userCount;
+  private Integer onlineUserCount;
   private Integer floorCount;
   private Integer roomCount;
   private Integer deviceCount;

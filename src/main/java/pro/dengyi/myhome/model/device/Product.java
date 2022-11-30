@@ -27,8 +27,9 @@ public class Product extends BaseModel {
   @Length(min = 1, max = 30)
   private String name;
 
-  @NotBlank(message = "code不能为空")
-  private String code;
+  @ApiModelProperty(value = "是否有详情页")
+  @NotNull(message = "是否有详情页不能为空")
+  private Boolean detailPage;
 
   @ApiModelProperty(value = "产品描述")
   @Length(max = 250)
@@ -41,7 +42,6 @@ public class Product extends BaseModel {
   @ApiModelProperty(value = "产品类型(normal.普通产品，gateway.网关产品)")
   @NotNull(message = "产品类型不能为空")
   private String type;
-
 
 
 }

@@ -40,6 +40,17 @@ the basic thing administrator need to do is add member and add devices to MyHome
 
 ## For Developers
 
+### About the devices
+
+I hava define devices in such different types:
+
+1. 可控型
+    1.1 布尔型
+    1.2 比例型
+    1.3 整数型
+2. 不可控型（测量型设备）
+
+
 ## How to contact me?
 my personal email is **dengyi@dengyi.pro** ,if you hava any better thoughts email me and let me know,maybe next 
 version of MyHome will accept it as a core future.

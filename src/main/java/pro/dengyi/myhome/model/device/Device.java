@@ -3,7 +3,6 @@ package pro.dengyi.myhome.model.device;
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import javax.validation.constraints.NotBlank;
@@ -21,7 +20,6 @@ import pro.dengyi.myhome.model.base.BaseModel;
 @EqualsAndHashCode(callSuper = true)
 @TableName("device_device")
 @ApiModel("设备实体")
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Device extends BaseModel {
 
   @ApiModelProperty(value = "芯片ID")
@@ -33,6 +31,8 @@ public class Device extends BaseModel {
 
 //  @ApiModelProperty(value = "连接密码")
 //  private String loginPassword;
+
+  private Boolean gateway;
 
   @ApiModelProperty(value = "是否在线")
   private Boolean online;
@@ -59,5 +59,8 @@ public class Device extends BaseModel {
   @NotBlank(message = "必须选择分类")
   private String roomId;
 
+
+  @TableField(exist = false)
+  private Boolean favorite;
 
 }

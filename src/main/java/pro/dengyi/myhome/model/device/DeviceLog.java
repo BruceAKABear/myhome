@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -39,4 +40,14 @@ public class DeviceLog extends BaseModel {
   private String direction;
 
 
+  public DeviceLog(String productId, String deviceId, String topicName, String payload,
+      String direction) {
+    this.productId = productId;
+    this.deviceId = deviceId;
+    this.topicName = topicName;
+    this.payload = payload;
+    this.direction = direction;
+    this.setCreateTime(LocalDateTime.now());
+    this.setUpdateTime(LocalDateTime.now());
+  }
 }

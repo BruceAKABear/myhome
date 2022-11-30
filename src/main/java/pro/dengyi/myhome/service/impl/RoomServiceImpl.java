@@ -63,9 +63,10 @@ public class RoomServiceImpl implements RoomService {
       throw new BusinessException(14002, "房间下还存在设备");
     }
     Room room = roomDao.selectById(id);
-    roomDao.deleteById(id);
+
     cache.invalidate("roomList");
     cache.invalidate("roomListByFloorId:" + room.getFloorId());
+    roomDao.deleteById(id);
   }
 
   @Override

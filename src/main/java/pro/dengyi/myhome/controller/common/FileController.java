@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
@@ -23,7 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import pro.dengyi.myhome.annotations.Permission;
 import pro.dengyi.myhome.response.DataResponse;
-import pro.dengyi.myhome.utils.IpUtil;
 
 /**
  * 文件controller
@@ -40,6 +40,9 @@ public class FileController {
   @Value("${server.port}")
   private Integer serverPort;
 
+  @Value("${system.file-prefix}")
+  private String filePrefix;
+
 
   @Permission
   @ApiOperation("上传文件")
@@ -54,9 +57,9 @@ public class FileController {
     }
     Files.copy(file.getInputStream(), path.resolve(dirPath + "/" + file.getOriginalFilename()),
         StandardCopyOption.REPLACE_EXISTING);
-    String ip = IpUtil.getLocalIp4Address().get().toString().replaceAll("/", "");
-    String fileUrl =
-        "http://" + ip + ":" + serverPort + "/file/preview?fileName=" + file.getOriginalFilename();
+    //todo
+    //String ip = IpUtil.getLocalIp4Address().get().toString().replaceAll("/", "");
+    String fileUrl = filePrefix + "/file/preview?fileName=" + file.getOriginalFilename();
     return new DataResponse<>(fileUrl);
   }
 
@@ -67,8 +70,16 @@ public class FileController {
     File file = new File(path);
     FileInputStream fileInputStream = new FileInputStream(path);
     ServletOutputStream outputStream = response.getOutputStream();
-    response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
-    response.setContentLength((int) file.length());
+    String extName = fileName.substring(fileName.indexOf('.') + 1);
+
+    String[] picExtName = new String[]{"jpg", "png", "jpeg"};
+    if (!Arrays.asList(picExtName).contains(extName)) {
+      response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
+      response.setContentLength((int) file.length());
+    } else {
+      response.setContentType("image/jpeg");
+      response.setContentLength((int) file.length());
+    }
     byte[] buffer = new byte[1024 * 8];
     int bytesRead;
     while ((bytesRead = fileInputStream.read(buffer)) != -1) {
