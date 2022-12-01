@@ -40,9 +40,9 @@ public class FloorController {
 
   @ApiOperation("楼层分页查询")
   @GetMapping("/page")
-  public DataResponse<IPage<FloorPageDto>> page(Integer pageNumber, Integer pageSize,
+  public DataResponse<IPage<FloorPageDto>> page(Integer page, Integer size,
       String floorName) {
-    IPage<FloorPageDto> pageResult = floorService.page(pageNumber, pageSize, floorName);
+    IPage<FloorPageDto> pageResult = floorService.page(page, size, floorName);
     return new DataResponse<>(pageResult);
   }
 

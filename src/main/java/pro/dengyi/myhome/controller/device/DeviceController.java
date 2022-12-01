@@ -162,6 +162,7 @@ public class DeviceController {
 
   @ApiOperation("改变收藏设备")
   @PostMapping("/changeFavorite")
+  @Permission(needValidate = false)
   public CommonResponse changeFavorite(@RequestBody ChangeFavoriteDto favoriteDto) {
     deviceService.changeFavorite(favoriteDto);
     return CommonResponse.success();

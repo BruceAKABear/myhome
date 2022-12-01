@@ -15,6 +15,7 @@ public class RoomDeviceTree {
   private String floorId;
   private String id;
   private String name;
+  private String type;
 
   private List<RoomDeviceTree> children;
 

@@ -86,6 +86,14 @@ public class UserController {
     return CommonResponse.success();
   }
 
+  @ApiOperation("更新选中后的楼层房间")
+  @PostMapping("/updateSelectRoom")
+  @Permission(needValidate = false)
+  public CommonResponse updateSelectRoom(@RequestBody Map<String, String> roomParam) {
+    userService.updateSelectRoom(roomParam);
+    return CommonResponse.success();
+  }
+
 
   @ApiOperation("新增用户")
   @PostMapping("/addOrUpdate")

@@ -271,6 +271,7 @@ public class DeviceServiceImpl implements DeviceService {
         root.setFloorId(room.getFloorId());
         root.setId(room.getId());
         root.setName(room.getName());
+        root.setType("room");
         List<Device> devices = deviceDao.selectList(
             new LambdaQueryWrapper<Device>().eq(Device::getRoomId, room.getId()));
         List<RoomDeviceTree> leaf = genLeaf(devices);
@@ -331,6 +332,7 @@ public class DeviceServiceImpl implements DeviceService {
     if (!CollectionUtils.isEmpty(devices)) {
       for (Device device : devices) {
         RoomDeviceTree tree = new RoomDeviceTree();
+        tree.setType("device");
         tree.setFloorId(device.getFloorId());
         tree.setId(device.getId());
         tree.setName(device.getNickName());

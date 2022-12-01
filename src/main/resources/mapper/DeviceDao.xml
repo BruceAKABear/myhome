@@ -56,9 +56,7 @@
     device_user_favorite
     WHERE
     device_user_favorite.device_id = device_device.id
-    <if test="!user.superAdmin">
-      and device_user_favorite.user_id= #{user.id}
-    </if>
+    and device_user_favorite.user_id= #{user.id}
     ) AS favorite
     FROM device_device
     <if test="!user.superAdmin">
@@ -71,10 +69,8 @@
     <if test="favorite != null and favorite">
       AND ( SELECT COUNT( 1 ) FROM device_user_favorite WHERE device_user_favorite.device_id =
       device_device.id
-    <if test="!user.superAdmin">
       and device_user_favorite.user_id= #{user.id}
-    </if>
-     )=#{favorite}
+      )=#{favorite}
     </if>
 
   </select>

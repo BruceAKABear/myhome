@@ -28,4 +28,6 @@ public interface UserService {
   void updateSelectLang(Map<String, String> langParam);
 
   void updateUserInfo(Map<String, Object> updateUserInfo);
+
+  void updateSelectRoom(Map<String, String> roomParam);
 }

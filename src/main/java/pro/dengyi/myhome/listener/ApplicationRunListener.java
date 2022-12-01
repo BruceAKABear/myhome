@@ -6,27 +6,17 @@ import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
-import org.quartz.CronScheduleBuilder;
-import org.quartz.JobBuilder;
-import org.quartz.JobDetail;
-import org.quartz.JobKey;
 import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.Trigger;
-import org.quartz.TriggerBuilder;
-import org.quartz.TriggerKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
-import pro.dengyi.myhome.config.MyScheduleJob;
 import pro.dengyi.myhome.dao.FamilyDao;
 import pro.dengyi.myhome.dao.OperationLogDao;
 import pro.dengyi.myhome.dao.ScheduleTaskDao;
 import pro.dengyi.myhome.dao.UserDao;
-import pro.dengyi.myhome.model.automation.ScheduleTask;
 import pro.dengyi.myhome.model.system.Family;
 import pro.dengyi.myhome.model.system.OperationLog;
 import pro.dengyi.myhome.properties.SystemProperties;
@@ -103,21 +93,21 @@ public class ApplicationRunListener implements ApplicationRunner {
         mqttClient.connect(connOpts);
         mqttClient.subscribe("report/#", 2);
 //        加载任务
-        scheduleTaskDao.selectList(
-                new LambdaQueryWrapper<ScheduleTask>().eq(ScheduleTask::getEnable, true))
-            .forEach(task -> {
-
-              JobDetail jobDetail = JobBuilder.newJob(MyScheduleJob.class)
-                  .withIdentity(JobKey.jobKey(task.getId())).build();
-              Trigger jobTrigger = TriggerBuilder.newTrigger().startNow()
-                  .withIdentity(TriggerKey.triggerKey(task.getId()))
-                  .withSchedule(CronScheduleBuilder.cronSchedule(task.getCron())).build();
-              try {
-                scheduler.scheduleJob(jobDetail, jobTrigger);
-              } catch (SchedulerException e) {
-                log.error("加载任务失败", e);
-              }
-            });
+//        scheduleTaskDao.selectList(
+//                new LambdaQueryWrapper<ScheduleTask>().eq(ScheduleTask::getEnable, true))
+//            .forEach(task -> {
+//
+//              JobDetail jobDetail = JobBuilder.newJob(MyScheduleJob.class)
+//                  .withIdentity(JobKey.jobKey(task.getId())).build();
+//              Trigger jobTrigger = TriggerBuilder.newTrigger().startNow()
+//                  .withIdentity(TriggerKey.triggerKey(task.getId()))
+//                  .withSchedule(CronScheduleBuilder.cronSchedule(task.getCron())).build();
+//              try {
+//                scheduler.scheduleJob(jobDetail, jobTrigger);
+//              } catch (SchedulerException e) {
+//                log.error("加载任务失败", e);
+//              }
+//            });
       } catch (Exception e) {
         e.printStackTrace();
       }

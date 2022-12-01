@@ -42,9 +42,9 @@ public class RoomController {
 
   @ApiOperation("分页查询")
   @GetMapping("/page")
-  public DataResponse<IPage<RoomDto>> page(Integer pageNumber, Integer pageSize, String floorId,
+  public DataResponse<IPage<RoomDto>> page(Integer page, Integer size, String floorId,
       String roomName) {
-    IPage<RoomDto> pageRes = roomService.page(pageNumber, pageSize, floorId, roomName);
+    IPage<RoomDto> pageRes = roomService.page(page, size, floorId, roomName);
     return new DataResponse<>(pageRes);
   }
 

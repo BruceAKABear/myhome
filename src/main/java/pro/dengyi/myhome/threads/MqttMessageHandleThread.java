@@ -62,7 +62,6 @@ public class MqttMessageHandleThread {
     String productId = topicArray[1];
     Product product = (Product) cache.get("product:" + productId,
         k -> productDao.selectById(productId));
-
     switch (product.getType()) {
       case "normal":
         break;
@@ -71,7 +70,6 @@ public class MqttMessageHandleThread {
       default:
         log.error("设备上报时，根据产品查出错误产品类型。topic为:{}，消息为:{}", topic, message);
     }
-
     String deviceId = topicArray[2];
     //1. 消息记录
     DeviceLog deviceLog = DeviceLog.builder().productId(productId).deviceId(deviceId)
@@ -80,14 +78,14 @@ public class MqttMessageHandleThread {
     deviceLog.setUpdateTime(LocalDateTime.now());
     deviceLogDao.insert(deviceLog);
     //2. 更新设备固件版本
-    Device device = deviceDao.selectById(deviceId);
-    device.setFramewareVersion(
-        Integer.parseInt(JSON.parseObject(message.toString()).get("version").toString()));
-    deviceDao.updateById(device);
     Frameware frameware = (Frameware) cache.get("frameware:" + product.getId(),
         key -> framewareDao.selectOne(
             new LambdaQueryWrapper<Frameware>().eq(Frameware::getProductId, product.getId())
                 .orderByDesc(Frameware::getVersion).last("limit 1")));
+    Device device = deviceDao.selectById(deviceId);
+    device.setFramewareVersion(
+        Integer.parseInt(JSON.parseObject(message.toString()).get("version").toString()));
+    deviceDao.updateById(device);
 
     if (frameware != null && frameware.getVersion() > device.getFramewareVersion()) {
 
@@ -109,7 +107,7 @@ public class MqttMessageHandleThread {
       }
 
     }
-    PushUtil.deviceStatusChangePush(deviceId,JSON.parse(message.toString()));
+    PushUtil.deviceStatusChangePush(deviceId, JSON.parse(message.toString()));
     //todo 2.条件触发
 
   }
