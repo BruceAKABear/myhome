@@ -44,6 +44,7 @@ import pro.dengyi.myhome.properties.SystemProperties;
 import pro.dengyi.myhome.service.DeviceService;
 import pro.dengyi.myhome.utils.PushUtil;
 import pro.dengyi.myhome.utils.UserHolder;
+import pro.dengyi.myhome.utils.queue.DeviceLogQueue;
 
 /**
  * @author dengyi (email:dengyi@dengyi.pro)
@@ -151,7 +152,7 @@ public class DeviceServiceImpl implements DeviceService {
         mqttClient.publish(controlTopic, message);
         DeviceLog deviceLog = new DeviceLog(device.getProductId(), deviceId, controlTopic,
             JSON.toJSONString(orderMap), "down");
-        deviceLogDao.insert(deviceLog);
+        DeviceLogQueue.publish(deviceLog);
       } catch (MqttException e) {
         log.error("发送命令失败", e);
       }
@@ -229,7 +230,6 @@ public class DeviceServiceImpl implements DeviceService {
     String cmdContent = (String) orderMap.get("cmdContent");
     //todo 严格校验
     if (device.getOnline()) {
-
       String controlTopic = "control/" + device.getProductId() + "/" + device.getId();
       MqttMessage message = new MqttMessage(cmdContent.getBytes(StandardCharsets.UTF_8));
       message.setQos(1);
@@ -237,7 +237,7 @@ public class DeviceServiceImpl implements DeviceService {
         mqttClient.publish(controlTopic, message);
         DeviceLog deviceLog = new DeviceLog(device.getProductId(), device.getId(), controlTopic,
             cmdContent, "down");
-        deviceLogDao.insert(deviceLog);
+        DeviceLogQueue.publish(deviceLog);
       } catch (MqttException e) {
         log.error("发送命令失败", e);
       }

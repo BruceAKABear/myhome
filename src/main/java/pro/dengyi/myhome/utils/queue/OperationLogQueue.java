@@ -1,4 +1,4 @@
-package pro.dengyi.myhome.utils;
+package pro.dengyi.myhome.utils.queue;
 
 import java.util.concurrent.LinkedBlockingQueue;
 import pro.dengyi.myhome.model.system.OperationLog;
@@ -9,7 +9,7 @@ import pro.dengyi.myhome.model.system.OperationLog;
  * @description：操作日志队列
  * @modified By：
  */
-public class LogQueueUtil {
+public class OperationLogQueue {
 
   static LinkedBlockingQueue<OperationLog> queue = new LinkedBlockingQueue(1000);
 

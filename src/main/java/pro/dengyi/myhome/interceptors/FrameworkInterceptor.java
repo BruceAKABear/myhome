@@ -22,7 +22,7 @@ import pro.dengyi.myhome.exception.BusinessException;
 import pro.dengyi.myhome.model.system.OperationLog;
 import pro.dengyi.myhome.model.system.User;
 import pro.dengyi.myhome.utils.IpUtil;
-import pro.dengyi.myhome.utils.LogQueueUtil;
+import pro.dengyi.myhome.utils.queue.OperationLogQueue;
 import pro.dengyi.myhome.utils.TokenUtil;
 import pro.dengyi.myhome.utils.UserHolder;
 
@@ -94,7 +94,7 @@ public class FrameworkInterceptor implements HandlerInterceptor {
       }
     }
     OperationLog operationLog = new OperationLog(uId, opName, uIP, requestURI, requestMethod);
-    LogQueueUtil.publish(operationLog);
+    OperationLogQueue.publish(operationLog);
   }
 
   /**

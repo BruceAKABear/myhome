@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.benmanes.caffeine.cache.Cache;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
@@ -15,14 +14,12 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import pro.dengyi.myhome.dao.DeviceDao;
-import pro.dengyi.myhome.dao.DeviceLogDao;
 import pro.dengyi.myhome.dao.FramewareDao;
-import pro.dengyi.myhome.dao.ProductDao;
 import pro.dengyi.myhome.model.device.Device;
 import pro.dengyi.myhome.model.device.DeviceLog;
 import pro.dengyi.myhome.model.device.Frameware;
-import pro.dengyi.myhome.model.device.Product;
 import pro.dengyi.myhome.utils.PushUtil;
+import pro.dengyi.myhome.utils.queue.DeviceLogQueue;
 
 /**
  * mqtt消息处理线程
@@ -36,10 +33,6 @@ public class MqttMessageHandleThread {
 
   @Autowired
   private DeviceDao deviceDao;
-  @Autowired
-  private ProductDao productDao;
-  @Autowired
-  private DeviceLogDao deviceLogDao;
   @Autowired
   private FramewareDao framewareDao;
   @Autowired
@@ -57,40 +50,39 @@ public class MqttMessageHandleThread {
   @Transactional
   public void handleMessage(String topic, MqttMessage message, MqttClient mqttClient) {
     log.info("收到消息:topic:{},消息内容:{}", topic, message.toString());
-    //todo mq日志
     String[] topicArray = topic.split("/");
     String productId = topicArray[1];
-    Product product = (Product) cache.get("product:" + productId,
-        k -> productDao.selectById(productId));
-    switch (product.getType()) {
-      case "normal":
-        break;
-      case "gateway":
-        break;
-      default:
-        log.error("设备上报时，根据产品查出错误产品类型。topic为:{}，消息为:{}", topic, message);
-    }
     String deviceId = topicArray[2];
-    //1. 消息记录
-    DeviceLog deviceLog = DeviceLog.builder().productId(productId).deviceId(deviceId)
-        .topicName(topic).payload(message.toString()).direction("up").build();
-    deviceLog.setCreateTime(LocalDateTime.now());
-    deviceLog.setUpdateTime(LocalDateTime.now());
-    deviceLogDao.insert(deviceLog);
-    //2. 更新设备固件版本
-    Frameware frameware = (Frameware) cache.get("frameware:" + product.getId(),
+    //设备日志
+    DeviceLog deviceLog = new DeviceLog(productId, deviceId, topic, message.toString(), "up");
+    DeviceLogQueue.publish(deviceLog);
+    //设备固件版本控制
+    deviceVersionControl(productId, deviceId, message.toString(), mqttClient);
+    //推送设备状态
+    PushUtil.deviceStatusChangePush(deviceId, JSON.parse(message.toString()));
+    //todo 2.条件触发
+
+  }
+
+  private void deviceVersionControl(String productId, String deviceId, String message,
+      MqttClient mqttClient) {
+    //判断固件版本更新
+    Frameware frameware = (Frameware) cache.get("frameware:" + productId,
         key -> framewareDao.selectOne(
-            new LambdaQueryWrapper<Frameware>().eq(Frameware::getProductId, product.getId())
+            new LambdaQueryWrapper<Frameware>().eq(Frameware::getProductId, productId)
                 .orderByDesc(Frameware::getVersion).last("limit 1")));
     Device device = deviceDao.selectById(deviceId);
-    device.setFramewareVersion(
-        Integer.parseInt(JSON.parseObject(message.toString()).get("version").toString()));
-    deviceDao.updateById(device);
-
+    Integer reportDeviceVersion = Integer.parseInt(
+        JSON.parseObject(message).get("version").toString());
+    if (!device.getFramewareVersion().equals(reportDeviceVersion)) {
+      //不相等进行更新
+      device.setFramewareVersion(reportDeviceVersion);
+      deviceDao.updateById(device);
+    }
     if (frameware != null && frameware.getVersion() > device.getFramewareVersion()) {
-
       try {
         Map<String, Object> otaParams = new HashMap<>();
+        //设备固件地址为内网地址
         //todo 这个url需要动态
         otaParams.put("url", frameware.getUrl());
         String otaTopic = "ota/" + device.getProductId() + "/" + device.getId();
@@ -100,15 +92,12 @@ public class MqttMessageHandleThread {
         mqttClient.publish(otaTopic, otaMessage);
         DeviceLog otaLog = new DeviceLog(device.getProductId(), device.getId(), otaTopic,
             JSON.toJSONString(otaParams), "down");
-        deviceLogDao.insert(otaLog);
-
+        DeviceLogQueue.publish(otaLog);
       } catch (Exception e) {
         log.error("下发固件更新时异常:", e);
       }
 
     }
-    PushUtil.deviceStatusChangePush(deviceId, JSON.parse(message.toString()));
-    //todo 2.条件触发
 
   }
 

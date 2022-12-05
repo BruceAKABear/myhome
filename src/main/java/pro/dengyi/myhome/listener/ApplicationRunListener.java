@@ -13,14 +13,17 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
+import pro.dengyi.myhome.dao.DeviceLogDao;
 import pro.dengyi.myhome.dao.FamilyDao;
 import pro.dengyi.myhome.dao.OperationLogDao;
 import pro.dengyi.myhome.dao.ScheduleTaskDao;
 import pro.dengyi.myhome.dao.UserDao;
+import pro.dengyi.myhome.model.device.DeviceLog;
 import pro.dengyi.myhome.model.system.Family;
 import pro.dengyi.myhome.model.system.OperationLog;
 import pro.dengyi.myhome.properties.SystemProperties;
-import pro.dengyi.myhome.utils.LogQueueUtil;
+import pro.dengyi.myhome.utils.queue.DeviceLogQueue;
+import pro.dengyi.myhome.utils.queue.OperationLogQueue;
 
 /**
  * 项目启动监听
@@ -51,6 +54,8 @@ public class ApplicationRunListener implements ApplicationRunner {
 
   @Autowired
   private OperationLogDao operationLogDao;
+  @Autowired
+  private DeviceLogDao deviceLogDao;
 
 
   @Transactional
@@ -116,8 +121,14 @@ public class ApplicationRunListener implements ApplicationRunner {
     //操作日志处理线程
     executor.execute(() -> {
       while (true) {
-        OperationLog operationLog = LogQueueUtil.consume();
+        OperationLog operationLog = OperationLogQueue.consume();
         operationLogDao.insert(operationLog);
+      }
+    });
+    executor.execute(() -> {
+      while (true) {
+        DeviceLog deviceLog = DeviceLogQueue.consume();
+        deviceLogDao.insert(deviceLog);
       }
     });
   }
