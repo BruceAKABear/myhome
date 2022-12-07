@@ -11,6 +11,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.ObjectUtils;
 
 /**
@@ -18,6 +19,7 @@ import org.springframework.util.ObjectUtils;
  *
  * @author dingwen 2021.04.28 11:49
  */
+@Slf4j
 public class IpUtil {
 
   public static String localIP() {
@@ -105,8 +107,8 @@ public class IpUtil {
    * @return 如果满足要求则true，否则false
    */
   private static boolean isValidInterface(NetworkInterface ni) throws SocketException {
-    return !ni.isLoopback() && !ni.isPointToPoint() && ni.isUp() && !ni.isVirtual()
-        && (ni.getName().startsWith("eth") || ni.getName().startsWith("ens"));
+    return !ni.isLoopback() && !ni.isPointToPoint() && ni.isUp() && !ni.isVirtual() && (
+        ni.getName().startsWith("eth") || ni.getName().startsWith("ens"));
   }
 
   /**
@@ -149,6 +151,18 @@ public class IpUtil {
       }
     }
     return Optional.of(inet4Addresses.get(0));
+  }
+
+
+  public static String getIp() {
+    String ip = "";
+    try {
+      ip = getLocalIp4Address().get().toString().replaceAll("/", "");
+    } catch (SocketException e) {
+      log.error("生产本机ip地址时错误，错误为:", e);
+    }
+    return ip;
+
   }
 }
 

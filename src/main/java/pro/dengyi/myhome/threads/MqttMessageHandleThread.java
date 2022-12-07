@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,7 @@ import pro.dengyi.myhome.dao.FramewareDao;
 import pro.dengyi.myhome.model.device.Device;
 import pro.dengyi.myhome.model.device.DeviceLog;
 import pro.dengyi.myhome.model.device.Frameware;
+import pro.dengyi.myhome.utils.IpUtil;
 import pro.dengyi.myhome.utils.PushUtil;
 import pro.dengyi.myhome.utils.queue.DeviceLogQueue;
 
@@ -37,6 +39,9 @@ public class MqttMessageHandleThread {
   private FramewareDao framewareDao;
   @Autowired
   private Cache cache;
+
+  @Value("${server.port}")
+  private Integer serverPort;
 
 
   /**
@@ -82,9 +87,8 @@ public class MqttMessageHandleThread {
     if (frameware != null && frameware.getVersion() > device.getFramewareVersion()) {
       try {
         Map<String, Object> otaParams = new HashMap<>();
-        //设备固件地址为内网地址
-        //todo 这个url需要动态
-        otaParams.put("url", frameware.getUrl());
+        String ip = IpUtil.getIp();
+        otaParams.put("url", "http://" + ip + ":" + serverPort + frameware.getUrl());
         String otaTopic = "ota/" + device.getProductId() + "/" + device.getId();
         MqttMessage otaMessage = new MqttMessage(
             JSON.toJSONString(otaParams).getBytes(StandardCharsets.UTF_8));

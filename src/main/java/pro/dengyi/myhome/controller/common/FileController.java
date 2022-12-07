@@ -14,6 +14,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.util.ObjectUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import pro.dengyi.myhome.annotations.Permission;
 import pro.dengyi.myhome.response.DataResponse;
+import pro.dengyi.myhome.utils.IpUtil;
 
 /**
  * 文件controller
@@ -44,6 +46,19 @@ public class FileController {
   private String filePrefix;
 
 
+  /**
+   * 用于上传文件
+   * <p>
+   * 文件归纳为：普通文件和设备固件
+   * <p>
+   * 对于设备固件来说，只能内网访问下载
+   * <p>
+   * 对于图片等文件来说则无要求
+   *
+   * @param file
+   * @return
+   * @throws IOException
+   */
   @Permission
   @ApiOperation("上传文件")
   @PostMapping("/uploadFile")
@@ -55,11 +70,24 @@ public class FileController {
     if (!Files.exists(path)) {
       Files.createDirectories(path);
     }
+    //同名存在替换
     Files.copy(file.getInputStream(), path.resolve(dirPath + "/" + file.getOriginalFilename()),
         StandardCopyOption.REPLACE_EXISTING);
-    //todo
-    //String ip = IpUtil.getLocalIp4Address().get().toString().replaceAll("/", "");
-    String fileUrl = filePrefix + "/file/preview?fileName=" + file.getOriginalFilename();
+    String fileUrl;
+    if (file.getOriginalFilename().endsWith(".bin")) {
+      //固件
+      fileUrl = "/file/preview?fileName=" + file.getOriginalFilename();
+    } else {
+      //其他文件,外网地址未配置使用内网地址
+      if (ObjectUtils.isEmpty(filePrefix)) {
+        String ip = IpUtil.getIp();
+        fileUrl = "http://" + ip + ":" + serverPort + "/file/preview?fileName="
+            + file.getOriginalFilename();
+      } else {
+        fileUrl = filePrefix + "/file/preview?fileName=" + file.getOriginalFilename();
+      }
+
+    }
     return new DataResponse<>(fileUrl);
   }
 

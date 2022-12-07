@@ -25,14 +25,14 @@ public class CommonController {
   @ApiOperation("请求主页")
   @GetMapping
   public DataResponse<String> index() {
-    return new DataResponse<>("this is no any functions to visit this api");
+    return new DataResponse<>("nothing here!");
   }
 
   @ApiOperation("请求异常")
   @GetMapping("/error")
   public DataResponse<String> error(HttpServletRequest request) {
     log.error("错误请求，信息为：{}", JSON.toJSONString(request.getRequestURI()));
-    return new DataResponse<>("you may meet some error,you need to concat the system manager");
+    return new DataResponse<>("you may meet some error,concat the system manager if you want!");
   }
 
 }
