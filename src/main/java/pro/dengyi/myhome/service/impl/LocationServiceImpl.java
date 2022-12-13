@@ -27,10 +27,12 @@ public class LocationServiceImpl implements LocationService {
     if (!ObjectUtils.isEmpty(beaconUuid)) {
       Room room = roomDao.selectOne(
           new LambdaQueryWrapper<Room>().eq(Room::getBeaconUuid, beaconUuid).last("limit 1"));
-      String floorId = room.getFloorId();
-      String roomId = room.getId();
-      //推送
-      PushUtil.positionPush(UserHolder.getUser().getId(), floorId, roomId);
+      if (room != null) {
+        String floorId = room.getFloorId();
+        String roomId = room.getId();
+        //推送
+        PushUtil.positionPush(UserHolder.getUser().getId(), floorId, roomId);
+      }
     }
   }
 }

@@ -153,6 +153,7 @@ public class DeviceController {
     return CommonResponse.success();
   }
 
+  @Deprecated
   @ApiOperation("单个设备固件升级")
   @PostMapping("/singleDeviceFirmwareUpdate")
   public CommonResponse singleDeviceFirmwareUpdate(@RequestBody DeviceDto deviceDto) {

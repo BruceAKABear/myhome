@@ -1,6 +1,7 @@
 package pro.dengyi.myhome.listener;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
@@ -21,9 +22,12 @@ import pro.dengyi.myhome.dao.UserDao;
 import pro.dengyi.myhome.model.device.DeviceLog;
 import pro.dengyi.myhome.model.system.Family;
 import pro.dengyi.myhome.model.system.OperationLog;
+import pro.dengyi.myhome.model.system.User;
 import pro.dengyi.myhome.properties.SystemProperties;
+import pro.dengyi.myhome.utils.UserHolder;
 import pro.dengyi.myhome.utils.queue.DeviceLogQueue;
 import pro.dengyi.myhome.utils.queue.OperationLogQueue;
+import pro.dengyi.myhome.utils.queue.RoomSelectQueue;
 
 /**
  * 项目启动监听
@@ -125,10 +129,21 @@ public class ApplicationRunListener implements ApplicationRunner {
         operationLogDao.insert(operationLog);
       }
     });
+    //设备日志队列
     executor.execute(() -> {
       while (true) {
         DeviceLog deviceLog = DeviceLogQueue.consume();
         deviceLogDao.insert(deviceLog);
+      }
+    });
+    //用户选择上报
+    executor.execute(() -> {
+      while (true) {
+        Map<String, String> params = RoomSelectQueue.consume();
+        User user = userDao.selectById(UserHolder.getUser().getId());
+        user.setSelectedFloorId(params.get("floorId"));
+        user.setSelectedRoomId(params.get("roomId"));
+        userDao.updateById(user);
       }
     });
   }

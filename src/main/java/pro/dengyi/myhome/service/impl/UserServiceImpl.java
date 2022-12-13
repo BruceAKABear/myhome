@@ -22,6 +22,7 @@ import pro.dengyi.myhome.service.UserService;
 import pro.dengyi.myhome.utils.PasswordUtil;
 import pro.dengyi.myhome.utils.TokenUtil;
 import pro.dengyi.myhome.utils.UserHolder;
+import pro.dengyi.myhome.utils.queue.RoomSelectQueue;
 
 /**
  * @author dengyi (email:dengyi@dengyi.pro)
@@ -177,13 +178,8 @@ public class UserServiceImpl implements UserService {
     userDao.updateById(user);
   }
 
-
-  @Transactional
   @Override
   public void updateSelectRoom(Map<String, String> roomParam) {
-    User user = userDao.selectById(UserHolder.getUser().getId());
-    user.setSelectedFloorId(roomParam.get("floorId"));
-    user.setSelectedRoomId(roomParam.get("roomId"));
-    userDao.updateById(user);
+    RoomSelectQueue.publish(roomParam);
   }
 }
