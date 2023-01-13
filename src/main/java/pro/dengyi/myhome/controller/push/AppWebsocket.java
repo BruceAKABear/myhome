@@ -81,7 +81,10 @@ public class AppWebsocket {
   public void onMessage(String message, Session session) {
     log.info("接收到移动端发送的消息,发送人为:{},消息内容为:{}", this.user.getId(), message);
     if (StringUtils.isNotBlank(message)) {
-      //todo 暂时服务端不会处理移动端发送来的消息
+      if (message.equals("beat")) {
+        log.info("接收到手机端心跳，用户为:{}", user);
+      }
+
     }
   }
 

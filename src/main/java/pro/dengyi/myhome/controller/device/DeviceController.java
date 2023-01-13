@@ -115,6 +115,14 @@ public class DeviceController {
     return CommonResponse.success();
   }
 
+  @ApiOperation("查询地图模式所有灯开关程度")
+  @GetMapping("/mapModeLamps")
+  @Permission(needValidate = false)
+  public DataResponse<List<Map<String, Object>>> mapModeLamps(@RequestParam String floorId) {
+    List<Map<String, Object>> res = deviceService.mapModeLamps(floorId);
+    return new DataResponse<>(res);
+  }
+
 
   @Permission(needLogIn = false, needValidate = false)
   @ApiOperation("设备登录")

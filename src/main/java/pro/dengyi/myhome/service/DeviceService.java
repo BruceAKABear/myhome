@@ -41,4 +41,6 @@ public interface DeviceService {
   List<DeviceDto> listByRoomId(String roomId, Boolean favorite);
 
   void changeFavorite(ChangeFavoriteDto favoriteDto);
+
+  List<Map<String, Object>> mapModeLamps(String floorId);
 }

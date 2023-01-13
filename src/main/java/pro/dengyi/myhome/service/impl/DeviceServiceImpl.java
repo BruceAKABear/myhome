@@ -8,6 +8,7 @@ import com.github.benmanes.caffeine.cache.Cache;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
@@ -171,12 +172,13 @@ public class DeviceServiceImpl implements DeviceService {
     }
     String eventType = (String) params.get("event");
     Device device = deviceDao.selectById(clientId);
-    if ("client.connected".equals(eventType)) {
+    if ("client.connected".equals(eventType) && !device.getOnline()) {
+      //之前是离线现在连接，才发送上线
       device.setOnline(true);
-      PushUtil.onOffLinePush(device.getId(), true);
+      PushUtil.onOffLinePush(device.getId(), device.getNickName(), true);
     } else {
       device.setOnline(false);
-      PushUtil.onOffLinePush(device.getId(), false);
+      PushUtil.onOffLinePush(device.getId(), device.getNickName(), false);
     }
     device.setUpdateTime(LocalDateTime.now());
     deviceDao.updateById(device);
@@ -325,6 +327,33 @@ public class DeviceServiceImpl implements DeviceService {
 //    cache.invalidate("listByRoomId:" + UserHolder.getUser().getId() + ":" + device.getRoomId() + ":"
 //        + favoriteDto.getFavorite());
 
+  }
+
+  @Override
+  public List<Map<String, Object>> mapModeLamps(String floorId) {
+    List<Map<String, Object>> res = new ArrayList<>();
+    List<Room> rooms = roomDao.selectList(
+        new LambdaQueryWrapper<Room>().eq(Room::getFloorId, floorId));
+
+    if (!CollectionUtils.isEmpty(rooms)) {
+      for (Room room : rooms) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("roomId", room.getId());
+        Device device = deviceDao.selectOne(
+            new LambdaQueryWrapper<Device>().eq(Device::getRoomId, room.getId())
+                .in(Device::getProductId, "1611639914035765249", "1592058799966867458",
+                    "1611640160472096770").orderByDesc(Device::getUpdateTime).last("limit 1"));
+        if (device != null) {
+          map.put("deviceId", device.getId());
+          DeviceLog deviceLog = deviceLogDao.selectOne(
+              new LambdaQueryWrapper<DeviceLog>().eq(DeviceLog::getDeviceId, device.getId())
+                  .orderByDesc(DeviceLog::getCreateTime).last("limit 1"));
+          map.put("currentStatus", deviceLog == null ? null : deviceLog.getPayload());
+        }
+        res.add(map);
+      }
+    }
+    return res;
   }
 
   private List<RoomDeviceTree> genLeaf(List<Device> devices) {

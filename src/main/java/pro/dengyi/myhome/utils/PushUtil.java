@@ -23,10 +23,11 @@ public class PushUtil {
    * @param deviceId      设备id
    * @param currentStatus 当前设备状态
    */
-  public static void deviceStatusChangePush(String deviceId, Object currentStatus) {
+  public static void deviceStatusChangePush(String deviceId, String roomId, Object currentStatus) {
     Map<String, Object> pushParams = new HashMap<>(3);
     pushParams.put("type", "deviceStatusChange");
     pushParams.put("deviceId", deviceId);
+    pushParams.put("roomId", roomId);
     pushParams.put("currentStatus", currentStatus);
     //推送至前端
     AppWebsocket.sendMessage2Device(JSON.toJSONString(pushParams));
@@ -40,10 +41,11 @@ public class PushUtil {
    * @param deviceId  设备id
    * @param onOffLine 在离线装填
    */
-  public static void onOffLinePush(String deviceId, boolean onOffLine) {
+  public static void onOffLinePush(String deviceId, String deviceName, boolean onOffLine) {
     Map<String, Object> pushParams = new HashMap<>(3);
     pushParams.put("type", "deviceOnOffLine");
     pushParams.put("deviceId", deviceId);
+    pushParams.put("deviceName", deviceName);
     pushParams.put("onOff", onOffLine);
     //推送至前端
     AppWebsocket.sendMessage2Device(JSON.toJSONString(pushParams));

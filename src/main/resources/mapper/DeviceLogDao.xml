@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="pro.dengyi.myhome.dao.DeviceLogDao">
+  <select id="logByCondition"
+          resultType="pro.dengyi.myhome.model.device.dto.LogByConditionDto">
+
+    SELECT device_log.payload     as log,
+           device_log.create_time as dateTime
+    FROM device_log
+    WHERE device_log.device_id = #{deviceId}
+      AND device_log.direction = 'up'
+      AND device_log.create_time &gt;= #{startDateTime}
+      AND device_log.create_time &lt;= #{endDateTime}
+    GROUP BY
+      date_format( device_log.create_time, '%Y-%m-%d %H:%i' )
+    ORDER BY
+      device_log.create_time
+  </select>
+</mapper>

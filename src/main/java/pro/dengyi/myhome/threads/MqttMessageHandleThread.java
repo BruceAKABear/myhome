@@ -58,13 +58,15 @@ public class MqttMessageHandleThread {
     String[] topicArray = topic.split("/");
     String productId = topicArray[1];
     String deviceId = topicArray[2];
+
+    Device device = (Device) cache.get("device:" + deviceId, pa -> deviceDao.selectById(deviceId));
     //设备日志
     DeviceLog deviceLog = new DeviceLog(productId, deviceId, topic, message.toString(), "up");
     DeviceLogQueue.publish(deviceLog);
     //设备固件版本控制
     deviceVersionControl(productId, deviceId, message.toString(), mqttClient);
     //推送设备状态
-    PushUtil.deviceStatusChangePush(deviceId, JSON.parse(message.toString()));
+    PushUtil.deviceStatusChangePush(deviceId, device.getRoomId(), JSON.parse(message.toString()));
     //todo 2.条件触发
 
   }
