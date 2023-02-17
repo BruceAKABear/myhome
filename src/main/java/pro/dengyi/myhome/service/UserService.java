@@ -30,4 +30,6 @@ public interface UserService {
   void updateUserInfo(Map<String, Object> updateUserInfo);
 
   void updateSelectRoom(Map<String, String> roomParam);
+
+  void updateDisplayMode(Map<String, String> modeParam);
 }

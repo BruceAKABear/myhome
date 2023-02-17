@@ -182,4 +182,13 @@ public class UserServiceImpl implements UserService {
   public void updateSelectRoom(Map<String, String> roomParam) {
     RoomSelectQueue.publish(roomParam);
   }
+
+
+  @Transactional
+  @Override
+  public void updateDisplayMode(Map<String, String> modeParam) {
+    User user = userDao.selectById(UserHolder.getUser().getId());
+    user.setDisplayMode(modeParam.get("displayMode"));
+    userDao.updateById(user);
+  }
 }

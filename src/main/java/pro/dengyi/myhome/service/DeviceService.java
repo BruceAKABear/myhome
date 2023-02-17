@@ -1,8 +1,11 @@
 package pro.dengyi.myhome.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import java.time.LocalDateTime;
 import pro.dengyi.myhome.model.device.Device;
+import pro.dengyi.myhome.model.device.dto.DeviceControlLogDto;
 import pro.dengyi.myhome.model.device.dto.DeviceDto;
+import pro.dengyi.myhome.model.device.dto.DeviceForScene;
 import pro.dengyi.myhome.model.device.dto.RoomDeviceTree;
 import pro.dengyi.myhome.model.dto.ChangeFavoriteDto;
 
@@ -43,4 +46,9 @@ public interface DeviceService {
   void changeFavorite(ChangeFavoriteDto favoriteDto);
 
   List<Map<String, Object>> mapModeLamps(String floorId);
+
+  List<DeviceForScene> allDeviceList(String floorId, String roomId);
+
+  List<DeviceControlLogDto> deviceControlLog(String userId, String roomId, String deviceId,
+      LocalDateTime startTime, LocalDateTime endTime, Integer page, Integer size);
 }

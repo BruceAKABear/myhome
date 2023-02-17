@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,7 +36,9 @@ import pro.dengyi.myhome.model.device.DeviceUserFavorite;
 import pro.dengyi.myhome.model.device.Frameware;
 import pro.dengyi.myhome.model.device.Product;
 import pro.dengyi.myhome.model.device.ProductField;
+import pro.dengyi.myhome.model.device.dto.DeviceControlLogDto;
 import pro.dengyi.myhome.model.device.dto.DeviceDto;
+import pro.dengyi.myhome.model.device.dto.DeviceForScene;
 import pro.dengyi.myhome.model.device.dto.OtaParam;
 import pro.dengyi.myhome.model.device.dto.RoomDeviceTree;
 import pro.dengyi.myhome.model.dto.ChangeFavoriteDto;
@@ -172,13 +175,14 @@ public class DeviceServiceImpl implements DeviceService {
     }
     String eventType = (String) params.get("event");
     Device device = deviceDao.selectById(clientId);
-    if ("client.connected".equals(eventType) && !device.getOnline()) {
-      //之前是离线现在连接，才发送上线
+    if ("client.connected".equals(eventType)) {
       device.setOnline(true);
-      PushUtil.onOffLinePush(device.getId(), device.getNickName(), true);
     } else {
       device.setOnline(false);
-      PushUtil.onOffLinePush(device.getId(), device.getNickName(), false);
+
+      if (UserHolder.getUser().isSuperAdmin()) {
+        PushUtil.onOffLinePush(device.getId(), device.getNickName(), false);
+      }
     }
     device.setUpdateTime(LocalDateTime.now());
     deviceDao.updateById(device);
@@ -238,7 +242,7 @@ public class DeviceServiceImpl implements DeviceService {
       try {
         mqttClient.publish(controlTopic, message);
         DeviceLog deviceLog = new DeviceLog(device.getProductId(), device.getId(), controlTopic,
-            cmdContent, "down");
+            cmdContent, "down", "man", UserHolder.getUser().getId());
         DeviceLogQueue.publish(deviceLog);
       } catch (MqttException e) {
         log.error("发送命令失败", e);
@@ -354,6 +358,50 @@ public class DeviceServiceImpl implements DeviceService {
       }
     }
     return res;
+  }
+
+  @Override
+  public List<DeviceForScene> allDeviceList(String floorId, String roomId) {
+    LambdaQueryWrapper<Device> qr = new LambdaQueryWrapper<>();
+    if (!ObjectUtils.isEmpty(floorId)) {
+      qr.eq(Device::getFloorId, floorId);
+    }
+    if (!ObjectUtils.isEmpty(roomId)) {
+      qr.eq(Device::getRoomId, roomId);
+    }
+    List<Device> devices = deviceDao.selectList(qr);
+    List<DeviceForScene> forSceneList = new ArrayList<>();
+
+    if (!CollectionUtils.isEmpty(devices)) {
+      for (Device device : devices) {
+        DeviceForScene singleObj = new DeviceForScene();
+        BeanUtils.copyProperties(device, singleObj);
+
+        List<ProductField> productFields = (List<ProductField>) cache.get(
+            "productFields::" + device.getProductId(), key -> productFieldDao.selectList(
+                new LambdaQueryWrapper<ProductField>().eq(ProductField::getProductId,
+                    device.getProductId())));
+        singleObj.setProductFields(productFields);
+        Room room = (Room) cache.get("room::" + device.getRoomId(),
+            key -> roomDao.selectById(device.getRoomId()));
+        singleObj.setRoom(room);
+        forSceneList.add(singleObj);
+      }
+    }
+
+    return forSceneList;
+  }
+
+  @Override
+  public List<DeviceControlLogDto> deviceControlLog(String userId, String roomId, String deviceId,
+      LocalDateTime startTime, LocalDateTime endTime, Integer page, Integer size) {
+    if (page == null) {
+      page = 1;
+    }
+    if (size == null) {
+      size = 20;
+    }
+    return deviceDao.deviceControlLog(userId, roomId, deviceId, startTime, endTime, page, size);
   }
 
   private List<RoomDeviceTree> genLeaf(List<Device> devices) {

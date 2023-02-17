@@ -74,4 +74,42 @@
     </if>
 
   </select>
+  <select id="deviceControlLog"
+          resultType="pro.dengyi.myhome.model.device.dto.DeviceControlLogDto">
+
+    SELECT device_log.create_time AS opTime,
+    system_user.id AS userId,
+    system_user.`name` AS userName,
+    device_device.id AS deviceId,
+    device_device.nick_name AS deviceName,
+    family_floor.id AS floorId,
+    family_floor.`name` AS floorName,
+    family_room.id AS roomId,
+    family_room.`name` AS roomName,
+    device_log.payload AS controlPayload
+    FROM device_log
+    INNER JOIN system_user ON device_log.user_id = system_user.id
+    INNER JOIN device_device ON device_device.id = device_log.device_id
+    INNER JOIN family_floor ON device_device.floor_id = family_floor.id
+    INNER JOIN family_room ON device_device.room_id = family_room.id
+    WHERE device_log.order_from = 'man'
+    AND device_log.direction = 'down'
+    <if test="userId != null and userId != ''">
+      and system_user.id=#{userId}
+    </if>
+    <if test="roomId != null and roomId != ''">
+      and family_room.id=#{roomId}
+    </if>
+    <if test="deviceId != null and deviceId != ''">
+      and device_device.id=#{deviceId}
+    </if>
+    <if test="startTime !=null ">
+      and device_log.create_time &gt;= #{startTime}
+    </if>
+    <if test="endTime !=null">
+      and device_log.create_time &lt;= #{endTime}
+    </if>
+    ORDER BY device_log.create_time DESC
+    limit 50
+  </select>
 </mapper>

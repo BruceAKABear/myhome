@@ -4,12 +4,14 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.github.benmanes.caffeine.cache.Cache;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.validation.constraints.NotBlank;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 import org.springframework.validation.annotation.Validated;
@@ -23,7 +25,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pro.dengyi.myhome.annotations.Permission;
 import pro.dengyi.myhome.model.device.Device;
+import pro.dengyi.myhome.model.device.dto.DeviceControlLogDto;
 import pro.dengyi.myhome.model.device.dto.DeviceDto;
+import pro.dengyi.myhome.model.device.dto.DeviceForScene;
 import pro.dengyi.myhome.model.device.dto.DeviceLoginDto;
 import pro.dengyi.myhome.model.device.dto.RoomDeviceTree;
 import pro.dengyi.myhome.model.dto.ChangeFavoriteDto;
@@ -69,6 +73,14 @@ public class DeviceController {
     return new DataResponse<>(deviceList);
   }
 
+
+  @ApiOperation("查询所有设备(包含产品信息、产品字段信息等，供场景使用)")
+  @GetMapping("/allDeviceList")
+  public DataResponse<List<DeviceForScene>> allDeviceList(String floorId, String roomId) {
+    List<DeviceForScene> deviceList = deviceService.allDeviceList(floorId, roomId);
+    return new DataResponse<>(deviceList);
+  }
+
   @ApiOperation("根据房间id查询所有可控设备列表")
   @GetMapping("/listByRoomId")
   @Permission(needValidate = false)
@@ -89,6 +101,13 @@ public class DeviceController {
   @ApiOperation("添加或修改设备")
   @PostMapping("/addUpdate")
   public CommonResponse addUpdate(@RequestBody @Validated Device device) {
+    deviceService.addUpdate(device);
+    return CommonResponse.success();
+  }
+
+  @ApiOperation("扫描添加或修改设备")
+  @PostMapping("/scanAddUpdate")
+  public CommonResponse scanAddUpdate(@RequestBody @Validated Device device) {
     deviceService.addUpdate(device);
     return CommonResponse.success();
   }
@@ -176,5 +195,19 @@ public class DeviceController {
     deviceService.changeFavorite(favoriteDto);
     return CommonResponse.success();
   }
+
+
+  @ApiOperation("设备操作日志")
+  @GetMapping("/deviceControlLog")
+  @Permission(needValidate = false)
+  public DataResponse<List<DeviceControlLogDto>> deviceControlLog(String userId, String roomId,
+      String deviceId, @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startTime,
+      @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endTime, Integer page,
+      Integer size) {
+    List<DeviceControlLogDto> dtos = deviceService.deviceControlLog(userId, roomId, deviceId,
+        startTime, endTime, page, size);
+    return new DataResponse<>(dtos);
+  }
+
 
 }

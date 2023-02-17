@@ -94,6 +94,14 @@ public class UserController {
     return CommonResponse.success();
   }
 
+  @ApiOperation("上报显示模式")
+  @PostMapping("/updateDisplayMode")
+  @Permission(needValidate = false)
+  public CommonResponse updateDisplayMode(@RequestBody Map<String, String> modeParam) {
+    userService.updateDisplayMode(modeParam);
+    return CommonResponse.success();
+  }
+
 
   @ApiOperation("新增用户")
   @PostMapping("/addOrUpdate")

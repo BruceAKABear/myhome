@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.benmanes.caffeine.cache.Cache;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.MqttClient;
@@ -16,11 +17,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import pro.dengyi.myhome.dao.DeviceDao;
 import pro.dengyi.myhome.dao.FramewareDao;
+import pro.dengyi.myhome.dao.SceneConditionDao;
+import pro.dengyi.myhome.model.automation.SceneCondition;
 import pro.dengyi.myhome.model.device.Device;
 import pro.dengyi.myhome.model.device.DeviceLog;
 import pro.dengyi.myhome.model.device.Frameware;
 import pro.dengyi.myhome.utils.IpUtil;
 import pro.dengyi.myhome.utils.PushUtil;
+import pro.dengyi.myhome.utils.SceneEngine;
 import pro.dengyi.myhome.utils.queue.DeviceLogQueue;
 
 /**
@@ -42,6 +46,10 @@ public class MqttMessageHandleThread {
 
   @Value("${server.port}")
   private Integer serverPort;
+  @Autowired
+  private SceneEngine sceneEngine;
+  @Autowired
+  private SceneConditionDao sceneConditionDao;
 
 
   /**
@@ -60,14 +68,19 @@ public class MqttMessageHandleThread {
     String deviceId = topicArray[2];
 
     Device device = (Device) cache.get("device:" + deviceId, pa -> deviceDao.selectById(deviceId));
-    //设备日志
+    //设备日志,队列进行异步存储
     DeviceLog deviceLog = new DeviceLog(productId, deviceId, topic, message.toString(), "up");
     DeviceLogQueue.publish(deviceLog);
+    //维持最新状态
+    cache.put("latestDeviceStatus:" + deviceId, message.toString());
     //设备固件版本控制
     deviceVersionControl(productId, deviceId, message.toString(), mqttClient);
     //推送设备状态
     PushUtil.deviceStatusChangePush(deviceId, device.getRoomId(), JSON.parse(message.toString()));
-    //todo 2.条件触发
+    //启用的条件触发
+    List<SceneCondition> conditions = (List<SceneCondition>) cache.get("condition",
+        k -> sceneConditionDao.selectList(new LambdaQueryWrapper<>()));
+    sceneEngine.trigger(deviceId, conditions, mqttClient);
 
   }
 

@@ -1,5 +1,6 @@
 package pro.dengyi.myhome.model.system;
 
+import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
@@ -71,6 +72,10 @@ public class User extends BaseModel {
   @TableField(exist = false)
   @NotNull(message = "可控设备不能为空")
   private List<String> deviceIds;
+
+
+  @TableField(updateStrategy = FieldStrategy.IGNORED)
+  private String displayMode;
 
 
 }

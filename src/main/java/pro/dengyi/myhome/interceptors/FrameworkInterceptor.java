@@ -22,9 +22,9 @@ import pro.dengyi.myhome.exception.BusinessException;
 import pro.dengyi.myhome.model.system.OperationLog;
 import pro.dengyi.myhome.model.system.User;
 import pro.dengyi.myhome.utils.IpUtil;
-import pro.dengyi.myhome.utils.queue.OperationLogQueue;
 import pro.dengyi.myhome.utils.TokenUtil;
 import pro.dengyi.myhome.utils.UserHolder;
+import pro.dengyi.myhome.utils.queue.OperationLogQueue;
 
 /**
  * @author ：dengyi(A.K.A Bear)
@@ -59,6 +59,9 @@ public class FrameworkInterceptor implements HandlerInterceptor {
     //通过状态
     boolean throughFlag = true;
     if (handler instanceof HandlerMethod) {
+
+      long startTime = System.currentTimeMillis();
+
       //封装语言选项
       handleLanguage(request);
       String token = request.getHeader("token");
@@ -158,6 +161,9 @@ public class FrameworkInterceptor implements HandlerInterceptor {
   @Override
   public void afterCompletion(HttpServletRequest request, HttpServletResponse response,
       Object handler, Exception ex) throws Exception {
+    long endTime = System.currentTimeMillis();
+    //todo 超时预警
+
     LocaleContextHolder.resetLocaleContext();
     UserHolder.remove();
   }

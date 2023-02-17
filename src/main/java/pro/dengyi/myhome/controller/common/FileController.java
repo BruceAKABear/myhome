@@ -29,6 +29,10 @@ import pro.dengyi.myhome.utils.IpUtil;
 
 /**
  * 文件controller
+ * <p>
+ * 提供对文件的上传、预览、下载、删除
+ * <p>
+ * 文件未使用任何文件系统，均存储在本地磁盘中，简化对外界环境的依赖
  *
  * @author dengyi (email:dengyi@dengyi.pro)
  * @date 2022-06-30
