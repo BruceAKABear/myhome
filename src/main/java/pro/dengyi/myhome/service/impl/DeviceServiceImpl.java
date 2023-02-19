@@ -288,8 +288,12 @@ public class DeviceServiceImpl implements DeviceService {
     return roomDeviceTreeList;
   }
 
+  @Autowired
+  private Cache caffeineCache;
+
   @Override
   public List<DeviceDto> listByRoomId(String roomId, Boolean favorite) {
+
     //todo 缓存
     List<DeviceDto> deviceDtos = deviceDao.listByRoomId(roomId, UserHolder.getUser(), favorite);
 

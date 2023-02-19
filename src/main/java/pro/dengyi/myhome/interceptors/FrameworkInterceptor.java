@@ -79,6 +79,11 @@ public class FrameworkInterceptor implements HandlerInterceptor {
 
   private void handleOpLog(Method method, String token, HttpServletRequest request) {
     ApiOperation apiOperation = method.getAnnotation(ApiOperation.class);
+    //如果没有注解那就不进行日志记录
+    if (apiOperation == null) {
+      return;
+    }
+
     String requestURI = request.getRequestURI();
     String requestMethod = request.getMethod();
     String opName = null;

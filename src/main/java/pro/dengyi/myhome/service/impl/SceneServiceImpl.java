@@ -43,23 +43,29 @@ public class SceneServiceImpl implements SceneService {
       scene.setCreateTime(LocalDateTime.now());
       scene.setUpdateTime(LocalDateTime.now());
       sceneDao.insert(scene);
-      List<SceneAction> actions = scene.getActions();
-      for (SceneAction action : actions) {
-        action.setSceneId(scene.getId());
-        action.setCreateTime(LocalDateTime.now());
-        action.setUpdateTime(LocalDateTime.now());
-        sceneActionDao.insert(action);
-      }
-      List<SceneCondition> conditions = scene.getConditions();
-      for (SceneCondition condition : conditions) {
-        condition.setSceneId(scene.getId());
-        condition.setCreateTime(LocalDateTime.now());
-        condition.setUpdateTime(LocalDateTime.now());
-        sceneConditionDao.insert(condition);
-      }
     } else {
       //修改
-
+      sceneDao.updateById(scene);
+    }
+    //全量删除后全量新增
+    sceneConditionDao.delete(
+        new LambdaQueryWrapper<SceneCondition>().eq(SceneCondition::getSceneId, scene.getId()));
+    sceneActionDao.delete(
+        new LambdaQueryWrapper<SceneAction>().eq(SceneAction::getSceneId, scene.getId()));
+    //全量新增
+    List<SceneAction> actions = scene.getActions();
+    for (SceneAction action : actions) {
+      action.setSceneId(scene.getId());
+      action.setCreateTime(LocalDateTime.now());
+      action.setUpdateTime(LocalDateTime.now());
+      sceneActionDao.insert(action);
+    }
+    List<SceneCondition> conditions = scene.getConditions();
+    for (SceneCondition condition : conditions) {
+      condition.setSceneId(scene.getId());
+      condition.setCreateTime(LocalDateTime.now());
+      condition.setUpdateTime(LocalDateTime.now());
+      sceneConditionDao.insert(condition);
     }
 
   }
@@ -80,6 +86,7 @@ public class SceneServiceImpl implements SceneService {
     return sceneDao.selectList(new LambdaQueryWrapper<>());
   }
 
+  @Transactional
   @Override
   public void changeEnable(Map<String, Object> params) {
     String sceneId = (String) params.get("sceneId");

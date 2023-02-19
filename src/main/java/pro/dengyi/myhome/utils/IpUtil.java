@@ -164,5 +164,37 @@ public class IpUtil {
     return ip;
 
   }
+
+
+  /**
+   * 获取本地mac地址 注意：物理地址是48位，别和ipv6搞错了
+   *
+   * @param inetAddress
+   * @return 本地mac地址
+   */
+  private static String getLocalMac(InetAddress inetAddress) {
+    try {
+      //获取网卡，获取地址
+      byte[] mac = NetworkInterface.getByInetAddress(inetAddress).getHardwareAddress();
+      StringBuffer sb = new StringBuffer();
+      for (int i = 0; i < mac.length; i++) {
+        if (i != 0) {
+          sb.append("-");
+        }
+        //字节转换为整数
+        int temp = mac[i] & 0xff;
+        String str = Integer.toHexString(temp);
+        if (str.length() == 1) {
+          sb.append("0" + str);
+        } else {
+          sb.append(str);
+        }
+      }
+      return sb.toString();
+    } catch (Exception exception) {
+    }
+    return null;
+  }
+
 }
 

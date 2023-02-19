@@ -36,7 +36,7 @@ public class SceneController {
   private SceneService sceneService;
 
 
-  @ApiOperation("新增或修改")
+  @ApiOperation("新增或修改场景")
   @PostMapping("/addOrUpdate")
   public CommonResponse addOrUpdate(@RequestBody Scene scene) {
     sceneService.addOrUpdate(scene);
@@ -44,7 +44,7 @@ public class SceneController {
 
   }
 
-  @ApiOperation("启停")
+  @ApiOperation("场景启停")
   @PostMapping("/changeEnable")
   public CommonResponse changeEnable(@RequestBody Map<String, Object> params) {
     sceneService.changeEnable(params);
@@ -52,7 +52,7 @@ public class SceneController {
 
   }
 
-  @ApiOperation("删除")
+  @ApiOperation("删除场景")
   @DeleteMapping("/delete/{id}")
   public CommonResponse delete(@PathVariable @NotBlank(message = "id不能为空") String id) {
     sceneService.delete(id);

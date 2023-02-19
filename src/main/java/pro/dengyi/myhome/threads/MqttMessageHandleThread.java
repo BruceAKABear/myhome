@@ -55,7 +55,7 @@ public class MqttMessageHandleThread {
   /**
    * the basic message for device upload must like this: {productId:xxxxxx,deviceId:xxxxx,...}
    *
-   * @param topic
+   * @param topic   mqtt topic must be like this: control/productId/deviceId(device id use chip id for unique)
    * @param message
    * @param mqttClient
    */
