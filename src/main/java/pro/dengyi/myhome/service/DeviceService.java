@@ -6,6 +6,7 @@ import pro.dengyi.myhome.model.device.Device;
 import pro.dengyi.myhome.model.device.dto.DeviceControlLogDto;
 import pro.dengyi.myhome.model.device.dto.DeviceDto;
 import pro.dengyi.myhome.model.device.dto.DeviceForScene;
+import pro.dengyi.myhome.model.device.dto.FavoriteDevicesModel;
 import pro.dengyi.myhome.model.device.dto.RoomDeviceTree;
 import pro.dengyi.myhome.model.dto.ChangeFavoriteDto;
 
@@ -51,4 +52,8 @@ public interface DeviceService {
 
   List<DeviceControlLogDto> deviceControlLog(String userId, String roomId, String deviceId,
       LocalDateTime startTime, LocalDateTime endTime, Integer page, Integer size);
+
+  List<FavoriteDevicesModel> favoriteDevices();
+
+  void oneButton(Map<String, Object> orderMap);
 }

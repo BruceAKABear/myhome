@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.List;
+import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -25,6 +26,9 @@ import pro.dengyi.myhome.model.base.BaseModel;
 @ApiModel("角色")
 public class Role extends BaseModel {
 
+  @ApiModelProperty("是否可以删除")
+  private Boolean canDel;
+
   @ApiModelProperty("角色名")
   private String name;
 
@@ -33,6 +37,11 @@ public class Role extends BaseModel {
 
   @TableField(exist = false)
   private List<Object> permIds;
+
+
+  @TableField(exist = false)
+  @NotNull(message = "可控设备不能为空")
+  private List<String> deviceIds;
 
   @TableField(exist = false)
   private long userCount;

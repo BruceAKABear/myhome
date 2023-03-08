@@ -48,4 +48,8 @@ public class Frameware extends BaseModel {
   @NotNull(message = "url地址不能为空")
   private String url;
 
+//  @ApiModelProperty(value = "开启自动更新")
+//  @NotNull(message = "自动更新不能为空")
+//  private Boolean autoUpdate;
+
 }

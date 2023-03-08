@@ -19,4 +19,6 @@ public interface SceneService {
   void changeEnable(Map<String, Object> params);
 
   void delete(String id);
+
+  Scene queryForUpdate(String sceneId);
 }

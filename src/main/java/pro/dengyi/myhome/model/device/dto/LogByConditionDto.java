@@ -21,6 +21,8 @@ public class LogByConditionDto {
 
   private LocalDate date;
 
+
+  @JsonFormat(pattern = "HH:mm")
   private LocalTime time;
 
   private String log;

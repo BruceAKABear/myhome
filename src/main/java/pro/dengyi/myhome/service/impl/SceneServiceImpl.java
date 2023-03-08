@@ -1,6 +1,7 @@
 package pro.dengyi.myhome.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.github.benmanes.caffeine.cache.Cache;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,8 @@ public class SceneServiceImpl implements SceneService {
   private SceneActionDao sceneActionDao;
   @Autowired
   private SceneConditionDao sceneConditionDao;
+  @Autowired
+  private Cache cache;
 
 
   @Transactional
@@ -67,6 +70,8 @@ public class SceneServiceImpl implements SceneService {
       condition.setUpdateTime(LocalDateTime.now());
       sceneConditionDao.insert(condition);
     }
+    //清除缓存
+    cache.invalidate("condition");
 
   }
 
@@ -106,5 +111,20 @@ public class SceneServiceImpl implements SceneService {
     sceneConditionDao.delete(
         new LambdaQueryWrapper<SceneCondition>().eq(SceneCondition::getSceneId, id));
     sceneActionDao.delete(new LambdaQueryWrapper<SceneAction>().eq(SceneAction::getSceneId, id));
+  }
+
+  @Override
+  public Scene queryForUpdate(String sceneId) {
+
+    Scene scene = sceneDao.selectById(sceneId);
+    List<SceneAction> sceneActions = sceneActionDao.selectList(
+        new LambdaQueryWrapper<SceneAction>().eq(SceneAction::getSceneId, sceneId));
+
+    List<SceneCondition> conditions = sceneConditionDao.selectList(
+        new LambdaQueryWrapper<SceneCondition>().eq(SceneCondition::getSceneId, sceneId));
+
+    scene.setActions(sceneActions);
+    scene.setConditions(conditions);
+    return scene;
   }
 }

@@ -92,7 +92,7 @@
     INNER JOIN device_device ON device_device.id = device_log.device_id
     INNER JOIN family_floor ON device_device.floor_id = family_floor.id
     INNER JOIN family_room ON device_device.room_id = family_room.id
-    WHERE device_log.order_from = 'man'
+    WHERE (device_log.order_from = 'man' or device_log.order_from = 'onebutton')
     AND device_log.direction = 'down'
     <if test="userId != null and userId != ''">
       and system_user.id=#{userId}
@@ -111,5 +111,20 @@
     </if>
     ORDER BY device_log.create_time DESC
     limit 50
+  </select>
+  <select id="selectAllRooms" resultType="pro.dengyi.myhome.model.system.Room">
+
+
+    SELECT family_room.id,
+           family_room.`name`,
+           family_room.floor_id,
+           family_room.create_time,
+           family_room.update_time,
+           family_room.beacon_uuid
+    FROM device_user_favorite
+           INNER JOIN device_device ON device_user_favorite.device_id = device_device.id
+           INNER JOIN family_room ON device_device.room_id = family_room.id
+    WHERE user_id = #{userId}
+    GROUP BY device_device.room_id
   </select>
 </mapper>

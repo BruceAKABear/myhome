@@ -41,7 +41,7 @@ public class MqttConfig {
       if (systemProperties.getMqttOpenSsl()) {
         //todo 开启ssl
       } else {
-        String clientId = null;
+        String clientId;
         switch (active) {
           case "dev":
             clientId = systemProperties.getMqttClientIds().get(0);

@@ -11,16 +11,21 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
+import pro.dengyi.myhome.dao.PermRoleDeviceDao;
+import pro.dengyi.myhome.dao.PermUserDeviceDao;
 import pro.dengyi.myhome.dao.PermissionFunctionDao;
 import pro.dengyi.myhome.dao.RoleDao;
 import pro.dengyi.myhome.dao.RolePermissionDao;
 import pro.dengyi.myhome.dao.UserDao;
+import pro.dengyi.myhome.model.perm.PermRoleDevice;
+import pro.dengyi.myhome.model.perm.PermUserDevice;
 import pro.dengyi.myhome.model.perm.PermissionFunction;
 import pro.dengyi.myhome.model.perm.Role;
 import pro.dengyi.myhome.model.perm.RolePermission;
 import pro.dengyi.myhome.model.perm.dto.PermissionDto;
 import pro.dengyi.myhome.model.system.User;
 import pro.dengyi.myhome.service.PermissionService;
+import pro.dengyi.myhome.utils.SwitchUtil;
 import pro.dengyi.myhome.utils.UserHolder;
 
 /**
@@ -37,7 +42,11 @@ public class PermissionServiceImpl implements PermissionService {
   @Autowired
   private RolePermissionDao rolePermissionDao;
   @Autowired
+  private PermRoleDeviceDao permRoleDeviceDao;
+  @Autowired
   private UserDao userDao;
+  @Autowired
+  private PermUserDeviceDao permUserDeviceDao;
 
 
   @Override
@@ -85,6 +94,12 @@ public class PermissionServiceImpl implements PermissionService {
                 .select(RolePermission::getPermissionId));
         role.setPermIds(objects);
 
+        List<Object> deviceIds = permRoleDeviceDao.selectObjs(
+            new LambdaQueryWrapper<PermRoleDevice>().eq(PermRoleDevice::getRoleId, role.getId())
+                .select(PermRoleDevice::getDeviceId));
+        role.setDeviceIds(SwitchUtil.objToList(deviceIds, String.class));
+
+
       }
 
     }
@@ -97,9 +112,11 @@ public class PermissionServiceImpl implements PermissionService {
     if (ObjectUtils.isEmpty(role.getId())) {
       role.setCreateTime(LocalDateTime.now());
       role.setUpdateTime(LocalDateTime.now());
+      role.setCanDel(true);
       roleDao.insert(role);
     } else {
       role.setUpdateTime(LocalDateTime.now());
+      //todo 保证删除状态
       roleDao.updateById(role);
     }
     rolePermissionDao.delete(
@@ -116,6 +133,38 @@ public class PermissionServiceImpl implements PermissionService {
       }
     }
 
+    //可控设备管理
+
+    permRoleDeviceDao.delete(
+        new LambdaQueryWrapper<PermRoleDevice>().eq(PermRoleDevice::getRoleId, role.getId()));
+    for (String deviceId : role.getDeviceIds()) {
+      PermRoleDevice permRoleDevice = new PermRoleDevice();
+      permRoleDevice.setDeviceId(deviceId);
+      permRoleDevice.setRoleId(role.getId());
+      permRoleDevice.setCreateTime(LocalDateTime.now());
+      permRoleDevice.setUpdateTime(LocalDateTime.now());
+      permRoleDeviceDao.insert(permRoleDevice);
+    }
+    // 更新人设备
+
+    List<User> users = userDao.selectList(
+        new LambdaQueryWrapper<User>().eq(User::getRoleId, role.getId()));
+
+    if (!CollectionUtils.isEmpty(users)) {
+      for (User user : users) {
+        permUserDeviceDao.delete(
+            new LambdaQueryWrapper<PermUserDevice>().eq(PermUserDevice::getUserId, user.getId()));
+        List<String> deviceIds = role.getDeviceIds();
+        for (String deviceId : deviceIds) {
+          PermUserDevice userDevice = new PermUserDevice();
+          userDevice.setUserId(user.getId());
+          userDevice.setDeviceId(deviceId);
+          userDevice.setCreateTime(LocalDateTime.now());
+          userDevice.setUpdateTime(LocalDateTime.now());
+          permUserDeviceDao.insert(userDevice);
+        }
+      }
+    }
   }
 
   @Override
@@ -135,12 +184,25 @@ public class PermissionServiceImpl implements PermissionService {
   @Transactional
   @Override
   public void roleDel(String roleId) {
+    if ("1".equals(roleId)) {
+      return;
+    }
+    if ("1632628475547410434".equals(roleId)) {
+      return;
+    }
+
     Long userCount = userDao.selectCount(
         new LambdaQueryWrapper<User>().eq(User::getRoleId, roleId));
     if (userCount == 0) {
       roleDao.deleteById(roleId);
       rolePermissionDao.delete(
           new LambdaQueryWrapper<RolePermission>().eq(RolePermission::getRoleId, roleId));
+      //删除角色设备
+      permRoleDeviceDao.delete(
+          new LambdaQueryWrapper<PermRoleDevice>().eq(PermRoleDevice::getRoleId, roleId));
+      //删除人员角色绑定
+
+//      userDao.upda
     }
 
   }

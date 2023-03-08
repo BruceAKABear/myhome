@@ -11,8 +11,6 @@ import org.hibernate.validator.constraints.Length;
 import pro.dengyi.myhome.model.base.BaseModel;
 
 /**
- * 产品实体
- *
  * @author dengyi (email:dengyi@dengyi.pro)
  * @date 2022-06-03
  */

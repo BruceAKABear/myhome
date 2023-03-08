@@ -55,7 +55,8 @@ public class MqttMessageHandleThread {
   /**
    * the basic message for device upload must like this: {productId:xxxxxx,deviceId:xxxxx,...}
    *
-   * @param topic   mqtt topic must be like this: control/productId/deviceId(device id use chip id for unique)
+   * @param topic      mqtt topic must be like this: control/productId/deviceId(device id use chip
+   *                   id for unique)
    * @param message
    * @param mqttClient
    */
@@ -76,7 +77,18 @@ public class MqttMessageHandleThread {
     //设备固件版本控制
     deviceVersionControl(productId, deviceId, message.toString(), mqttClient);
     //推送设备状态
-    PushUtil.deviceStatusChangePush(deviceId, device.getRoomId(), JSON.parse(message.toString()));
+    //特
+    if ("1604724519529963522".equals(productId)) {
+      Map map = JSON.parseObject(message.toString(), Map.class);
+      if ((int) map.get("pm10") != 65535) {
+        PushUtil.deviceStatusChangePush(deviceId, device.getRoomId(),
+            JSON.parse(message.toString()));
+
+      }
+    } else {
+
+      PushUtil.deviceStatusChangePush(deviceId, device.getRoomId(), JSON.parse(message.toString()));
+    }
     //启用的条件触发
     List<SceneCondition> conditions = (List<SceneCondition>) cache.get("condition",
         k -> sceneConditionDao.selectList(new LambdaQueryWrapper<>()));

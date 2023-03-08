@@ -24,7 +24,13 @@ import pro.dengyi.myhome.model.base.BaseModel;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProductFieldValue extends BaseModel {
 
+
+  @ApiModelProperty(value = "字段id")
+  @NotBlank(message = "字段id不能为空")
+  private String fieldId;
+
   @ApiModelProperty(value = "显示值")
+  @NotBlank(message = "显示值不能为空")
   private String label;
 
   @ApiModelProperty(value = "实际值")

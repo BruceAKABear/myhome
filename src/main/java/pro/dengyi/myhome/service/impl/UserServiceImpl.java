@@ -3,6 +3,7 @@ package pro.dengyi.myhome.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.benmanes.caffeine.cache.Cache;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,14 +13,18 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
+import pro.dengyi.myhome.dao.PermRoleDeviceDao;
 import pro.dengyi.myhome.dao.PermUserDeviceDao;
+import pro.dengyi.myhome.dao.RoleDao;
 import pro.dengyi.myhome.dao.UserDao;
 import pro.dengyi.myhome.exception.BusinessException;
+import pro.dengyi.myhome.model.perm.PermRoleDevice;
 import pro.dengyi.myhome.model.perm.PermUserDevice;
 import pro.dengyi.myhome.model.system.User;
 import pro.dengyi.myhome.model.vo.LoginVo;
 import pro.dengyi.myhome.service.UserService;
 import pro.dengyi.myhome.utils.PasswordUtil;
+import pro.dengyi.myhome.utils.SwitchUtil;
 import pro.dengyi.myhome.utils.TokenUtil;
 import pro.dengyi.myhome.utils.UserHolder;
 import pro.dengyi.myhome.utils.queue.RoomSelectQueue;
@@ -34,7 +39,14 @@ public class UserServiceImpl implements UserService {
   @Autowired
   private UserDao userDao;
   @Autowired
+  private RoleDao roleDao;
+
+  @Autowired
   private PermUserDeviceDao permUserDeviceDao;
+  @Autowired
+  private Cache cache;
+  @Autowired
+  private PermRoleDeviceDao permRoleDeviceDao;
 
 
   @Override
@@ -64,12 +76,20 @@ public class UserServiceImpl implements UserService {
       user.setPassw(encodePassword);
     }
     userDao.updateById(user);
+    //更新可控设备
+    permUserDeviceDao.delete(
+        new LambdaQueryWrapper<PermUserDevice>().eq(PermUserDevice::getUserId, user.getId()));
+//    role
   }
 
   @Override
   public User info() {
     User user = userDao.selectById(UserHolder.getUser().getId());
     user.setPassw(null);
+    if ("1632628475547410434".equals(user.getRoleId())) {
+      user.setAdmin(true);
+    }
+
     return user;
   }
 
@@ -96,7 +116,14 @@ public class UserServiceImpl implements UserService {
     //设备管理
     permUserDeviceDao.delete(
         new LambdaQueryWrapper<PermUserDevice>().eq(PermUserDevice::getUserId, user.getId()));
-    for (String deviceId : user.getDeviceIds()) {
+
+    List<String> deviceIds = (List<String>) cache.get("roleDvice:" + user.getRoleId(),
+        (key) -> SwitchUtil.objToList(permRoleDeviceDao.selectObjs(
+            new LambdaQueryWrapper<PermRoleDevice>().eq(PermRoleDevice::getRoleId, "1")
+                .select(PermRoleDevice::getDeviceId)), String.class));
+
+    //todo
+    for (String deviceId : deviceIds) {
       PermUserDevice permUserDevice = new PermUserDevice();
       permUserDevice.setDeviceId(deviceId);
       permUserDevice.setUserId(user.getId());
@@ -128,6 +155,9 @@ public class UserServiceImpl implements UserService {
           user.setDeviceIds(new ArrayList<>());
         }
         user.getDeviceIds().add((String) object);
+
+        user.setRoleName(
+            user.getRoleId() != null ? roleDao.selectById(user.getRoleId()).getName() : null);
       }
 
     }

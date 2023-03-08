@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pro.dengyi.myhome.model.automation.Scene;
 import pro.dengyi.myhome.response.CommonResponse;
@@ -41,6 +42,14 @@ public class SceneController {
   public CommonResponse addOrUpdate(@RequestBody Scene scene) {
     sceneService.addOrUpdate(scene);
     return CommonResponse.success();
+
+  }
+
+  @ApiOperation("查询供修改")
+  @GetMapping("/queryForUpdate")
+  public DataResponse<Scene> queryForUpdate(@RequestParam String sceneId) {
+    Scene scene = sceneService.queryForUpdate(sceneId);
+    return new DataResponse<>(scene);
 
   }
 

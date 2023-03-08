@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import pro.dengyi.myhome.annotations.NoLog;
 import pro.dengyi.myhome.response.DataResponse;
 
 /**
@@ -16,6 +17,7 @@ import pro.dengyi.myhome.response.DataResponse;
  * @author dengyi (email:dengyi@dengyi.pro)
  * @date 2022-06-30
  */
+@NoLog
 @Slf4j
 @Api(tags = "通用接口")
 @RestController

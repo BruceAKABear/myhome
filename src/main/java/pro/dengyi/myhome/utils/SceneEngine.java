@@ -117,7 +117,7 @@ public class SceneEngine {
       Scene scene = sceneDao.selectById(sceneId);
       //未启用场景跳过
       if (!scene.getEnable()) {
-        break;
+        continue;
       }
       List<SceneCondition> conditions = sceneGroups.get(sceneId);
       //快速处理不包含，不走逻辑

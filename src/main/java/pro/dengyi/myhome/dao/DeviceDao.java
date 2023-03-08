@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import pro.dengyi.myhome.model.device.Device;
 import pro.dengyi.myhome.model.device.dto.DeviceControlLogDto;
 import pro.dengyi.myhome.model.device.dto.DeviceDto;
+import pro.dengyi.myhome.model.system.Room;
 import pro.dengyi.myhome.model.system.User;
 
 /**
@@ -27,4 +28,6 @@ public interface DeviceDao extends BaseMapper<Device> {
   List<DeviceControlLogDto> deviceControlLog(@Param("userId") String userId, @Param("roomId") String roomId, @Param("deviceId") String deviceId,
       @Param("startTime") LocalDateTime startTime, @Param("endTime") LocalDateTime endTime,
       @Param("page") Integer page, @Param("size") Integer size);
+
+  List<Room> selectAllRooms(@Param("userId") String id);
 }

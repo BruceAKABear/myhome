@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiOperation;
 import java.util.HashMap;
 import java.util.Map;
 import javax.validation.constraints.NotBlank;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -27,6 +28,7 @@ import pro.dengyi.myhome.response.DataResponse;
 import pro.dengyi.myhome.service.DDService;
 import pro.dengyi.myhome.service.UserService;
 import pro.dengyi.myhome.utils.TokenUtil;
+import pro.dengyi.myhome.utils.UserHolder;
 
 /**
  * 用户controller
@@ -34,6 +36,7 @@ import pro.dengyi.myhome.utils.TokenUtil;
  * @author dengyi (email:dengyi@dengyi.pro)
  * @date 2022-01-22
  */
+@Slf4j
 @Api(tags = "用户接口")
 @RestController
 @RequestMapping("/user")
@@ -90,6 +93,7 @@ public class UserController {
   @PostMapping("/updateSelectRoom")
   @Permission(needValidate = false)
   public CommonResponse updateSelectRoom(@RequestBody Map<String, String> roomParam) {
+    roomParam.put("userId", UserHolder.getUser().getId());
     userService.updateSelectRoom(roomParam);
     return CommonResponse.success();
   }
@@ -149,6 +153,8 @@ public class UserController {
     userInfoParam.put("code", dto.getCode());
     HashMap<String, Object> userinfoMap = ddService.userInfo(accessToken, userInfoParam);
     Map<String, String> result = (Map<String, String>) userinfoMap.get("result");
+
+    log.warn("钉钉返回", result);
     String userid = result.get("userid");
     User user = userDao.selectById(userid);
     if (user == null) {

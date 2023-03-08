@@ -23,12 +23,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import pro.dengyi.myhome.annotations.NoLog;
 import pro.dengyi.myhome.annotations.Permission;
 import pro.dengyi.myhome.model.device.Device;
 import pro.dengyi.myhome.model.device.dto.DeviceControlLogDto;
 import pro.dengyi.myhome.model.device.dto.DeviceDto;
 import pro.dengyi.myhome.model.device.dto.DeviceForScene;
 import pro.dengyi.myhome.model.device.dto.DeviceLoginDto;
+import pro.dengyi.myhome.model.device.dto.FavoriteDevicesModel;
 import pro.dengyi.myhome.model.device.dto.RoomDeviceTree;
 import pro.dengyi.myhome.model.dto.ChangeFavoriteDto;
 import pro.dengyi.myhome.properties.SystemProperties;
@@ -76,6 +78,7 @@ public class DeviceController {
 
   @ApiOperation("查询所有设备(包含产品信息、产品字段信息等，供场景使用)")
   @GetMapping("/allDeviceList")
+  @Permission(needValidate = false)
   public DataResponse<List<DeviceForScene>> allDeviceList(String floorId, String roomId) {
     List<DeviceForScene> deviceList = deviceService.allDeviceList(floorId, roomId);
     return new DataResponse<>(deviceList);
@@ -126,11 +129,20 @@ public class DeviceController {
     return CommonResponse.success();
   }
 
+  //todo 严格校验格式
   @ApiOperation("下发命令(严格校验)")
   @PostMapping("/sendCmd")
   @Permission(needValidate = false)
   public CommonResponse sendCmd(@RequestBody Map<String, Object> orderMap) {
     deviceService.sendCmd(orderMap);
+    return CommonResponse.success();
+  }
+
+  @ApiOperation("一键控制")
+  @PostMapping("/oneButton")
+  @Permission(needValidate = false)
+  public CommonResponse oneButton(@RequestBody Map<String, Object> orderMap) {
+    deviceService.oneButton(orderMap);
     return CommonResponse.success();
   }
 
@@ -144,6 +156,7 @@ public class DeviceController {
 
 
   @Permission(needLogIn = false, needValidate = false)
+  @NoLog
   @ApiOperation("设备登录")
   @PostMapping("/deviceLogin")
   public Map<String, String> deviceLogin(@RequestBody DeviceLoginDto loginDto) {
@@ -175,6 +188,7 @@ public class DeviceController {
   @Transactional
   @ApiOperation("EMQ钩子")
   @PostMapping("/emqHook")
+  @NoLog
   public CommonResponse emqHook(@RequestBody Map<String, Object> params) {
     deviceService.emqHook(params);
     return CommonResponse.success();
@@ -194,6 +208,14 @@ public class DeviceController {
   public CommonResponse changeFavorite(@RequestBody ChangeFavoriteDto favoriteDto) {
     deviceService.changeFavorite(favoriteDto);
     return CommonResponse.success();
+  }
+
+  @ApiOperation("收藏设备集合")
+  @GetMapping("/favoriteDevices")
+  @Permission(needValidate = false)
+  public DataResponse<List<FavoriteDevicesModel>> favoriteDevices() {
+    List<FavoriteDevicesModel> res = deviceService.favoriteDevices();
+    return new DataResponse<>(res);
   }
 
 

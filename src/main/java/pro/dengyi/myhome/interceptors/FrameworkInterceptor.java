@@ -16,12 +16,15 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
+import pro.dengyi.myhome.annotations.NoLog;
 import pro.dengyi.myhome.annotations.Permission;
 import pro.dengyi.myhome.dao.PermissionFunctionDao;
 import pro.dengyi.myhome.exception.BusinessException;
 import pro.dengyi.myhome.model.system.OperationLog;
 import pro.dengyi.myhome.model.system.User;
 import pro.dengyi.myhome.utils.IpUtil;
+import pro.dengyi.myhome.utils.RequestTimeHolder;
 import pro.dengyi.myhome.utils.TokenUtil;
 import pro.dengyi.myhome.utils.UserHolder;
 import pro.dengyi.myhome.utils.queue.OperationLogQueue;
@@ -29,7 +32,8 @@ import pro.dengyi.myhome.utils.queue.OperationLogQueue;
 /**
  * @author ：dengyi(A.K.A Bear)
  * @date ：Created in 2022/8/30 16:08
- * @description：框架拦截器
+ * @description：this is the main myhome framework intercepter, in order to control main permission
+ * and
  * @modified By：
  */
 @Slf4j
@@ -59,9 +63,8 @@ public class FrameworkInterceptor implements HandlerInterceptor {
     //通过状态
     boolean throughFlag = true;
     if (handler instanceof HandlerMethod) {
-
-      long startTime = System.currentTimeMillis();
-
+      //封装开始请求时间
+      RequestTimeHolder.setStartTime();
       //封装语言选项
       handleLanguage(request);
       String token = request.getHeader("token");
@@ -77,10 +80,20 @@ public class FrameworkInterceptor implements HandlerInterceptor {
     return throughFlag;
   }
 
+
+  /**
+   * 操作日志方法
+   *
+   * @param method
+   * @param token
+   * @param request
+   */
   private void handleOpLog(Method method, String token, HttpServletRequest request) {
     ApiOperation apiOperation = method.getAnnotation(ApiOperation.class);
-    //如果没有注解那就不进行日志记录
-    if (apiOperation == null) {
+    NoLog noLogOnMethod = method.getAnnotation(NoLog.class);
+    NoLog noLogOnClass = method.getDeclaringClass().getAnnotation(NoLog.class);
+    //if no swagger annotation or hava no log annotation do need to do real log logic
+    if (apiOperation == null || noLogOnMethod != null || noLogOnClass != null) {
       return;
     }
 
@@ -128,6 +141,7 @@ public class FrameworkInterceptor implements HandlerInterceptor {
    */
   private void validatePermission(String token, Permission permission, Method method,
       HttpServletRequest request) {
+    //do log logic
     handleOpLog(method, token, request);
     String requestURI = request.getRequestURI();
     if (permission.needLogIn()) {
@@ -166,10 +180,23 @@ public class FrameworkInterceptor implements HandlerInterceptor {
   @Override
   public void afterCompletion(HttpServletRequest request, HttpServletResponse response,
       Object handler, Exception ex) throws Exception {
-    long endTime = System.currentTimeMillis();
+    Long timeDifference = RequestTimeHolder.getTimeDifference();
+    RequestTimeHolder.remove();
+
+    String requestURI = request.getRequestURI();
+    //超时
+    log.info("请求接口： " + requestURI + " , 耗时：" + timeDifference);
+
     //todo 超时预警
 
     LocaleContextHolder.resetLocaleContext();
     UserHolder.remove();
+  }
+
+  @Override
+  public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
+      ModelAndView modelAndView) throws Exception {
+
+    HandlerInterceptor.super.postHandle(request, response, handler, modelAndView);
   }
 }

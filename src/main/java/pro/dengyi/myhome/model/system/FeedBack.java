@@ -19,25 +19,25 @@ import pro.dengyi.myhome.model.base.BaseModel;
 @Data
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-@TableName("family_room")
-@ApiModel("房间")
+@TableName("feed_back")
+@ApiModel("反馈")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Room extends BaseModel {
+public class FeedBack extends BaseModel {
 
 
+  @ApiModelProperty(value = "用户id")
+  private String userId;
 
-  @ApiModelProperty(value = "顺序")
-  private Integer sequence;
+  @ApiModelProperty(value = "标题")
+  @NotBlank(message = "标题不能为空")
+  @Length(min = 1, max = 100)
+  private String title;
 
-  @ApiModelProperty(value = "楼层ID")
-  @NotBlank(message = "楼层ID不能为空")
-  private String floorId;
 
-  @ApiModelProperty(value = "房间名")
-  @Length(min = 2, max = 10)
-  @NotBlank(message = "房间名不能为空")
-  private String name;
+  @ApiModelProperty(value = "描述")
+  @NotBlank(message = "描述不能为空")
+  @Length(min = 1, max = 250)
+  private String description;
 
-  @ApiModelProperty(value = "beacon-uuid")
-  private String beaconUuid;
+
 }

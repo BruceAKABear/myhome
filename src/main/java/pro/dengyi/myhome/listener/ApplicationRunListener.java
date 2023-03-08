@@ -24,7 +24,6 @@ import pro.dengyi.myhome.model.system.Family;
 import pro.dengyi.myhome.model.system.OperationLog;
 import pro.dengyi.myhome.model.system.User;
 import pro.dengyi.myhome.properties.SystemProperties;
-import pro.dengyi.myhome.utils.UserHolder;
 import pro.dengyi.myhome.utils.queue.DeviceLogQueue;
 import pro.dengyi.myhome.utils.queue.OperationLogQueue;
 import pro.dengyi.myhome.utils.queue.RoomSelectQueue;
@@ -140,7 +139,7 @@ public class ApplicationRunListener implements ApplicationRunner {
     executor.execute(() -> {
       while (true) {
         Map<String, String> params = RoomSelectQueue.consume();
-        User user = userDao.selectById(UserHolder.getUser().getId());
+        User user = userDao.selectById(params.get("userId"));
         user.setSelectedFloorId(params.get("floorId"));
         user.setSelectedRoomId(params.get("roomId"));
         userDao.updateById(user);

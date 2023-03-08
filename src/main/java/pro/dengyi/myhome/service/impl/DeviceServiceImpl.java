@@ -29,6 +29,7 @@ import pro.dengyi.myhome.dao.FramewareDao;
 import pro.dengyi.myhome.dao.ProductDao;
 import pro.dengyi.myhome.dao.ProductFieldDao;
 import pro.dengyi.myhome.dao.RoomDao;
+import pro.dengyi.myhome.dao.UserDao;
 import pro.dengyi.myhome.exception.BusinessException;
 import pro.dengyi.myhome.model.device.Device;
 import pro.dengyi.myhome.model.device.DeviceLog;
@@ -39,11 +40,13 @@ import pro.dengyi.myhome.model.device.ProductField;
 import pro.dengyi.myhome.model.device.dto.DeviceControlLogDto;
 import pro.dengyi.myhome.model.device.dto.DeviceDto;
 import pro.dengyi.myhome.model.device.dto.DeviceForScene;
+import pro.dengyi.myhome.model.device.dto.FavoriteDevicesModel;
 import pro.dengyi.myhome.model.device.dto.OtaParam;
 import pro.dengyi.myhome.model.device.dto.RoomDeviceTree;
 import pro.dengyi.myhome.model.dto.ChangeFavoriteDto;
 import pro.dengyi.myhome.model.system.Floor;
 import pro.dengyi.myhome.model.system.Room;
+import pro.dengyi.myhome.model.system.User;
 import pro.dengyi.myhome.properties.SystemProperties;
 import pro.dengyi.myhome.service.DeviceService;
 import pro.dengyi.myhome.utils.PushUtil;
@@ -80,6 +83,8 @@ public class DeviceServiceImpl implements DeviceService {
   private ProductFieldDao productFieldDao;
   @Autowired
   private Cache cache;
+  @Autowired
+  private UserDao userDao;
 
 
   @Override
@@ -165,6 +170,7 @@ public class DeviceServiceImpl implements DeviceService {
     }
   }
 
+  @Transactional
   @Override
   public void emqHook(Map<String, Object> params) {
     log.warn("设备状态发生改变，数据为:{}", params);
@@ -177,18 +183,18 @@ public class DeviceServiceImpl implements DeviceService {
     Device device = deviceDao.selectById(clientId);
     if ("client.connected".equals(eventType)) {
       device.setOnline(true);
+      PushUtil.onOffLinePush(device.getId(), device.getNickName(), true);
     } else {
       device.setOnline(false);
-
-      if (UserHolder.getUser().isSuperAdmin()) {
-        PushUtil.onOffLinePush(device.getId(), device.getNickName(), false);
-      }
+      //设备端是没有用户缓存的！！！
+      PushUtil.onOffLinePush(device.getId(), device.getNickName(), false);
     }
     device.setUpdateTime(LocalDateTime.now());
     deviceDao.updateById(device);
   }
 
   @Override
+  @Transactional
   public void deviceOnline(String clientId) {
     Device device = deviceDao.selectById(clientId);
     device.setOnline(true);
@@ -288,9 +294,6 @@ public class DeviceServiceImpl implements DeviceService {
     return roomDeviceTreeList;
   }
 
-  @Autowired
-  private Cache caffeineCache;
-
   @Override
   public List<DeviceDto> listByRoomId(String roomId, Boolean favorite) {
 
@@ -304,16 +307,37 @@ public class DeviceServiceImpl implements DeviceService {
         List<ProductField> productFieldList = productFieldDao.selectList(
             new LambdaQueryWrapper<ProductField>().eq(ProductField::getProductId, product.getId()));
         deviceDto.setProductFieldList(productFieldList);
-        DeviceLog deviceLog = deviceLogDao.selectOne(
-            new LambdaQueryWrapper<DeviceLog>().eq(DeviceLog::getDeviceId, deviceDto.getId())
-                .orderByDesc(DeviceLog::getCreateTime).eq(DeviceLog::getDirection, "up")
-                .last("limit 1"));
+
+        DeviceLog deviceLog = null;
+        if ("1604724519529963522".equals(product.getId())) {
+          List<DeviceLog> deviceLogs = deviceLogDao.selectList(
+              new LambdaQueryWrapper<DeviceLog>().eq(DeviceLog::getDeviceId, deviceDto.getId())
+                  .orderByDesc(DeviceLog::getCreateTime).eq(DeviceLog::getDirection, "up")
+                  .last("limit 100"));
+
+          for (int i = 0; i <= deviceLogs.size() - 1; i++) {
+
+            Map map = JSON.parseObject(deviceLogs.get(i).getPayload(), Map.class);
+            if ((int) map.get("pm10") != 65535) {
+              deviceLog = deviceLogs.get(i);
+              break;
+            }
+          }
+
+        } else {
+          deviceLog = deviceLogDao.selectOne(
+              new LambdaQueryWrapper<DeviceLog>().eq(DeviceLog::getDeviceId, deviceDto.getId())
+                  .orderByDesc(DeviceLog::getCreateTime).eq(DeviceLog::getDirection, "up")
+                  .last("limit 1"));
+        }
+
         deviceDto.setCurrentStatus(deviceLog != null ? deviceLog.getPayload() : null);
       }
     }
     return deviceDtos;
   }
 
+  @Transactional
   @Override
   public void changeFavorite(ChangeFavoriteDto favoriteDto) {
 
@@ -353,6 +377,7 @@ public class DeviceServiceImpl implements DeviceService {
                     "1611640160472096770").orderByDesc(Device::getUpdateTime).last("limit 1"));
         if (device != null) {
           map.put("deviceId", device.getId());
+          map.put("deviceOnline", device.getOnline());
           DeviceLog deviceLog = deviceLogDao.selectOne(
               new LambdaQueryWrapper<DeviceLog>().eq(DeviceLog::getDeviceId, device.getId())
                   .orderByDesc(DeviceLog::getCreateTime).last("limit 1"));
@@ -381,6 +406,11 @@ public class DeviceServiceImpl implements DeviceService {
         DeviceForScene singleObj = new DeviceForScene();
         BeanUtils.copyProperties(device, singleObj);
 
+        Product product = (Product) cache.get("product:" + device.getProductId(),
+            k -> productDao.selectById(device.getProductId()));
+
+        singleObj.setProduct(product);
+
         List<ProductField> productFields = (List<ProductField>) cache.get(
             "productFields::" + device.getProductId(), key -> productFieldDao.selectList(
                 new LambdaQueryWrapper<ProductField>().eq(ProductField::getProductId,
@@ -403,9 +433,73 @@ public class DeviceServiceImpl implements DeviceService {
       page = 1;
     }
     if (size == null) {
-      size = 20;
+      size = 50;
     }
     return deviceDao.deviceControlLog(userId, roomId, deviceId, startTime, endTime, page, size);
+  }
+
+  @Override
+  public List<FavoriteDevicesModel> favoriteDevices() {
+    List<FavoriteDevicesModel> li = new ArrayList<>();
+
+    List<Room> rooms = deviceDao.selectAllRooms(UserHolder.getUser().getId());
+
+    if (!CollectionUtils.isEmpty(rooms)) {
+
+      for (Room room : rooms) {
+        FavoriteDevicesModel m = new FavoriteDevicesModel();
+        m.setRoom(room);
+        List<DeviceDto> deviceDtos = this.listByRoomId(room.getId(), true);
+        m.setDeviceDtos(deviceDtos);
+        li.add(m);
+      }
+    }
+
+    return li;
+  }
+
+  @Override
+  public void oneButton(Map<String, Object> orderMap) {
+    User user = userDao.selectById(UserHolder.getUser().getId());
+    if (user.isSuperAdmin() || "1632628475547410434".equals(user.getRoleId())) {
+      String type = (String) orderMap.get("type");
+      switch (type) {
+        case "switch":
+          String status = (String) orderMap.get("status");
+          String floorId = (String) orderMap.get("floorId");
+          List<Device> devices = deviceDao.selectList(
+              new LambdaQueryWrapper<Device>().eq(Device::getOnline, true));
+          String cmdContent = null;
+
+          if ("open".equals(status)) {
+            //一键全开
+            cmdContent = "{\"ch1\":true,\"ch2\":true,\"ch3\":true}";
+          } else if ("close".equals(status)) {
+            //一键全关
+            cmdContent = "{\"ch1\":false,\"ch2\":false,\"ch3\":false}";
+          }
+          for (Device device : devices) {
+            String controlTopic = "control/" + device.getProductId() + "/" + device.getId();
+            MqttMessage message = new MqttMessage(cmdContent.getBytes(StandardCharsets.UTF_8));
+            System.out.println(message);
+            message.setQos(1);
+            try {
+              mqttClient.publish(controlTopic, message);
+              DeviceLog deviceLog = new DeviceLog(device.getProductId(), device.getId(),
+                  controlTopic,
+                  cmdContent, "down", "onebutton", UserHolder.getUser().getId());
+              DeviceLogQueue.publish(deviceLog);
+            } catch (MqttException e) {
+              log.error("发送命令失败", e);
+            }
+          }
+
+          break;
+        default:
+          log.error("未支持一键类型");
+      }
+
+    }
   }
 
   private List<RoomDeviceTree> genLeaf(List<Device> devices) {

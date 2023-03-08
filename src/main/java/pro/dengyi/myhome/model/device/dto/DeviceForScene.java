@@ -3,6 +3,7 @@ package pro.dengyi.myhome.model.device.dto;
 import java.util.List;
 import lombok.Data;
 import pro.dengyi.myhome.model.device.Device;
+import pro.dengyi.myhome.model.device.Product;
 import pro.dengyi.myhome.model.device.ProductField;
 import pro.dengyi.myhome.model.system.Room;
 
@@ -16,6 +17,8 @@ import pro.dengyi.myhome.model.system.Room;
 public class DeviceForScene extends Device {
 
   private List<ProductField> productFields;
+
+  private Product product;
 
   private Room room;
 

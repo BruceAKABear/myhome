@@ -55,6 +55,15 @@ public class DeviceLogServiceImpl implements DeviceLogService {
         logByConditionDtos = newArr;
       }
     }
+
+//    List<LogByConditionDto> reverseArr = new ArrayList<>();
+//    for (int i = 0; i <= logByConditionDtos.size() - 1; i++) {
+//      if (reverseArr.size() <= 30) {
+//        reverseArr.add(logByConditionDtos.get(i));
+//      }
+//
+//    }
+
     return logByConditionDtos;
   }
 
