@@ -1,4 +1,4 @@
-package pro.dengyi.myhome.model.device;
+package pro.dengyi.myhome.model.system;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -10,21 +10,23 @@ import pro.dengyi.myhome.model.base.BaseModel;
 
 /**
  * @author ：dengyi(A.K.A Bear)
- * @date ：Created in 2022/9/9 14:45
- * @description：设备设备关联
+ * @date ：Created in 2023/3/14 9:52
+ * @description：the api processing time model
  * @modified By：
  */
+
 @Data
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-@TableName("device_device")
-@ApiModel("设备关联实体")
+@TableName("system_api_processing_time")
+@ApiModel("接口处理时间")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class DeviceRelated extends BaseModel {
+public class ApiProcessingTime extends BaseModel {
 
-  private String mainDeviceId;
 
-  private String relatedDeviceId;
+  private String uri;
 
+
+  private Integer times;
 
 }

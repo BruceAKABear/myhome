@@ -14,5 +14,6 @@ public interface DeviceLogService {
 
   IPage<DeviceLog> page(Integer page, Integer size, String deviceId);
 
-  List<LogByConditionDto> logByCondition(String deviceId, LocalDateTime startDateTime, LocalDateTime endDateTime, Integer step);
+  List<LogByConditionDto> logByCondition(String deviceId, LocalDateTime startDateTime,
+      LocalDateTime endDateTime, Integer step);
 }

@@ -25,7 +25,8 @@ public interface DeviceDao extends BaseMapper<Device> {
   List<DeviceDto> listByRoomId(@Param("roomId") String roomId, @Param("user") User user,
       @Param("favorite") Boolean favorite);
 
-  List<DeviceControlLogDto> deviceControlLog(@Param("userId") String userId, @Param("roomId") String roomId, @Param("deviceId") String deviceId,
+  List<DeviceControlLogDto> deviceControlLog(@Param("userId") String userId,
+      @Param("roomId") String roomId, @Param("deviceId") String deviceId,
       @Param("startTime") LocalDateTime startTime, @Param("endTime") LocalDateTime endTime,
       @Param("page") Integer page, @Param("size") Integer size);
 

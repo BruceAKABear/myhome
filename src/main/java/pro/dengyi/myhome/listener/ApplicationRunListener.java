@@ -9,8 +9,10 @@ import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.quartz.Scheduler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
@@ -60,6 +62,10 @@ public class ApplicationRunListener implements ApplicationRunner {
   @Autowired
   private DeviceLogDao deviceLogDao;
 
+  private Environment environment;
+  @Value("{mmmm}")
+  private String nna;
+
 
   @Transactional
   @Override
@@ -71,6 +77,8 @@ public class ApplicationRunListener implements ApplicationRunner {
       newFamily.setName("我的家");
       familyDao.insert(newFamily);
     }
+
+
 //    List<User> userList = userDao.selectList(
 //        new LambdaQueryWrapper<User>().eq(User::getHouseHolder, true));
 //    if (CollectionUtils.isEmpty(userList)) {
@@ -87,6 +95,9 @@ public class ApplicationRunListener implements ApplicationRunner {
 //      user.setUpdateTime(now);
 //      userDao.insert(user);
 //    }
+
+
+
 
     //连接mqtt服务器
     executor.execute(() -> {

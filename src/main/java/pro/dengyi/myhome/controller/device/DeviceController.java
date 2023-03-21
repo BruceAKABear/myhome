@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import pro.dengyi.myhome.annotations.IpRestrict;
 import pro.dengyi.myhome.annotations.NoLog;
 import pro.dengyi.myhome.annotations.Permission;
 import pro.dengyi.myhome.model.device.Device;
@@ -155,6 +156,16 @@ public class DeviceController {
   }
 
 
+  /**
+   * device login controller
+   * <p>
+   * the most important thing is the device ip must internal ip because the whole system in internal
+   * network
+   *
+   * @param loginDto
+   * @return
+   */
+  @IpRestrict
   @Permission(needLogIn = false, needValidate = false)
   @NoLog
   @ApiOperation("设备登录")
@@ -184,6 +195,14 @@ public class DeviceController {
     return resMap;
   }
 
+
+  /**
+   * 指定回调服务器ip
+   *
+   * @param params
+   * @return
+   */
+  @IpRestrict
   @Permission(needLogIn = false, needValidate = false)
   @Transactional
   @ApiOperation("EMQ钩子")

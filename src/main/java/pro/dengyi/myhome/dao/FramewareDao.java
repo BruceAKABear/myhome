@@ -13,5 +13,6 @@ import pro.dengyi.myhome.model.device.Frameware;
 @Repository
 public interface FramewareDao extends BaseMapper<Frameware> {
 
-  IPage<Frameware> selectCustomPage(IPage<Frameware> pageParam, @Param("productId") String productId);
+  IPage<Frameware> selectCustomPage(IPage<Frameware> pageParam,
+      @Param("productId") String productId);
 }

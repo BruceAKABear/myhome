@@ -11,7 +11,7 @@ import pro.dengyi.myhome.model.perm.PermissionFunction;
 @Data
 public class PermissionDto {
 
-  private  List<PermissionFunction>  menuPerms;
+  private List<PermissionFunction> menuPerms;
 
   private List<String> buttonPerm;
 

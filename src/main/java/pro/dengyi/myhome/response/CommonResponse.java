@@ -35,6 +35,9 @@ public class CommonResponse implements Response {
     this.message = message;
   }
 
+  public static CommonResponse success() {
+    return new CommonResponse(true, 10000, "操作成功");
+  }
 
   @Override
   public Boolean getStatus() {
@@ -49,9 +52,5 @@ public class CommonResponse implements Response {
   @Override
   public String getMessage() {
     return message;
-  }
-
-  public static CommonResponse success() {
-    return new CommonResponse(true, 10000, "操作成功");
   }
 }

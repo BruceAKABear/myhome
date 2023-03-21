@@ -38,7 +38,6 @@ public class Role extends BaseModel {
   @TableField(exist = false)
   private List<Object> permIds;
 
-
   @TableField(exist = false)
   @NotNull(message = "可控设备不能为空")
   private List<String> deviceIds;

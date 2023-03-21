@@ -41,6 +41,50 @@ public class AppWebsocket {
   private User user;
 
   /**
+   * 向应用端发送消息
+   *
+   * @param userId
+   * @param message
+   * @return
+   */
+  public static Boolean sendMessage2Device(@NotBlank String userId, @NotBlank String message) {
+    log.info("服务端给用户:" + userId + "发送消息，消息内容为:" + message);
+    boolean flag = true;
+    if (StringUtils.isNotBlank(userId) && devicesInfoMaps.containsKey(userId)) {
+      try {
+        devicesInfoMaps.get(userId).session.getBasicRemote().sendText(message);
+      } catch (IOException e) {
+        log.error(
+            "服务端给用户:" + userId + "发送消息，消息内容为:" + message + ",发送时错误，错误信息为:",
+            e);
+        flag = false;
+      }
+    } else {
+      log.error("服务端给用户:" + userId + "发送消息，消息内容为:" + message
+          + ",发送时错误，错误信息为:设备不在线");
+      flag = false;
+    }
+    return flag;
+  }
+
+  public static Boolean sendMessage2Device(@NotBlank String message) {
+    log.info("服务端批量给用户发送消息，消息内容为:" + message);
+    boolean flag = true;
+
+    devicesInfoMaps.keySet().forEach(key -> {
+      try {
+        devicesInfoMaps.get(key).session.getBasicRemote().sendText(message);
+      } catch (IOException e) {
+        log.error(
+            "服务端给用户:" + devicesInfoMaps.get(key).user.getId() + "发送消息，消息内容为:"
+                + message + ",发送时错误，错误信息为:",
+            e);
+      }
+    });
+    return flag;
+  }
+
+  /**
    * 连接建立成 功调用的方法
    */
   @OnOpen
@@ -88,7 +132,6 @@ public class AppWebsocket {
     }
   }
 
-
   /**
    * @param session
    * @param error
@@ -96,50 +139,6 @@ public class AppWebsocket {
   @OnError
   public void onError(Session session, Throwable error) {
     log.error("当前websocket异常，异常信息为：", error);
-  }
-
-  /**
-   * 向应用端发送消息
-   *
-   * @param userId
-   * @param message
-   * @return
-   */
-  public static Boolean sendMessage2Device(@NotBlank String userId, @NotBlank String message) {
-    log.info("服务端给用户:" + userId + "发送消息，消息内容为:" + message);
-    boolean flag = true;
-    if (StringUtils.isNotBlank(userId) && devicesInfoMaps.containsKey(userId)) {
-      try {
-        devicesInfoMaps.get(userId).session.getBasicRemote().sendText(message);
-      } catch (IOException e) {
-        log.error(
-            "服务端给用户:" + userId + "发送消息，消息内容为:" + message + ",发送时错误，错误信息为:",
-            e);
-        flag = false;
-      }
-    } else {
-      log.error("服务端给用户:" + userId + "发送消息，消息内容为:" + message
-          + ",发送时错误，错误信息为:设备不在线");
-      flag = false;
-    }
-    return flag;
-  }
-
-  public static Boolean sendMessage2Device(@NotBlank String message) {
-    log.info("服务端批量给用户发送消息，消息内容为:" + message);
-    boolean flag = true;
-
-    devicesInfoMaps.keySet().forEach(key -> {
-      try {
-        devicesInfoMaps.get(key).session.getBasicRemote().sendText(message);
-      } catch (IOException e) {
-        log.error(
-            "服务端给用户:" + devicesInfoMaps.get(key).user.getId() + "发送消息，消息内容为:"
-                + message + ",发送时错误，错误信息为:",
-            e);
-      }
-    });
-    return flag;
   }
 
 

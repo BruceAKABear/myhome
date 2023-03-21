@@ -15,6 +15,8 @@ import pro.dengyi.myhome.model.device.dto.LogByConditionDto;
 @Repository
 public interface DeviceLogDao extends BaseMapper<DeviceLog> {
 
-  List<LogByConditionDto> logByCondition(@Param("deviceId") String deviceId, @Param("startDateTime") LocalDateTime startDateTime, @Param("endDateTime") LocalDateTime endDateTime, @Param("step") Integer step);
+  List<LogByConditionDto> logByCondition(@Param("deviceId") String deviceId,
+      @Param("startDateTime") LocalDateTime startDateTime,
+      @Param("endDateTime") LocalDateTime endDateTime, @Param("step") Integer step);
 
 }

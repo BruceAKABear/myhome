@@ -32,6 +32,9 @@ public class Device extends BaseModel {
 //  @ApiModelProperty(value = "连接密码")
 //  private String loginPassword;
 
+
+
+  @ApiModelProperty(value = "是否网关设备")
   private Boolean gateway;
 
   @ApiModelProperty(value = "是否在线")

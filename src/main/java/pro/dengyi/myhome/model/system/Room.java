@@ -25,7 +25,6 @@ import pro.dengyi.myhome.model.base.BaseModel;
 public class Room extends BaseModel {
 
 
-
   @ApiModelProperty(value = "顺序")
   private Integer sequence;
 

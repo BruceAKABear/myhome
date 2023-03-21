@@ -43,6 +43,4 @@ public class ConditionTaskItem extends BaseModel {
   private String fid;
 
 
-
-
 }

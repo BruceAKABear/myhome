@@ -199,9 +199,20 @@ class MyhomeApplicationTests {
   public void dynamicLogic() {
 
     /**
-     * conditionA:{
+     * conditionA:[
+     *  conditionA1:{
      *
-     * }
+     *  }
+     *  AND
+     *  conditionA2:{
+     *
+     *  }
+     *  OR
+     *  conditionA3:{
+     *
+     *  }
+     *
+     * ]
      * AND
      * CONDITIONb:{
      *

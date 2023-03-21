@@ -240,6 +240,7 @@ public class DeviceServiceImpl implements DeviceService {
     String deviceId = (String) orderMap.get("deviceId");
     Device device = deviceDao.selectById(deviceId);
     String cmdContent = (String) orderMap.get("cmdContent");
+    //1. 是否有权限，2.是否在线，3.命令是否正确
     //todo 严格校验
     if (device.getOnline()) {
       String controlTopic = "control/" + device.getProductId() + "/" + device.getId();

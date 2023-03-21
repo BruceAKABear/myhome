@@ -2,7 +2,6 @@ package pro.dengyi.myhome.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import java.util.List;
-import lombok.Data;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 import pro.dengyi.myhome.model.device.ProductField;

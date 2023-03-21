@@ -38,7 +38,7 @@ public class OperationLog extends BaseModel {
     this.uId = uId;
     this.opName = opName;
     this.opIp = opIp;
-    this.requestUri=requestUri;
+    this.requestUri = requestUri;
     this.requestMethod = requestMethod;
     this.setCreateTime(LocalDateTime.now());
     this.setUpdateTime(LocalDateTime.now());

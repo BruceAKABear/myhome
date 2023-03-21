@@ -2,6 +2,10 @@ package pro.dengyi.myhome.exception;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
+import java.security.SignatureException;
+import java.util.HashMap;
+import java.util.Map;
+import javax.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -10,11 +14,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import pro.dengyi.myhome.response.CommonResponse;
 import pro.dengyi.myhome.response.Response;
-
-import javax.validation.ConstraintViolationException;
-import java.security.SignatureException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 全局异常处理器
@@ -48,6 +47,15 @@ public class GlobalExceptionHandler {
     Map<String, Object> returnmap = new HashMap<>(4);
     returnmap.put("status", false);
     returnmap.put("code", be.getCode());
+    returnmap.put("message", be.getMessage());
+    return returnmap;
+  }
+
+  @ExceptionHandler(IpRestrictException.class)
+  public Map<String, Object> ipRestrictException(IpRestrictException be) {
+    Map<String, Object> returnmap = new HashMap<>(4);
+    returnmap.put("status", false);
+    returnmap.put("code", 2000);
     returnmap.put("message", be.getMessage());
     return returnmap;
   }
