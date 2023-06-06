@@ -8,9 +8,9 @@ package pro.dengyi.myhome.integration;
  */
 public interface NotifyUser {
 
-  /**
-   * 用邮件通知用户
-   */
-  void notifyByEmail(String email);
+    /**
+     * 用邮件通知用户
+     */
+    void notifyByEmail(String email);
 
 }

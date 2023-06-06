@@ -3,11 +3,12 @@ package pro.dengyi.myhome.model.automation;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
-import java.time.LocalTime;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import pro.dengyi.myhome.model.base.BaseModel;
+
+import java.time.LocalTime;
 
 /**
  * @author ：dengyi(A.K.A Bear)
@@ -23,19 +24,19 @@ import pro.dengyi.myhome.model.base.BaseModel;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SceneCondition extends BaseModel {
 
-  private String sceneId;
+    private String sceneId;
 
-  //type有device和time
-  private String type;
+    //type有device和time
+    private String type;
 
-  private LocalTime startTime;
-  private LocalTime endTime;
+    private LocalTime startTime;
+    private LocalTime endTime;
 
-  private String deviceId;
+    private String deviceId;
 
-  private String deviceProperty;
-  private String propertyValue;
+    private String deviceProperty;
+    private String propertyValue;
 
-  private String relation;
+    private String relation;
 
 }

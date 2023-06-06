@@ -10,5 +10,5 @@ import pro.dengyi.myhome.model.system.FeedBack;
  */
 public interface FeedBackService {
 
-  void add(FeedBack feedBack);
+    void add(FeedBack feedBack);
 }

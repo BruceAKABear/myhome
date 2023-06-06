@@ -11,6 +11,11 @@ import javax.script.ScriptEngine;
 
 public class SceneEngine {
 
-  private ScriptEngine jsEngine;
+    private ScriptEngine jsEngine;
+
+
+    public void fire() {
+
+    }
 
 }

@@ -2,8 +2,9 @@ package pro.dengyi.myhome.model.base;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
-import java.time.LocalDateTime;
 import lombok.Data;
+
+import java.time.LocalDateTime;
 
 /**
  * 实体类基类
@@ -14,15 +15,15 @@ import lombok.Data;
 @Data
 public class BaseModel {
 
-  @ApiModelProperty(value = "分类Id", hidden = true)
-  private String id;
+    @ApiModelProperty(value = "分类Id", hidden = true)
+    private String id;
 
-  @ApiModelProperty(value = "创建时间", hidden = true)
-  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-  private LocalDateTime createTime;
+    @ApiModelProperty(value = "创建时间", hidden = true)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime createTime;
 
-  @ApiModelProperty(value = "更新时间", hidden = true)
-  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-  private LocalDateTime updateTime;
+    @ApiModelProperty(value = "更新时间", hidden = true)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime updateTime;
 
 }

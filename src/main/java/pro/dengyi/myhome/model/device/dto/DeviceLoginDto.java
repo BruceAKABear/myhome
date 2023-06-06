@@ -15,10 +15,10 @@ import lombok.Data;
 @Data
 public class DeviceLoginDto {
 
-  private String clientId;
+    private String clientId;
 
-  private String userName;
+    private String userName;
 
-  private String password;
+    private String password;
 
 }

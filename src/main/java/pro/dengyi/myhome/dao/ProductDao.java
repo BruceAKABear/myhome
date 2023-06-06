@@ -14,6 +14,6 @@ import pro.dengyi.myhome.model.device.dto.ProductPageDto;
 @Repository
 public interface ProductDao extends BaseMapper<Product> {
 
-  IPage<ProductPageDto> selectCustomPage(IPage<ProductPageDto> pageParam,
-      @Param("name") String name);
+    IPage<ProductPageDto> selectCustomPage(IPage<ProductPageDto> pageParam,
+                                           @Param("name") String name);
 }

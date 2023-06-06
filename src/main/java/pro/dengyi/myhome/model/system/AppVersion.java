@@ -21,9 +21,9 @@ import pro.dengyi.myhome.model.base.BaseModel;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AppVersion extends BaseModel {
 
-  private String version;
-  private Integer versionCode;
-  private String updateType;
-  private String wgetUrl;
-  private String note;
+    private String version;
+    private Integer versionCode;
+    private String updateType;
+    private String wgetUrl;
+    private String note;
 }

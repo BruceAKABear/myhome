@@ -9,9 +9,9 @@ import pro.dengyi.myhome.model.device.Frameware;
  */
 public interface FramewareService {
 
-  IPage<Frameware> page(Integer page, Integer size, String productId);
+    IPage<Frameware> page(Integer page, Integer size, String productId);
 
-  void delete(String id);
+    void delete(String id);
 
-  void add(Frameware frameware);
+    void add(Frameware frameware);
 }

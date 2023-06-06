@@ -2,7 +2,6 @@ package pro.dengyi.myhome.controller.device;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 import pro.dengyi.myhome.model.device.ProductField;
 import pro.dengyi.myhome.response.DataResponse;
 import pro.dengyi.myhome.service.ProductFieldService;
+
+import java.util.List;
 
 /**
  * 设备字段controller
@@ -24,15 +25,15 @@ import pro.dengyi.myhome.service.ProductFieldService;
 @RequestMapping("/productField")
 public class ProductFieldController {
 
-  @Autowired
-  private ProductFieldService productFieldService;
+    @Autowired
+    private ProductFieldService productFieldService;
 
-  @ApiOperation("查询产品字段集合")
-  @GetMapping("/fieldList")
-  public DataResponse<List<ProductField>> fieldList(String deviceId, String productId) {
-    List<ProductField> fieldList = productFieldService.fieldList(deviceId, productId);
-    return new DataResponse<>(fieldList);
-  }
+    @ApiOperation("查询产品字段集合")
+    @GetMapping("/fieldList")
+    public DataResponse<List<ProductField>> fieldList(String deviceId, String productId) {
+        List<ProductField> fieldList = productFieldService.fieldList(deviceId, productId);
+        return new DataResponse<>(fieldList);
+    }
 
 
 }

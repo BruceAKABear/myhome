@@ -1,7 +1,8 @@
 package pro.dengyi.myhome.model.device.dto;
 
-import java.util.List;
 import lombok.Data;
+
+import java.util.List;
 
 /**
  * @author ：dengyi(A.K.A Bear)
@@ -12,11 +13,11 @@ import lombok.Data;
 @Data
 public class RoomDeviceTree {
 
-  private String floorId;
-  private String id;
-  private String name;
-  private String type;
+    private String floorId;
+    private String id;
+    private String name;
+    private String type;
 
-  private List<RoomDeviceTree> children;
+    private List<RoomDeviceTree> children;
 
 }

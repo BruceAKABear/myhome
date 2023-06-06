@@ -14,14 +14,21 @@ import pro.dengyi.myhome.model.base.BaseModel;
 import javax.validation.constraints.NotBlank;
 
 /**
+ * 抽象设备
+ *
  * @author BLab
  */
 @Data
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-@TableName("device_device")
-@ApiModel("设备实体")
-public class Device extends BaseModel {
+@TableName("device_abstract_device")
+@ApiModel("抽象设备实体")
+public class AbstractDevice extends BaseModel {
+
+
+    @ApiModelProperty(value = "设备id")
+    private String deviceId;
+
 
     @ApiModelProperty(value = "芯片ID")
     private String chipId;

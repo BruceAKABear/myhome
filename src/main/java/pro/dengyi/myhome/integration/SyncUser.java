@@ -10,6 +10,6 @@ import pro.dengyi.myhome.model.system.User;
  */
 public interface SyncUser {
 
-  Boolean addUser(User user);
+    Boolean addUser(User user);
 
 }

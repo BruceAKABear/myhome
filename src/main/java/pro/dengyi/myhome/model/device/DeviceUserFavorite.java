@@ -21,9 +21,9 @@ import pro.dengyi.myhome.model.base.BaseModel;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class DeviceUserFavorite extends BaseModel {
 
-  @ApiModelProperty(value = "设备ID")
-  private String deviceId;
+    @ApiModelProperty(value = "设备ID")
+    private String deviceId;
 
-  @ApiModelProperty(value = "用户ID")
-  private String userId;
+    @ApiModelProperty(value = "用户ID")
+    private String userId;
 }

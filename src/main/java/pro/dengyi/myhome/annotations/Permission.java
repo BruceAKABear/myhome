@@ -15,19 +15,19 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD, ElementType.TYPE})
 public @interface Permission {
 
-  /**
-   * 是否校验登录
-   *
-   * @return
-   */
-  boolean needLogIn() default true;
+    /**
+     * 是否校验登录
+     *
+     * @return
+     */
+    boolean needLogIn() default true;
 
-  /**
-   * 是否校验权限
-   *
-   * @return
-   */
-  boolean needValidate() default true;
+    /**
+     * 是否校验权限
+     *
+     * @return
+     */
+    boolean needValidate() default true;
 
 
 }

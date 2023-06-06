@@ -22,17 +22,25 @@ import pro.dengyi.myhome.service.LocationService;
 @RequestMapping("/location")
 public class LocationController {
 
-  @Autowired
-  private LocationService locationService;
+    @Autowired
+    private LocationService locationService;
+
+    @ApiOperation("上报信号最强beacon")
+    @Permission(needValidate = false)
+    @GetMapping("/uploadBeacon")
+    public CommonResponse uploadBeacon(String beaconUuid) {
+        locationService.checkLocation(beaconUuid);
+        return CommonResponse.success();
+    }
 
 
-  @ApiOperation("根据最强信号强度beacon查询位置")
-  @Permission(needValidate = false)
-  @GetMapping("/checkLocation")
-  public CommonResponse checkLocation(String beaconUuid) {
-    locationService.checkLocation(beaconUuid);
-    return CommonResponse.success();
-  }
+    @ApiOperation("根据最强信号强度beacon查询位置")
+    @Permission(needValidate = false)
+    @GetMapping("/checkLocation")
+    public CommonResponse checkLocation(String beaconUuid) {
+        locationService.checkLocation(beaconUuid);
+        return CommonResponse.success();
+    }
 
 
 }

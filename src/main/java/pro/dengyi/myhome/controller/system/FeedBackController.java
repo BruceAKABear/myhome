@@ -24,15 +24,15 @@ import pro.dengyi.myhome.service.FeedBackService;
 @RequestMapping("/feedBack")
 public class FeedBackController {
 
-  @Autowired
-  private FeedBackService feedBackService;
+    @Autowired
+    private FeedBackService feedBackService;
 
-  @ApiOperation("新增反馈")
-  @PostMapping("/add")
-  @Permission(needValidate = false)
-  public CommonResponse add(@RequestBody FeedBack feedBack) {
-    feedBackService.add(feedBack);
-    return CommonResponse.success();
-  }
+    @ApiOperation("新增反馈")
+    @PostMapping("/add")
+    @Permission(needValidate = false)
+    public CommonResponse add(@RequestBody FeedBack feedBack) {
+        feedBackService.add(feedBack);
+        return CommonResponse.success();
+    }
 
 }

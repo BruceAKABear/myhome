@@ -20,7 +20,7 @@ import pro.dengyi.myhome.model.base.BaseModel;
 @ApiModel("数据权限")
 public class PermUserDevice extends BaseModel {
 
-  private String deviceId;
-  private String userId;
+    private String deviceId;
+    private String userId;
 
 }

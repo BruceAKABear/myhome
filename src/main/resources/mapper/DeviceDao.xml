@@ -75,7 +75,7 @@
 
   </select>
   <select id="deviceControlLog"
-          resultType="pro.dengyi.myhome.model.device.dto.DeviceControlLogDto">
+    resultType="pro.dengyi.myhome.model.device.dto.DeviceControlLogDto">
 
     SELECT device_log.create_time AS opTime,
     system_user.id AS userId,

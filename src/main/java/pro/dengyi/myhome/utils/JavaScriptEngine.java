@@ -5,10 +5,10 @@ import javax.script.ScriptEngineManager;
 
 public class JavaScriptEngine {
 
-  public static ScriptEngine engine;
+    public static ScriptEngine engine;
 
-  static {
-    ScriptEngineManager mgr = new ScriptEngineManager();
-    engine = mgr.getEngineByName("JavaScript");
-  }
+    static {
+        ScriptEngineManager mgr = new ScriptEngineManager();
+        engine = mgr.getEngineByName("JavaScript");
+    }
 }

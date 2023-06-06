@@ -1,11 +1,12 @@
 package pro.dengyi.myhome.model.device.dto;
 
-import java.util.List;
 import lombok.Data;
 import pro.dengyi.myhome.model.device.Device;
 import pro.dengyi.myhome.model.device.Product;
 import pro.dengyi.myhome.model.device.ProductField;
 import pro.dengyi.myhome.model.system.Room;
+
+import java.util.List;
 
 /**
  * @author ：dengyi(A.K.A Bear)
@@ -16,11 +17,11 @@ import pro.dengyi.myhome.model.system.Room;
 @Data
 public class DeviceForScene extends Device {
 
-  private List<ProductField> productFields;
+    private List<ProductField> productFields;
 
-  private Product product;
+    private Product product;
 
-  private Room room;
+    private Room room;
 
 
 }

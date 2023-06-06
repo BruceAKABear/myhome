@@ -2,8 +2,6 @@ package pro.dengyi.myhome.controller.system;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import java.util.Map;
-import javax.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +10,9 @@ import org.springframework.web.bind.annotation.RestController;
 import pro.dengyi.myhome.annotations.Permission;
 import pro.dengyi.myhome.response.DataResponse;
 import pro.dengyi.myhome.service.AppVersionService;
+
+import javax.validation.constraints.NotBlank;
+import java.util.Map;
 
 /**
  * @author ：dengyi(A.K.A Bear)
@@ -25,15 +26,15 @@ import pro.dengyi.myhome.service.AppVersionService;
 @RequestMapping("/appVersion")
 public class AppVersionController {
 
-  @Autowired
-  private AppVersionService appVersionService;
+    @Autowired
+    private AppVersionService appVersionService;
 
-  @ApiOperation("检查app版本")
-  @GetMapping("/versionCheck")
-  public DataResponse<Map<String, Object>> versionCheck(@RequestParam @NotBlank String version,
-      @RequestParam @NotBlank Integer versionCode) {
-    Map<String, Object> map = appVersionService.versionCheck(version, versionCode);
-    return new DataResponse<>(map);
-  }
+    @ApiOperation("检查app版本")
+    @GetMapping("/versionCheck")
+    public DataResponse<Map<String, Object>> versionCheck(@RequestParam @NotBlank String version,
+                                                          @RequestParam @NotBlank Integer versionCode) {
+        Map<String, Object> map = appVersionService.versionCheck(version, versionCode);
+        return new DataResponse<>(map);
+    }
 
 }

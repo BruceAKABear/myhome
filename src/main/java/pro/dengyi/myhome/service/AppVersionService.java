@@ -10,5 +10,5 @@ import java.util.Map;
  */
 public interface AppVersionService {
 
-  Map<String, Object> versionCheck(String version, Integer versionCode);
+    Map<String, Object> versionCheck(String version, Integer versionCode);
 }

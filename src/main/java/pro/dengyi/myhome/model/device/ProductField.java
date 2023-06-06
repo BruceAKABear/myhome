@@ -4,11 +4,12 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import javax.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import pro.dengyi.myhome.model.base.BaseModel;
+
+import javax.validation.constraints.NotBlank;
 
 /**
  * 设备类别字段映射表
@@ -24,18 +25,18 @@ import pro.dengyi.myhome.model.base.BaseModel;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProductField extends BaseModel {
 
-  @ApiModelProperty(value = "产品Id")
-  private String productId;
+    @ApiModelProperty(value = "产品Id")
+    private String productId;
 
-  @ApiModelProperty(value = "显示值")
-  private String label;
+    @ApiModelProperty(value = "显示值")
+    private String label;
 
-  @ApiModelProperty(value = "字段")
-  @NotBlank(message = "字段不能为空")
-  private String field;
+    @ApiModelProperty(value = "字段")
+    @NotBlank(message = "字段不能为空")
+    private String field;
 
-  @ApiModelProperty(value = "字段类型")
-  @NotBlank(message = "字段类型不能为空")
-  private String fieldType;
+    @ApiModelProperty(value = "字段类型")
+    @NotBlank(message = "字段类型不能为空")
+    private String fieldType;
 
 }

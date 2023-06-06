@@ -11,27 +11,27 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class RoomSelectQueue {
 
-  static LinkedBlockingQueue<Map<String, String>> queue = new LinkedBlockingQueue(1000);
+    static LinkedBlockingQueue<Map<String, String>> queue = new LinkedBlockingQueue(1000);
 
-  public static boolean publish(Map<String, String> param) {
-    boolean flag;
-    try {
-      queue.put(param);
-      flag = true;
-    } catch (InterruptedException e) {
-      flag = false;
+    public static boolean publish(Map<String, String> param) {
+        boolean flag;
+        try {
+            queue.put(param);
+            flag = true;
+        } catch (InterruptedException e) {
+            flag = false;
+        }
+        return flag;
     }
-    return flag;
-  }
 
-  public static Map<String, String> consume() {
-    Map<String, String> param;
-    try {
-      param = queue.take();
-    } catch (InterruptedException e) {
-      param = null;
+    public static Map<String, String> consume() {
+        Map<String, String> param;
+        try {
+            param = queue.take();
+        } catch (InterruptedException e) {
+            param = null;
+        }
+        return param;
     }
-    return param;
-  }
 
 }

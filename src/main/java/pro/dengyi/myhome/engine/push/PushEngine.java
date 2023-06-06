@@ -8,6 +8,6 @@ package pro.dengyi.myhome.engine.push;
  */
 public interface PushEngine {
 
-  Boolean doPush();
+    Boolean doPush();
 
 }

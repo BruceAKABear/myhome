@@ -9,12 +9,12 @@ import lombok.Data;
 @Data
 public class DashboardDto {
 
-  private Integer familyCount;
-  private Integer userCount;
-  private Integer onlineUserCount;
-  private Integer floorCount;
-  private Integer roomCount;
-  private Integer deviceCount;
-  private Integer onlineDeviceCount;
-  private Integer offlineDeviceCount;
+    private Integer familyCount;
+    private Integer userCount;
+    private Integer onlineUserCount;
+    private Integer floorCount;
+    private Integer roomCount;
+    private Integer deviceCount;
+    private Integer onlineDeviceCount;
+    private Integer offlineDeviceCount;
 }

@@ -10,6 +10,6 @@ import pro.dengyi.myhome.model.automation.ScheduleTask;
 @Data
 public class ScheduleTaskPageDto extends ScheduleTask {
 
-  private String deviceName;
+    private String deviceName;
 
 }

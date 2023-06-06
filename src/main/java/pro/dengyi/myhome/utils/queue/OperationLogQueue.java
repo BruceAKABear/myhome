@@ -1,7 +1,8 @@
 package pro.dengyi.myhome.utils.queue;
 
-import java.util.concurrent.LinkedBlockingQueue;
 import pro.dengyi.myhome.model.system.OperationLog;
+
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * @author ：dengyi(A.K.A Bear)
@@ -11,27 +12,27 @@ import pro.dengyi.myhome.model.system.OperationLog;
  */
 public class OperationLogQueue {
 
-  static LinkedBlockingQueue<OperationLog> queue = new LinkedBlockingQueue(1000);
+    static LinkedBlockingQueue<OperationLog> queue = new LinkedBlockingQueue(1000);
 
-  public static boolean publish(OperationLog log) {
-    boolean flag;
-    try {
-      queue.put(log);
-      flag = true;
-    } catch (InterruptedException e) {
-      flag = false;
+    public static boolean publish(OperationLog log) {
+        boolean flag;
+        try {
+            queue.put(log);
+            flag = true;
+        } catch (InterruptedException e) {
+            flag = false;
+        }
+        return flag;
     }
-    return flag;
-  }
 
-  public static OperationLog consume() {
-    OperationLog log;
-    try {
-      log = queue.take();
-    } catch (InterruptedException e) {
-      log = null;
+    public static OperationLog consume() {
+        OperationLog log;
+        try {
+            log = queue.take();
+        } catch (InterruptedException e) {
+            log = null;
+        }
+        return log;
     }
-    return log;
-  }
 
 }

@@ -8,5 +8,5 @@ package pro.dengyi.myhome.service;
  */
 public interface LocationService {
 
-  void checkLocation(String beaconMac);
+    void checkLocation(String beaconMac);
 }

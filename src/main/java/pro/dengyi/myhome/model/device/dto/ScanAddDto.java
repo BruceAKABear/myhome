@@ -8,7 +8,7 @@ package pro.dengyi.myhome.model.device.dto;
  */
 public class ScanAddDto {
 
-  private String productInfo;
+    private String productInfo;
 
 
 }

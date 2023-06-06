@@ -12,7 +12,7 @@ import pro.dengyi.myhome.model.system.Family;
 @Data
 public class FamilyDto extends Family {
 
-  private Integer floorCount;
-  private Integer roomCount;
-  private Integer deviceCount;
+    private Integer floorCount;
+    private Integer roomCount;
+    private Integer deviceCount;
 }

@@ -1,7 +1,8 @@
 package pro.dengyi.myhome.service;
 
-import java.util.List;
 import pro.dengyi.myhome.model.device.ProductField;
+
+import java.util.List;
 
 /**
  * @author dengyi (email:dengyi@dengyi.pro)
@@ -9,5 +10,5 @@ import pro.dengyi.myhome.model.device.ProductField;
  */
 public interface ProductFieldService {
 
-  List<ProductField> fieldList(String deviceId, String productId);
+    List<ProductField> fieldList(String deviceId, String productId);
 }

@@ -4,11 +4,12 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import javax.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import pro.dengyi.myhome.model.base.BaseModel;
+
+import javax.validation.constraints.NotBlank;
 
 /**
  * 设备类别字段映射表
@@ -25,17 +26,17 @@ import pro.dengyi.myhome.model.base.BaseModel;
 public class ProductFieldValue extends BaseModel {
 
 
-  @ApiModelProperty(value = "字段id")
-  @NotBlank(message = "字段id不能为空")
-  private String fieldId;
+    @ApiModelProperty(value = "字段id")
+    @NotBlank(message = "字段id不能为空")
+    private String fieldId;
 
-  @ApiModelProperty(value = "显示值")
-  @NotBlank(message = "显示值不能为空")
-  private String label;
+    @ApiModelProperty(value = "显示值")
+    @NotBlank(message = "显示值不能为空")
+    private String label;
 
-  @ApiModelProperty(value = "实际值")
-  @NotBlank(message = "实际值不能为空")
-  private String value;
+    @ApiModelProperty(value = "实际值")
+    @NotBlank(message = "实际值不能为空")
+    private String value;
 
 
 }

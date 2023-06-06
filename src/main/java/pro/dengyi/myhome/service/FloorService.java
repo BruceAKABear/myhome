@@ -1,9 +1,10 @@
 package pro.dengyi.myhome.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import java.util.List;
 import pro.dengyi.myhome.model.dto.FloorPageDto;
 import pro.dengyi.myhome.model.system.Floor;
+
+import java.util.List;
 
 /**
  * @author dengyi (email:dengyi@dengyi.pro)
@@ -11,11 +12,11 @@ import pro.dengyi.myhome.model.system.Floor;
  */
 public interface FloorService {
 
-  void addUpdate(Floor floor);
+    void addUpdate(Floor floor);
 
-  void delete(String id);
+    void delete(String id);
 
-  List<FloorPageDto> floorList();
+    List<FloorPageDto> floorList();
 
-  IPage<FloorPageDto> page(Integer pageNumber, Integer pageSize, String floorName);
+    IPage<FloorPageDto> page(Integer pageNumber, Integer pageSize, String floorName);
 }

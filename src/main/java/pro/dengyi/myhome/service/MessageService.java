@@ -11,9 +11,9 @@ import pro.dengyi.myhome.model.system.Message;
  */
 public interface MessageService {
 
-  IPage<Message> getAllMessage(Integer page, Integer size, Boolean read);
+    IPage<Message> getAllMessage(Integer page, Integer size, Boolean read);
 
-  Integer getHaveNotRead();
+    Integer getHaveNotRead();
 
-  void readMessage(String messageId);
+    void readMessage(String messageId);
 }

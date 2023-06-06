@@ -9,13 +9,13 @@ import pro.dengyi.myhome.model.automation.ScheduleTask;
  */
 public interface ScheduleTaskService {
 
-  void addOrUpdate(ScheduleTask scheduleTask);
+    void addOrUpdate(ScheduleTask scheduleTask);
 
-  IPage<ScheduleTask> page(Integer page, Integer size, String name);
+    IPage<ScheduleTask> page(Integer page, Integer size, String name);
 
-  void delete(String id);
+    void delete(String id);
 
-  void changeStatus(String id);
+    void changeStatus(String id);
 
-  void triggerImmediately(String id);
+    void triggerImmediately(String id);
 }

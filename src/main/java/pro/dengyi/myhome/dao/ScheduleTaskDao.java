@@ -14,6 +14,6 @@ import pro.dengyi.myhome.model.automation.dto.ScheduleTaskPageDto;
 @Repository
 public interface ScheduleTaskDao extends BaseMapper<ScheduleTask> {
 
-  IPage<ScheduleTaskPageDto> selectCustomPage(IPage<ScheduleTaskPageDto> pageParam,
-      @Param("name") String name);
+    IPage<ScheduleTaskPageDto> selectCustomPage(IPage<ScheduleTaskPageDto> pageParam,
+                                                @Param("name") String name);
 }

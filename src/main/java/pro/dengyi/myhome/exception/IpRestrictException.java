@@ -8,7 +8,7 @@ package pro.dengyi.myhome.exception;
  */
 public class IpRestrictException extends RuntimeException {
 
-  public IpRestrictException(String message) {
-    super(message);
-  }
+    public IpRestrictException(String message) {
+        super(message);
+    }
 }

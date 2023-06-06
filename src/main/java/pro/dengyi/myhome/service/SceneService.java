@@ -1,8 +1,9 @@
 package pro.dengyi.myhome.service;
 
+import pro.dengyi.myhome.model.automation.Scene;
+
 import java.util.List;
 import java.util.Map;
-import pro.dengyi.myhome.model.automation.Scene;
 
 /**
  * @author ：dengyi(A.K.A Bear)
@@ -12,13 +13,13 @@ import pro.dengyi.myhome.model.automation.Scene;
  */
 public interface SceneService {
 
-  void addOrUpdate(Scene scene);
+    void addOrUpdate(Scene scene);
 
-  List<Scene> list();
+    List<Scene> list();
 
-  void changeEnable(Map<String, Object> params);
+    void changeEnable(Map<String, Object> params);
 
-  void delete(String id);
+    void delete(String id);
 
-  Scene queryForUpdate(String sceneId);
+    Scene queryForUpdate(String sceneId);
 }

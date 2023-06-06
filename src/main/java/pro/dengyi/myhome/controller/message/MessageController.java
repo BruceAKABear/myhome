@@ -26,34 +26,34 @@ import pro.dengyi.myhome.service.MessageService;
 @RequestMapping("/message")
 public class MessageController {
 
-  @Autowired
-  private MessageService messageService;
+    @Autowired
+    private MessageService messageService;
 
 
-  @Permission(needValidate = false)
-  @ApiOperation("查询所有消息")
-  @GetMapping("/getAllMessage")
-  public DataResponse<IPage<Message>> getAllMessage(@RequestParam Integer page,
-      @RequestParam Integer size, @RequestParam(required = false) Boolean read) {
-    IPage<Message> res = messageService.getAllMessage(page, size, read);
-    return new DataResponse<>(res);
-  }
+    @Permission(needValidate = false)
+    @ApiOperation("查询所有消息")
+    @GetMapping("/getAllMessage")
+    public DataResponse<IPage<Message>> getAllMessage(@RequestParam Integer page,
+                                                      @RequestParam Integer size, @RequestParam(required = false) Boolean read) {
+        IPage<Message> res = messageService.getAllMessage(page, size, read);
+        return new DataResponse<>(res);
+    }
 
-  @Permission(needValidate = false)
-  @ApiOperation("查询纬度消息数量")
-  @GetMapping("/getHaveNotRead")
-  public DataResponse<Integer> getHaveNotRead() {
-    Integer count = messageService.getHaveNotRead();
-    return new DataResponse<>(count);
-  }
+    @Permission(needValidate = false)
+    @ApiOperation("查询纬度消息数量")
+    @GetMapping("/getHaveNotRead")
+    public DataResponse<Integer> getHaveNotRead() {
+        Integer count = messageService.getHaveNotRead();
+        return new DataResponse<>(count);
+    }
 
-  @Permission(needValidate = false)
-  @ApiOperation("查询纬度消息数量")
-  @GetMapping("/readMessage")
-  public CommonResponse readMessage(@RequestParam String messageId) {
-    messageService.readMessage(messageId);
-    return CommonResponse.success();
-  }
+    @Permission(needValidate = false)
+    @ApiOperation("查询纬度消息数量")
+    @GetMapping("/readMessage")
+    public CommonResponse readMessage(@RequestParam String messageId) {
+        messageService.readMessage(messageId);
+        return CommonResponse.success();
+    }
 
 
 }

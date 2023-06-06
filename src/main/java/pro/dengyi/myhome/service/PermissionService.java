@@ -1,10 +1,11 @@
 package pro.dengyi.myhome.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import java.util.List;
 import pro.dengyi.myhome.model.perm.PermissionFunction;
 import pro.dengyi.myhome.model.perm.Role;
 import pro.dengyi.myhome.model.perm.dto.PermissionDto;
+
+import java.util.List;
 
 /**
  * @author dengyi (email:dengyi@dengyi.pro)
@@ -12,15 +13,15 @@ import pro.dengyi.myhome.model.perm.dto.PermissionDto;
  */
 public interface PermissionService {
 
-  PermissionDto getPerm();
+    PermissionDto getPerm();
 
-  IPage<Role> rolePage(Integer page, Integer size, String roleName);
+    IPage<Role> rolePage(Integer page, Integer size, String roleName);
 
-  void roleAdd(Role roleAddDto);
+    void roleAdd(Role roleAddDto);
 
-  List<PermissionFunction> allPermTree();
+    List<PermissionFunction> allPermTree();
 
-  void roleDel(String roleId);
+    void roleDel(String roleId);
 
-  List<Role> roleList();
+    List<Role> roleList();
 }

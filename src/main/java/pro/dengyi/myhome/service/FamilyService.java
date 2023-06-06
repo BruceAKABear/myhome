@@ -9,10 +9,10 @@ import pro.dengyi.myhome.model.system.Family;
  */
 public interface FamilyService {
 
-  void addUpdate(Family family);
+    void addUpdate(Family family);
 
-  FamilyDto info();
+    FamilyDto info();
 
-  Boolean checkIsFirst();
+    Boolean checkIsFirst();
 
 }

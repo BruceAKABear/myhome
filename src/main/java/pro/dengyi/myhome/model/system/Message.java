@@ -22,16 +22,16 @@ import pro.dengyi.myhome.model.base.BaseModel;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Message extends BaseModel {
 
-  //消息类型 onOff设备在离线 、security安防
-  private String type;
+    //消息类型 onOff设备在离线 、security安防
+    private String type;
 
 
-  private String fromUserId;
+    private String fromUserId;
 
-  private String userId;
+    private String userId;
 
-  private Boolean readed;
+    private Boolean readed;
 
-  private String content;
+    private String content;
 
 }

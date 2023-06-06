@@ -11,8 +11,8 @@ import lombok.Data;
 @Data
 public class OtaParam {
 
-  private String deviceId;
-  private Integer targetVersion;
-  private String targetUrl;
+    private String deviceId;
+    private Integer targetVersion;
+    private String targetUrl;
 
 }

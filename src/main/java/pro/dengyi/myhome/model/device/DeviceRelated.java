@@ -22,9 +22,9 @@ import pro.dengyi.myhome.model.base.BaseModel;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class DeviceRelated extends BaseModel {
 
-  private String mainDeviceId;
+    private String mainDeviceId;
 
-  private String relatedDeviceId;
+    private String relatedDeviceId;
 
 
 }

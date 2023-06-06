@@ -4,12 +4,13 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import javax.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import pro.dengyi.myhome.model.base.BaseModel;
 import pro.dengyi.myhome.model.device.Device;
+
+import javax.validation.constraints.NotBlank;
 
 /**
  * 定时任务实体
@@ -24,23 +25,23 @@ import pro.dengyi.myhome.model.device.Device;
 @TableName("task_condition_item")
 public class ConditionTaskItem extends BaseModel {
 
-  @ApiModelProperty("名称")
-  @NotBlank
-  private String name;
+    @ApiModelProperty("名称")
+    @NotBlank
+    private String name;
 
-  private String link;
+    private String link;
 
 
-  private String targetDeviceId;
+    private String targetDeviceId;
 
-  @TableField(exist = false)
-  private Device targetDevice;
+    @TableField(exist = false)
+    private Device targetDevice;
 
-  private String targetFiled;
+    private String targetFiled;
 
-  private String targetValue;
+    private String targetValue;
 
-  private String fid;
+    private String fid;
 
 
 }

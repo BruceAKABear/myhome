@@ -12,36 +12,36 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class DataResponse<T> implements Response {
 
-  private Boolean status;
-  private Integer code;
-  private String message;
-  private T data;
+    private Boolean status;
+    private Integer code;
+    private String message;
+    private T data;
 
 
-  public DataResponse(T data) {
-    this.status = true;
-    this.code = 10000;
-    this.message = "操作成功";
-    this.data = data;
-  }
+    public DataResponse(T data) {
+        this.status = true;
+        this.code = 10000;
+        this.message = "操作成功";
+        this.data = data;
+    }
 
-  @Override
-  public Boolean getStatus() {
-    return status;
-  }
+    @Override
+    public Boolean getStatus() {
+        return status;
+    }
 
-  @Override
-  public Integer getCode() {
-    return code;
-  }
+    @Override
+    public Integer getCode() {
+        return code;
+    }
 
-  @Override
-  public String getMessage() {
-    return message;
-  }
+    @Override
+    public String getMessage() {
+        return message;
+    }
 
 
-  public T getData() {
-    return data;
-  }
+    public T getData() {
+        return data;
+    }
 }

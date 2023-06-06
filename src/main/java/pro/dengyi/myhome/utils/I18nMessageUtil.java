@@ -17,20 +17,20 @@ import org.springframework.stereotype.Component;
 @Component
 public class I18nMessageUtil {
 
-  private static MessageSource messageSource;
+    private static MessageSource messageSource;
 
-  public I18nMessageUtil(MessageSource messageSource) {
-    I18nMessageUtil.messageSource = messageSource;
-  }
+    public I18nMessageUtil(MessageSource messageSource) {
+        I18nMessageUtil.messageSource = messageSource;
+    }
 
-  /**
-   * 通过编码查询值
-   *
-   * @param errorCode
-   * @return
-   */
-  public static String get(Integer errorCode) {
-    return messageSource.getMessage(errorCode + "_message", null, LocaleContextHolder.getLocale());
-  }
+    /**
+     * 通过编码查询值
+     *
+     * @param errorCode
+     * @return
+     */
+    public static String get(Integer errorCode) {
+        return messageSource.getMessage(errorCode + "_message", null, LocaleContextHolder.getLocale());
+    }
 
 }

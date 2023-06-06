@@ -10,28 +10,28 @@ import java.util.TimerTask;
  */
 public class CountDownTimer {
 
-  private TimerTask timerTask;
-  private long time;
+    private TimerTask timerTask;
+    private long time;
 
-  public CountDownTimer(long time) {
-    this.time = time;
-  }
+    public CountDownTimer(long time) {
+        this.time = time;
+    }
 
-  public void start() {
-    timerTask = new TimerTask() {
-      @Override
-      public void run() {
-        if (time == 0) {
-          System.out.println("倒计时结束");
-          cancel();
-        } else {
-          System.out.println("倒计时：" + time + "s");
-          time--;
-        }
-      }
-    };
-    java.util.Timer timer = new java.util.Timer();
-    timer.schedule(timerTask, 0, 1000);
-  }
+    public void start() {
+        timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                if (time == 0) {
+                    System.out.println("倒计时结束");
+                    cancel();
+                } else {
+                    System.out.println("倒计时：" + time + "s");
+                    time--;
+                }
+            }
+        };
+        java.util.Timer timer = new java.util.Timer();
+        timer.schedule(timerTask, 0, 1000);
+    }
 
 }

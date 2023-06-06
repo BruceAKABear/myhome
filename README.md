@@ -21,6 +21,11 @@ in order to ensure the system safety,I make it running in local server,that mean
 MyHome core backend system is build with Java version 8, dashboard and Android application are build with Javascript(the reason why ios app not present is apple account is so expensive to me). The database I use mariadb for storing data, in order to connect devices,I use EMQX for device communication.
 so, if you want to use MyHome,you need to install mariadb,EMQX,Java8
 
+
+## Safety first!
+
+
+
 ## For normal Users
 in order, you can use this system,you need to let your MyHome administrator add you to the system,
 then login to the system,then control everything you can control.

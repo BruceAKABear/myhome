@@ -21,34 +21,34 @@ import pro.dengyi.myhome.utils.UserHolder;
 @Service
 public class MessageServiceImpl implements MessageService {
 
-  @Autowired
-  private MessageDao messageDao;
+    @Autowired
+    private MessageDao messageDao;
 
-  @Override
-  public IPage<Message> getAllMessage(Integer page, Integer size, Boolean read) {
-    User currentUser = UserHolder.getUser();
-    IPage<Message> pageParams = new Page<>(page == null ? 1 : page, size == null ? 10 : size);
-    LambdaQueryWrapper<Message> queryWrapper = new LambdaQueryWrapper<>();
-    queryWrapper.eq(Message::getUserId, currentUser.getId());
-    if (read != null) {
-      queryWrapper.eq(Message::getReaded, read);
+    @Override
+    public IPage<Message> getAllMessage(Integer page, Integer size, Boolean read) {
+        User currentUser = UserHolder.getUser();
+        IPage<Message> pageParams = new Page<>(page == null ? 1 : page, size == null ? 10 : size);
+        LambdaQueryWrapper<Message> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Message::getUserId, currentUser.getId());
+        if (read != null) {
+            queryWrapper.eq(Message::getReaded, read);
+        }
+        return messageDao.selectPage(pageParams, queryWrapper);
     }
-    return messageDao.selectPage(pageParams, queryWrapper);
-  }
 
-  @Override
-  public Integer getHaveNotRead() {
-    User currentUser = UserHolder.getUser();
-    return Math.toIntExact(messageDao.selectCount(
-        new LambdaQueryWrapper<Message>().eq(Message::getUserId, currentUser.getId())
-            .eq(Message::getReaded, false)));
-  }
+    @Override
+    public Integer getHaveNotRead() {
+        User currentUser = UserHolder.getUser();
+        return Math.toIntExact(messageDao.selectCount(
+                new LambdaQueryWrapper<Message>().eq(Message::getUserId, currentUser.getId())
+                        .eq(Message::getReaded, false)));
+    }
 
-  @Transactional
-  @Override
-  public void readMessage(String messageId) {
-    Message message = messageDao.selectById(messageId);
-    message.setReaded(true);
-    messageDao.updateById(message);
-  }
+    @Transactional
+    @Override
+    public void readMessage(String messageId) {
+        Message message = messageDao.selectById(messageId);
+        message.setReaded(true);
+        messageDao.updateById(message);
+    }
 }

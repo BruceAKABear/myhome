@@ -1,7 +1,8 @@
 package pro.dengyi.myhome.utils.queue;
 
-import java.util.concurrent.LinkedBlockingQueue;
 import pro.dengyi.myhome.model.device.DeviceLog;
+
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * @author ：dengyi(A.K.A Bear)
@@ -11,27 +12,27 @@ import pro.dengyi.myhome.model.device.DeviceLog;
  */
 public class RequestTimeQueue {
 
-  static LinkedBlockingQueue<DeviceLog> queue = new LinkedBlockingQueue(1000);
+    static LinkedBlockingQueue<DeviceLog> queue = new LinkedBlockingQueue(1000);
 
-  public static boolean publish(DeviceLog log) {
-    boolean flag;
-    try {
-      queue.put(log);
-      flag = true;
-    } catch (InterruptedException e) {
-      flag = false;
+    public static boolean publish(DeviceLog log) {
+        boolean flag;
+        try {
+            queue.put(log);
+            flag = true;
+        } catch (InterruptedException e) {
+            flag = false;
+        }
+        return flag;
     }
-    return flag;
-  }
 
-  public static DeviceLog consume() {
-    DeviceLog log;
-    try {
-      log = queue.take();
-    } catch (InterruptedException e) {
-      log = null;
+    public static DeviceLog consume() {
+        DeviceLog log;
+        try {
+            log = queue.take();
+        } catch (InterruptedException e) {
+            log = null;
+        }
+        return log;
     }
-    return log;
-  }
 
 }

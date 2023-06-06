@@ -20,8 +20,8 @@ import pro.dengyi.myhome.model.base.BaseModel;
 @ApiModel("功能权限")
 public class RolePermission extends BaseModel {
 
-  private String roleId;
+    private String roleId;
 
-  private String permissionId;
+    private String permissionId;
 
 }

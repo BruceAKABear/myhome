@@ -24,9 +24,9 @@ import pro.dengyi.myhome.model.base.BaseModel;
 public class ApiProcessingTime extends BaseModel {
 
 
-  private String uri;
+    private String uri;
 
 
-  private Integer times;
+    private Integer times;
 
 }

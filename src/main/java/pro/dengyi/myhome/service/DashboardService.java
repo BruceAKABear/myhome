@@ -8,6 +8,6 @@ import pro.dengyi.myhome.model.dto.DashboardDto;
  */
 public interface DashboardService {
 
-  DashboardDto dashboardInfo();
+    DashboardDto dashboardInfo();
 
 }

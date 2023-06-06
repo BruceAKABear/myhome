@@ -11,7 +11,7 @@ import lombok.Data;
 @Data
 public class ChangeFavoriteDto {
 
-  private String deviceId;
-  private Boolean favorite;
+    private String deviceId;
+    private Boolean favorite;
 
 }

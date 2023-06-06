@@ -8,20 +8,20 @@ package pro.dengyi.myhome.utils;
  */
 public class RequestTimeHolder {
 
-  private static final ThreadLocal<Long> LOCAL = new ThreadLocal<>();
+    private static final ThreadLocal<Long> LOCAL = new ThreadLocal<>();
 
-  public static void setStartTime() {
-    LOCAL.set(System.currentTimeMillis());
-  }
+    public static void setStartTime() {
+        LOCAL.set(System.currentTimeMillis());
+    }
 
-  public static Long getTimeDifference() {
-    return System.currentTimeMillis() - LOCAL.get();
-  }
+    public static Long getTimeDifference() {
+        return System.currentTimeMillis() - LOCAL.get();
+    }
 
 
-  public static void remove() {
-    LOCAL.remove();
+    public static void remove() {
+        LOCAL.remove();
 
-  }
+    }
 
 }

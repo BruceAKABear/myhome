@@ -1,10 +1,11 @@
 package pro.dengyi.myhome.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 import pro.dengyi.myhome.model.device.ProductField;
+
+import java.util.List;
 
 /**
  * @author dengyi (email:dengyi@dengyi.pro)
@@ -13,5 +14,5 @@ import pro.dengyi.myhome.model.device.ProductField;
 @Repository
 public interface ProductFieldDao extends BaseMapper<ProductField> {
 
-  List<ProductField> selectFieldListByDeviceId(@Param("deviceId") String deviceId);
+    List<ProductField> selectFieldListByDeviceId(@Param("deviceId") String deviceId);
 }

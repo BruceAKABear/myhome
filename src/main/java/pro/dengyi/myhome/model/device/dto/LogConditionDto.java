@@ -1,8 +1,9 @@
 package pro.dengyi.myhome.model.device.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import java.time.LocalDateTime;
 import lombok.Data;
+
+import java.time.LocalDateTime;
 
 /**
  * @author ：dengyi(A.K.A Bear)
@@ -13,13 +14,13 @@ import lombok.Data;
 @Data
 public class LogConditionDto {
 
-  private String deviceId;
+    private String deviceId;
 
-  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-  private LocalDateTime startDateTime;
-  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-  private LocalDateTime endDateTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime startDateTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime endDateTime;
 
-  private Integer step;
+    private Integer step;
 
 }

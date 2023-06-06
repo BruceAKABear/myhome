@@ -19,20 +19,20 @@ import pro.dengyi.myhome.utils.UserHolder;
 @Service
 public class LocationServiceImpl implements LocationService {
 
-  @Autowired
-  private RoomDao roomDao;
+    @Autowired
+    private RoomDao roomDao;
 
-  @Override
-  public void checkLocation(String beaconUuid) {
-    if (!ObjectUtils.isEmpty(beaconUuid)) {
-      Room room = roomDao.selectOne(
-          new LambdaQueryWrapper<Room>().eq(Room::getBeaconUuid, beaconUuid).last("limit 1"));
-      if (room != null) {
-        String floorId = room.getFloorId();
-        String roomId = room.getId();
-        //推送
-        PushUtil.positionPush(UserHolder.getUser().getId(), floorId, roomId);
-      }
+    @Override
+    public void checkLocation(String beaconUuid) {
+        if (!ObjectUtils.isEmpty(beaconUuid)) {
+            Room room = roomDao.selectOne(
+                    new LambdaQueryWrapper<Room>().eq(Room::getBeaconUuid, beaconUuid).last("limit 1"));
+            if (room != null) {
+                String floorId = room.getFloorId();
+                String roomId = room.getId();
+                //推送
+                PushUtil.positionPush(UserHolder.getUser().getId(), floorId, roomId);
+            }
+        }
     }
-  }
 }

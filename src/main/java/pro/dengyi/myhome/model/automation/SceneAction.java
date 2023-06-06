@@ -22,15 +22,15 @@ import pro.dengyi.myhome.model.base.BaseModel;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SceneAction extends BaseModel {
 
-  private String sceneId;
+    private String sceneId;
 
-  private String type;
+    private String type;
 
-  private String deviceId;
+    private String deviceId;
 
-  private String deviceProperty;
+    private String deviceProperty;
 
-  private String propertyValue;
+    private String propertyValue;
 
 
 }

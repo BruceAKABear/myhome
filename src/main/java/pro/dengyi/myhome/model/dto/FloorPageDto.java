@@ -12,6 +12,6 @@ import pro.dengyi.myhome.model.system.Floor;
 @Data
 public class FloorPageDto extends Floor {
 
-  private Integer roomCount;
-  private Integer deviceCount;
+    private Integer roomCount;
+    private Integer deviceCount;
 }

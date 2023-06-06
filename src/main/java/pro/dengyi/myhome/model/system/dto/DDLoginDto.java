@@ -5,6 +5,6 @@ import lombok.Data;
 @Data
 public class DDLoginDto {
 
-  private String code;
+    private String code;
 
 }

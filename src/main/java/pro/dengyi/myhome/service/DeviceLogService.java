@@ -1,10 +1,11 @@
 package pro.dengyi.myhome.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import java.time.LocalDateTime;
-import java.util.List;
 import pro.dengyi.myhome.model.device.DeviceLog;
 import pro.dengyi.myhome.model.device.dto.LogByConditionDto;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @author dengyi (email:dengyi@dengyi.pro)
@@ -12,8 +13,8 @@ import pro.dengyi.myhome.model.device.dto.LogByConditionDto;
  */
 public interface DeviceLogService {
 
-  IPage<DeviceLog> page(Integer page, Integer size, String deviceId);
+    IPage<DeviceLog> page(Integer page, Integer size, String deviceId);
 
-  List<LogByConditionDto> logByCondition(String deviceId, LocalDateTime startDateTime,
-      LocalDateTime endDateTime, Integer step);
+    List<LogByConditionDto> logByCondition(String deviceId, LocalDateTime startDateTime,
+                                           LocalDateTime endDateTime, Integer step);
 }

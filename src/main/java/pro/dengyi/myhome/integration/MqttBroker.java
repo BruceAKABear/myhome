@@ -11,19 +11,19 @@ import java.util.Map;
 public interface MqttBroker {
 
 
-  /**
-   * 设备登录
-   *
-   * @return true auth pass,false auth fail
-   */
-  Boolean deviceLogin(Map<String, String> params);
+    /**
+     * 设备登录
+     *
+     * @return true auth pass,false auth fail
+     */
+    Boolean deviceLogin(Map<String, String> params);
 
 
-  /**
-   * broker设备状态改变回调
-   *
-   * @return
-   */
-  Boolean callBack(Map<String, String> params);
+    /**
+     * broker设备状态改变回调
+     *
+     * @return
+     */
+    Boolean callBack(Map<String, String> params);
 
 }
