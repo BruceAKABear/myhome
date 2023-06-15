@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import pro.dengyi.myhome.model.device.DeviceLog;
 import pro.dengyi.myhome.model.device.dto.LogByConditionDto;
 import pro.dengyi.myhome.model.device.dto.LogConditionDto;
-import pro.dengyi.myhome.response.DataResponse;
+import pro.dengyi.myhome.common.response.DataResponse;
 import pro.dengyi.myhome.service.DeviceLogService;
 
 import java.util.List;

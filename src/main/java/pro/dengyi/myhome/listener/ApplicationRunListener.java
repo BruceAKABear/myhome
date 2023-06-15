@@ -10,18 +10,17 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.env.Environment;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
+import pro.dengyi.myhome.common.config.properties.SystemProperties;
+import pro.dengyi.myhome.common.utils.queue.DeviceLogQueue;
+import pro.dengyi.myhome.common.utils.queue.OperationLogQueue;
+import pro.dengyi.myhome.common.utils.queue.RoomSelectQueue;
 import pro.dengyi.myhome.dao.*;
 import pro.dengyi.myhome.model.device.DeviceLog;
 import pro.dengyi.myhome.model.system.Family;
 import pro.dengyi.myhome.model.system.OperationLog;
 import pro.dengyi.myhome.model.system.User;
-import pro.dengyi.myhome.properties.SystemProperties;
-import pro.dengyi.myhome.utils.queue.DeviceLogQueue;
-import pro.dengyi.myhome.utils.queue.OperationLogQueue;
-import pro.dengyi.myhome.utils.queue.RoomSelectQueue;
 
 import java.util.Map;
 import java.util.concurrent.Executor;
@@ -34,7 +33,7 @@ import java.util.concurrent.TimeUnit;
  * @date 2022-01-22
  */
 @Slf4j
-@Component
+//@Component
 public class ApplicationRunListener implements ApplicationRunner {
 
     @Autowired

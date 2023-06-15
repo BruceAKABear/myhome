@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pro.dengyi.myhome.model.automation.Scene;
-import pro.dengyi.myhome.response.CommonResponse;
-import pro.dengyi.myhome.response.DataResponse;
+import pro.dengyi.myhome.common.response.CommonResponse;
+import pro.dengyi.myhome.common.response.DataResponse;
 import pro.dengyi.myhome.service.SceneService;
 
 import javax.validation.constraints.NotBlank;
@@ -30,7 +30,7 @@ public class SceneController {
     @Autowired
     private SceneService sceneService;
 
-
+//todo 相同条件不能存在
     @ApiOperation("新增或修改场景")
     @PostMapping("/addOrUpdate")
     public CommonResponse addOrUpdate(@RequestBody Scene scene) {

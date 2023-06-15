@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="pro.dengyi.myhome.dao.SceneDao">
+    <select id="sceneListAndDetails" resultMap="scene-detail-result-map">
+        SELECT
+            scene_scene.id,
+            scene_scene.`name`,
+            scene_scene.description,
+            scene_scene.`enable`,
+            scene_scene.create_time,
+            scene_scene.update_time,
+            scene_condition.id AS cid,
+            scene_condition.type AS ctype,
+            scene_condition.start_time AS cstart_time,
+            scene_condition.end_time AS cend_time,
+            scene_condition.device_id AS cdevice_id,
+            scene_condition.device_property AS cdevice_property,
+            scene_condition.relation AS crelation,
+            scene_condition.property_value AS cproperty_value,
+            scene_action.id AS aid,
+            scene_action.type AS atype,
+            scene_action.device_id AS adevice_id,
+            scene_action.device_property AS adevice_property,
+            scene_action.property_value AS aproperty_value
+        FROM
+            scene_scene
+                LEFT JOIN scene_condition ON scene_scene.id = scene_condition.scene_id
+                LEFT JOIN scene_action ON scene_action.scene_id = scene_scene.id
+    </select>
+
+
+    <resultMap id="scene-detail-result-map" type="pro.dengyi.myhome.model.automation.Scene">
+        <result column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="description" property="description"/>
+        <result column="enable" property="enable"/>
+
+        <collection property="conditions" ofType="pro.dengyi.myhome.model.automation.SceneCondition">
+            <result column="cid" property="id"/>
+            <result column="ctype" property="type"/>
+            <result column="cend_time" property="endTime"/>
+            <result column="cdevice_id" property="deviceId"/>
+            <result column="cdevice_property" property="deviceProperty"/>
+            <result column="cproperty_value" property="propertyValue"/>
+            <result column="crelation" property="relation"/>
+        </collection>
+
+        <collection property="actions" ofType="pro.dengyi.myhome.model.automation.SceneAction">
+
+            <result column="aid" property="id"/>
+            <result column="atype" property="type"/>
+            <result column="adevice_id" property="deviceId"/>
+            <result column="adevice_property" property="deviceProperty"/>
+            <result column="aproperty_value" property="propertyValue"/>
+        </collection>
+
+    </resultMap>
+</mapper>

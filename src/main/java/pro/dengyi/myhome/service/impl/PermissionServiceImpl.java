@@ -13,8 +13,8 @@ import pro.dengyi.myhome.model.perm.*;
 import pro.dengyi.myhome.model.perm.dto.PermissionDto;
 import pro.dengyi.myhome.model.system.User;
 import pro.dengyi.myhome.service.PermissionService;
-import pro.dengyi.myhome.utils.SwitchUtil;
-import pro.dengyi.myhome.utils.UserHolder;
+import pro.dengyi.myhome.common.utils.SwitchUtil;
+import pro.dengyi.myhome.common.utils.UserHolder;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

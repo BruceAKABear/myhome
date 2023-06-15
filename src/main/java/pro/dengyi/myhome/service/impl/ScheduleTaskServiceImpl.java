@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
-import pro.dengyi.myhome.config.MyScheduleJob;
+import pro.dengyi.myhome.common.config.MyScheduleJob;
 import pro.dengyi.myhome.dao.DeviceDao;
 import pro.dengyi.myhome.dao.ScheduleTaskDao;
 import pro.dengyi.myhome.dao.ScheduleTaskDeviceDao;

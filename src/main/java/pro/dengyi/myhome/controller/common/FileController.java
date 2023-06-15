@@ -7,9 +7,9 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import pro.dengyi.myhome.annotations.Permission;
-import pro.dengyi.myhome.response.DataResponse;
-import pro.dengyi.myhome.utils.IpUtil;
+import pro.dengyi.myhome.common.aop.annotations.Permission;
+import pro.dengyi.myhome.common.response.DataResponse;
+import pro.dengyi.myhome.common.utils.IpUtil;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;

@@ -43,6 +43,8 @@ public class SceneServiceImpl implements SceneService {
     public void addOrUpdate(Scene scene) {
 
         if (ObjectUtils.isEmpty(scene.getId())) {
+//            sceneDao.selectList(new LambdaQueryWrapper<Scene>().eq())
+
             //新增
             scene.setCreateTime(LocalDateTime.now());
             scene.setUpdateTime(LocalDateTime.now());

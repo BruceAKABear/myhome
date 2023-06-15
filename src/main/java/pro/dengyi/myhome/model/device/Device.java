@@ -23,6 +23,7 @@ import javax.validation.constraints.NotBlank;
 @ApiModel("设备实体")
 public class Device extends BaseModel {
 
+    //todo 可以和id合二为一
     @ApiModelProperty(value = "芯片ID")
     private String chipId;
 

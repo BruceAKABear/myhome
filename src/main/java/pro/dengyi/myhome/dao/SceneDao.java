@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.springframework.stereotype.Repository;
 import pro.dengyi.myhome.model.automation.Scene;
 
+import java.util.List;
+
 /**
  * @author ：dengyi(A.K.A Bear)
  * @date ：Created in 2023/2/10 13:07
@@ -12,5 +14,7 @@ import pro.dengyi.myhome.model.automation.Scene;
  */
 @Repository
 public interface SceneDao extends BaseMapper<Scene> {
+
+    List<Scene> sceneListAndDetails();
 
 }

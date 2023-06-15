@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
-import pro.dengyi.myhome.properties.SystemProperties;
-import pro.dengyi.myhome.response.DataResponse;
+import pro.dengyi.myhome.common.config.properties.SystemProperties;
+import pro.dengyi.myhome.common.response.DataResponse;
 
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;

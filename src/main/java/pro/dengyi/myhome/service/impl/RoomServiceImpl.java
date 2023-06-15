@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 import pro.dengyi.myhome.dao.DeviceDao;
 import pro.dengyi.myhome.dao.RoomDao;
-import pro.dengyi.myhome.exception.BusinessException;
+import pro.dengyi.myhome.common.exception.BusinessException;
 import pro.dengyi.myhome.model.device.Device;
 import pro.dengyi.myhome.model.dto.RoomDto;
 import pro.dengyi.myhome.model.system.Room;

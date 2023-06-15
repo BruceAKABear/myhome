@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import pro.dengyi.myhome.annotations.Permission;
+import pro.dengyi.myhome.common.aop.annotations.Permission;
 import pro.dengyi.myhome.model.system.Message;
-import pro.dengyi.myhome.response.CommonResponse;
-import pro.dengyi.myhome.response.DataResponse;
+import pro.dengyi.myhome.common.response.CommonResponse;
+import pro.dengyi.myhome.common.response.DataResponse;
 import pro.dengyi.myhome.service.MessageService;
 
 /**

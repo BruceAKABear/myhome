@@ -11,6 +11,7 @@ import lombok.ToString;
 import pro.dengyi.myhome.model.base.BaseModel;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 /**
@@ -42,11 +43,13 @@ public class Scene extends BaseModel {
     @NotBlank(message = "条件集合不能为空")
     @ApiModelProperty("条件集合")
     @TableField(exist = false)
+    @Size(min = 1, message = "条件长度必须大于等于1")
     private List<SceneCondition> conditions;
 
     @NotBlank(message = "执行集合不能为空")
     @ApiModelProperty("执行集合")
     @TableField(exist = false)
+    @Size(min = 1, message = "动作长度必须大于等于1")
     private List<SceneAction> actions;
 
 

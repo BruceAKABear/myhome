@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import pro.dengyi.myhome.model.device.Product;
 import pro.dengyi.myhome.model.device.dto.ProductAddDto;
 import pro.dengyi.myhome.model.device.dto.ProductPageDto;
-import pro.dengyi.myhome.response.CommonResponse;
-import pro.dengyi.myhome.response.DataResponse;
+import pro.dengyi.myhome.common.response.CommonResponse;
+import pro.dengyi.myhome.common.response.DataResponse;
 import pro.dengyi.myhome.service.ProductService;
 
 import javax.validation.constraints.NotBlank;

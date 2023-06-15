@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pro.dengyi.myhome.model.device.Frameware;
-import pro.dengyi.myhome.response.CommonResponse;
-import pro.dengyi.myhome.response.DataResponse;
+import pro.dengyi.myhome.common.response.CommonResponse;
+import pro.dengyi.myhome.common.response.DataResponse;
 import pro.dengyi.myhome.service.FramewareService;
 
 import javax.validation.constraints.NotBlank;

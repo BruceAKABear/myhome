@@ -7,8 +7,8 @@ import org.springframework.util.ObjectUtils;
 import pro.dengyi.myhome.dao.RoomDao;
 import pro.dengyi.myhome.model.system.Room;
 import pro.dengyi.myhome.service.LocationService;
-import pro.dengyi.myhome.utils.PushUtil;
-import pro.dengyi.myhome.utils.UserHolder;
+import pro.dengyi.myhome.common.utils.PushUtil;
+import pro.dengyi.myhome.common.utils.UserHolder;
 
 /**
  * @author ：dengyi(A.K.A Bear)

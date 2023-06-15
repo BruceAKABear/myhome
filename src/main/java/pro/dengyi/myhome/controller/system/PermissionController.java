@@ -6,12 +6,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import pro.dengyi.myhome.annotations.Permission;
+import pro.dengyi.myhome.common.aop.annotations.Permission;
 import pro.dengyi.myhome.model.perm.PermissionFunction;
 import pro.dengyi.myhome.model.perm.Role;
 import pro.dengyi.myhome.model.perm.dto.PermissionDto;
-import pro.dengyi.myhome.response.CommonResponse;
-import pro.dengyi.myhome.response.DataResponse;
+import pro.dengyi.myhome.common.response.CommonResponse;
+import pro.dengyi.myhome.common.response.DataResponse;
 import pro.dengyi.myhome.service.PermissionService;
 
 import java.util.List;

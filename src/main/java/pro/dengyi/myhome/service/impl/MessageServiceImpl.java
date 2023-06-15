@@ -10,7 +10,7 @@ import pro.dengyi.myhome.dao.MessageDao;
 import pro.dengyi.myhome.model.system.Message;
 import pro.dengyi.myhome.model.system.User;
 import pro.dengyi.myhome.service.MessageService;
-import pro.dengyi.myhome.utils.UserHolder;
+import pro.dengyi.myhome.common.utils.UserHolder;
 
 /**
  * @author ：dengyi(A.K.A Bear)

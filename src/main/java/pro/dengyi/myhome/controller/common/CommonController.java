@@ -7,8 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pro.dengyi.myhome.annotations.NoLog;
-import pro.dengyi.myhome.response.DataResponse;
+import pro.dengyi.myhome.common.aop.annotations.NoLog;
+import pro.dengyi.myhome.common.response.DataResponse;
 
 import javax.servlet.http.HttpServletRequest;
 

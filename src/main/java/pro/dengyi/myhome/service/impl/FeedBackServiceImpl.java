@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pro.dengyi.myhome.dao.FeedBackDao;
 import pro.dengyi.myhome.model.system.FeedBack;
 import pro.dengyi.myhome.service.FeedBackService;
-import pro.dengyi.myhome.utils.UserHolder;
+import pro.dengyi.myhome.common.utils.UserHolder;
 
 import java.time.LocalDateTime;
 

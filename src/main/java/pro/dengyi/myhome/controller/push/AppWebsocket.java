@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import pro.dengyi.myhome.model.system.User;
-import pro.dengyi.myhome.utils.TokenUtil;
+import pro.dengyi.myhome.common.utils.TokenUtil;
 
 import javax.validation.constraints.NotBlank;
 import javax.websocket.*;

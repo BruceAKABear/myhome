@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pro.dengyi.myhome.annotations.Permission;
+import pro.dengyi.myhome.common.aop.annotations.Permission;
 import pro.dengyi.myhome.model.system.FeedBack;
-import pro.dengyi.myhome.response.CommonResponse;
+import pro.dengyi.myhome.common.response.CommonResponse;
 import pro.dengyi.myhome.service.FeedBackService;
 
 /**
