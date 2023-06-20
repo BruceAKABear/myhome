@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration>
-    <springProperty></springProperty>
     <!--定义日志文件的存储地址,使用绝对路径-->
     <property name="LOG_HOME" value="./logs"/>
     <!--appender-->

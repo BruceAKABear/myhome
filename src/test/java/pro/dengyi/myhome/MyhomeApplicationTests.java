@@ -8,8 +8,10 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import pro.dengyi.myhome.common.engine.CountDownTimer;
+import pro.dengyi.myhome.common.pubsub.EventType;
 import pro.dengyi.myhome.common.utils.JavaScriptEngine;
 import pro.dengyi.myhome.common.utils.PasswordUtil;
+import pro.dengyi.myhome.common.utils.PubSubUtil;
 import pro.dengyi.myhome.dao.DeviceDao;
 import pro.dengyi.myhome.dao.PermUserDeviceDao;
 import pro.dengyi.myhome.dao.SceneDao;
@@ -33,6 +35,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @SpringBootTest(classes = MyhomeApplication.class, webEnvironment = WebEnvironment.DEFINED_PORT)
 class MyhomeApplicationTests {
@@ -238,6 +241,27 @@ class MyhomeApplicationTests {
             System.out.println(scene);
         }
 
+
+    }
+
+
+    @Autowired
+    private PubSubUtil pubSubUtil;
+
+    @Test
+    public void pubsubTest() throws InterruptedException {
+        //1
+        pubSubUtil.publish(EventType.DEVICE_REPORT,"hello1");
+        pubSubUtil.publish(EventType.DEVICE_REPORT,"hello2");
+        pubSubUtil.publish(EventType.DEVICE_REPORT,"hello3");
+        TimeUnit.SECONDS.sleep(5);
+        //2
+        pubSubUtil.publish(EventType.DEVICE_REPORT,"hello1");
+        TimeUnit.SECONDS.sleep(2);
+        pubSubUtil.publish(EventType.DEVICE_REPORT,"hello2");
+        TimeUnit.SECONDS.sleep(2);
+        pubSubUtil.publish(EventType.DEVICE_REPORT,"hello3");
+        TimeUnit.SECONDS.sleep(5);
 
     }
 
