@@ -117,6 +117,7 @@ public class UserServiceImpl implements UserService {
         //设备管理
         permUserDeviceDao.delete(
                 new LambdaQueryWrapper<PermUserDevice>().eq(PermUserDevice::getUserId, user.getId()));
+        //todo
 
         List<String> deviceIds = (List<String>) cache.get("roleDvice:" + user.getRoleId(),
                 (key) -> SwitchUtil.objToList(permRoleDeviceDao.selectObjs(

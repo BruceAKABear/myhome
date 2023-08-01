@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
-import org.quartz.Scheduler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
@@ -47,8 +46,8 @@ public class ApplicationRunListener implements ApplicationRunner {
     @Autowired
     private Executor executor;
 
-    @Autowired
-    private Scheduler scheduler;
+//    @Autowired
+//    private Scheduler scheduler;
 
     @Autowired
     private ScheduleTaskDao scheduleTaskDao;

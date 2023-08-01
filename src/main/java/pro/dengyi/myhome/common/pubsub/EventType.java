@@ -7,5 +7,7 @@ package pro.dengyi.myhome.common.pubsub;
  * @modified By：
  */
 public enum EventType {
-    DEVICE_REPORT
+    DEVICE_REPORT,
+    API_PROCESS_TIME,
+    NOTIFY_USER
 }

@@ -37,4 +37,5 @@ public interface Response {
      * @return
      */
     Object getData();
+
 }

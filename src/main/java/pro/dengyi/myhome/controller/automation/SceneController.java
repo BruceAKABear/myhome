@@ -5,9 +5,9 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import pro.dengyi.myhome.model.automation.Scene;
 import pro.dengyi.myhome.common.response.CommonResponse;
 import pro.dengyi.myhome.common.response.DataResponse;
+import pro.dengyi.myhome.model.automation.Scene;
 import pro.dengyi.myhome.service.SceneService;
 
 import javax.validation.constraints.NotBlank;

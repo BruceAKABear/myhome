@@ -35,8 +35,8 @@
 
     <!--开发环境  -->
     <springProfile name="dev">
-        <logger name="org.springframework" level="WARN"/>
-        <logger name="com.zaxxer.hikari.pool" level="INFO"/>
+        <logger name="org.springframework" level="debug"/>
+        <logger name="com.zaxxer.hikari.pool" level="debug"/>
         <root level="debug">
             <appender-ref ref="CONSOLE"/>
         </root>

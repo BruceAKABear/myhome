@@ -250,18 +250,15 @@ class MyhomeApplicationTests {
 
     @Test
     public void pubsubTest() throws InterruptedException {
-        //1
-        pubSubUtil.publish(EventType.DEVICE_REPORT,"hello1");
-        pubSubUtil.publish(EventType.DEVICE_REPORT,"hello2");
-        pubSubUtil.publish(EventType.DEVICE_REPORT,"hello3");
-        TimeUnit.SECONDS.sleep(5);
-        //2
-        pubSubUtil.publish(EventType.DEVICE_REPORT,"hello1");
-        TimeUnit.SECONDS.sleep(2);
-        pubSubUtil.publish(EventType.DEVICE_REPORT,"hello2");
-        TimeUnit.SECONDS.sleep(2);
-        pubSubUtil.publish(EventType.DEVICE_REPORT,"hello3");
-        TimeUnit.SECONDS.sleep(5);
+        //理想状态下一个类型只能有一个线程处理
+        Map<String, Object> param = new HashMap<>();
+        param.put("type", "abc");
+        pubSubUtil.publish(EventType.API_PROCESS_TIME,param);
+        pubSubUtil.publish(EventType.DEVICE_REPORT,param);
+        pubSubUtil.publish(EventType.NOTIFY_USER,param);
+
+        pubSubUtil.publish(EventType.DEVICE_REPORT,param);
+        TimeUnit.SECONDS.sleep(20);
 
     }
 

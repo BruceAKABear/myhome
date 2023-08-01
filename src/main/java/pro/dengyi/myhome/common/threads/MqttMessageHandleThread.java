@@ -109,6 +109,7 @@ public class MqttMessageHandleThread {
         Device device = deviceDao.selectById(deviceId);
         Integer reportDeviceVersion = Integer.parseInt(
                 JSON.parseObject(message).get("version").toString());
+        //todo 不相等且大于才进行更新
         if (!device.getFramewareVersion().equals(reportDeviceVersion)) {
             //不相等进行更新
             device.setFramewareVersion(reportDeviceVersion);

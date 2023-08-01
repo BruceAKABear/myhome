@@ -74,7 +74,7 @@ public class User extends BaseModel {
     @TableField(exist = false)
     private String roleName;
 
-//    @TableField(exist = false)
+    @TableField(exist = false)
     @NotNull(message = "可控设备不能为空")
     private List<String> deviceIds;
 

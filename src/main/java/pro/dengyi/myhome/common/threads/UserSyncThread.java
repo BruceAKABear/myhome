@@ -5,20 +5,18 @@ import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
+import pro.dengyi.myhome.common.utils.PasswordUtil;
+import pro.dengyi.myhome.common.utils.SwitchUtil;
 import pro.dengyi.myhome.dao.PermRoleDeviceDao;
 import pro.dengyi.myhome.dao.PermUserDeviceDao;
 import pro.dengyi.myhome.dao.UserDao;
 import pro.dengyi.myhome.model.perm.PermRoleDevice;
 import pro.dengyi.myhome.model.perm.PermUserDevice;
 import pro.dengyi.myhome.model.system.User;
-import pro.dengyi.myhome.common.utils.PasswordUtil;
-import pro.dengyi.myhome.common.utils.SwitchUtil;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -34,8 +32,8 @@ import java.util.Map;
  * @modified By：
  */
 @Slf4j
-@Component
-@EnableScheduling
+//@Component
+//@EnableScheduling
 public class UserSyncThread {
 
     @Autowired

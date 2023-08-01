@@ -13,10 +13,8 @@ import pro.dengyi.myhome.common.aop.annotations.NoLog;
 import pro.dengyi.myhome.common.aop.annotations.Permission;
 import pro.dengyi.myhome.common.config.properties.SystemProperties;
 import pro.dengyi.myhome.common.exception.BusinessException;
-import pro.dengyi.myhome.common.utils.IpUtil;
-import pro.dengyi.myhome.common.utils.ProcessTimeUtil;
-import pro.dengyi.myhome.common.utils.TokenUtil;
-import pro.dengyi.myhome.common.utils.UserHolder;
+import pro.dengyi.myhome.common.pubsub.EventType;
+import pro.dengyi.myhome.common.utils.*;
 import pro.dengyi.myhome.common.utils.queue.OperationLogQueue;
 import pro.dengyi.myhome.dao.PermissionFunctionDao;
 import pro.dengyi.myhome.model.system.OperationLog;
@@ -42,6 +40,8 @@ public class FrameworkInterceptor implements HandlerInterceptor {
     private PermissionFunctionDao permissionFunctionDao;
     @Autowired
     private SystemProperties systemProperties;
+    @Autowired
+    private PubSubUtil pubSubUtil;
 
 
     /**
@@ -151,7 +151,7 @@ public class FrameworkInterceptor implements HandlerInterceptor {
                 throw new BusinessException(1, "未登录");
             }
             //校验token
-            User user = null;
+            User user;
             try {
                 user = TokenUtil.decToken(token);
             } catch (Exception e) {
@@ -181,16 +181,18 @@ public class FrameworkInterceptor implements HandlerInterceptor {
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response,
                                 Object handler, Exception ex) throws Exception {
         long processTime = ProcessTimeUtil.processTime();
-
-        if (processTime >= systemProperties.getApiProcessLimitation()) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("requestURI", request.getRequestURI());
+        param.put("timems", processTime);
+        //if open log
+        if (systemProperties.getOpenProcessTimeLog()) {
+            pubSubUtil.publish(EventType.API_PROCESS_TIME, param);
         }
 
-        String requestURI = request.getRequestURI();
-        //超时
-        log.info("请求接口： " + requestURI + " , 耗时：" + processTime);
-
-        //todo 超时预警
-
+        //todo 超时预警 一定时间内只发一条
+        if (processTime >= systemProperties.getApiProcessLimitation()) {
+            log.error("请求时间超过阈值");
+        }
         LocaleContextHolder.resetLocaleContext();
         UserHolder.remove();
     }

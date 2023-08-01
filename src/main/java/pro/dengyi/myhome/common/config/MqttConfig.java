@@ -36,6 +36,9 @@ public class MqttConfig {
             MqttClient client = null;
             if (systemProperties.getMqttOpenSsl()) {
                 //todo 开启ssl
+
+
+
             } else {
                 String clientId;
                 switch (active) {

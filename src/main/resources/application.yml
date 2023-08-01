@@ -1,8 +1,8 @@
 server:
-  port: 9010
+  port: 9012
 spring:
   profiles:
-    active: prod
+    active: dev
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8

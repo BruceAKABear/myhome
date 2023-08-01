@@ -1,4 +1,4 @@
-package pro.dengyi.myhome.common.engine;
+package pro.dengyi.myhome.common.engine.scene;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -45,6 +45,8 @@ public class SceneEngine {
             //any condition contains trigger device process else break
             String triggerDeviceId = (String) deviceReportMap.get("deviceId");
             List<Scene> scenesRelated = scenesContainDevice(triggerDeviceId);
+
+            //定时  延时  条件触发
             for (int i = 0; i < scenesRelated.size(); i++) {
                 Scene scene = scenesRelated.get(i);
                 List<SceneCondition> conditionsInScene = scene.getConditions();
@@ -55,7 +57,6 @@ public class SceneEngine {
                             LocalTime serverTime = dateTimeNow.toLocalTime();
                             if ((serverTime.isAfter(condition.getStartTime()) || serverTime.equals(condition.getStartTime()))
                                     && (serverTime.isBefore(condition.getEndTime()) || serverTime.equals(condition.getEndTime()))) {
-
                             }
                             break;
                         case "device":
@@ -74,7 +75,7 @@ public class SceneEngine {
                             log.error("SceneEngine->not supported automation condition type:{}", condition.getType());
                     }
                 }
-                //todo 逻辑
+                //todo 与或非逻辑
 
                 List<SceneAction> actionsInScene = scene.getActions();
 

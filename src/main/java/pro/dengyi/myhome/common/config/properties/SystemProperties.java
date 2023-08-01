@@ -52,6 +52,10 @@ public class SystemProperties {
 
     private String filePrefix;
 
+
+    //处理时间配置
+    private Boolean openProcessTimeLog = true;
     private Long apiProcessLimitation = 60L;
+    private String notifyUserEmails;
 
 }
