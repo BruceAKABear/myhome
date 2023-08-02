@@ -14,12 +14,12 @@ import org.springframework.web.bind.annotation.*;
 import pro.dengyi.myhome.common.aop.annotations.IpRestrict;
 import pro.dengyi.myhome.common.aop.annotations.NoLog;
 import pro.dengyi.myhome.common.aop.annotations.Permission;
-import pro.dengyi.myhome.model.device.Device;
-import pro.dengyi.myhome.model.device.dto.*;
-import pro.dengyi.myhome.model.dto.ChangeFavoriteDto;
 import pro.dengyi.myhome.common.config.properties.SystemProperties;
 import pro.dengyi.myhome.common.response.CommonResponse;
 import pro.dengyi.myhome.common.response.DataResponse;
+import pro.dengyi.myhome.model.device.Device;
+import pro.dengyi.myhome.model.device.dto.*;
+import pro.dengyi.myhome.model.dto.ChangeFavoriteDto;
 import pro.dengyi.myhome.service.DeviceService;
 
 import javax.validation.constraints.NotBlank;
@@ -52,96 +52,85 @@ public class DeviceController {
 
     @ApiOperation("分页查询")
     @GetMapping("/page")
-    public DataResponse<IPage<DeviceDto>> page(Integer page, Integer size, String floorId,
-                                               String roomId, String productId) {
-        IPage<DeviceDto> pageRes = deviceService.page(page, size, floorId, roomId, productId);
-        return new DataResponse<>(pageRes);
+    public IPage<DeviceDto> page(Integer page, Integer size, String floorId,
+                                 String roomId, String productId) {
+        return deviceService.page(page, size, floorId, roomId, productId);
     }
 
     @ApiOperation("查询调试所有设备")
     @GetMapping("/debugDeviceList")
-    public DataResponse<List<Device>> debugDeviceList(String productId) {
-        List<Device> deviceList = deviceService.debugDeviceList(productId);
-        return new DataResponse<>(deviceList);
+    public List<Device> debugDeviceList(String productId) {
+        return deviceService.debugDeviceList(productId);
     }
 
 
     @ApiOperation("查询所有设备(包含产品信息、产品字段信息等，供场景使用)")
     @GetMapping("/allDeviceList")
     @Permission(needValidate = false)
-    public DataResponse<List<DeviceForScene>> allDeviceList(String floorId, String roomId) {
-        List<DeviceForScene> deviceList = deviceService.allDeviceList(floorId, roomId);
-        return new DataResponse<>(deviceList);
+    public List<DeviceForScene> allDeviceList(String floorId, String roomId) {
+        return deviceService.allDeviceList(floorId, roomId);
+
     }
 
     @ApiOperation("根据房间id查询所有可控设备列表")
     @GetMapping("/listByRoomId")
     @Permission(needValidate = false)
-    public DataResponse<List<DeviceDto>> listByRoomId(
+    public List<DeviceDto> listByRoomId(
             @RequestParam @NotBlank(message = "房间id不能为空") String roomId,
             @RequestParam Boolean favorite) {
-        List<DeviceDto> deviceList = deviceService.listByRoomId(roomId, favorite);
-        return new DataResponse<>(deviceList);
+        return deviceService.listByRoomId(roomId, favorite);
     }
 
     @ApiOperation("根据楼层id查询房间设备树")
     @GetMapping("/roomDeviceTree")
-    public DataResponse<List<RoomDeviceTree>> roomDeviceTree(String floorId) {
-        List<RoomDeviceTree> roomDeviceTrees = deviceService.roomDeviceTree(floorId);
-        return new DataResponse<>(roomDeviceTrees);
+    public List<RoomDeviceTree> roomDeviceTree(String floorId) {
+        return deviceService.roomDeviceTree(floorId);
     }
 
     @ApiOperation("添加或修改设备")
     @PostMapping("/addUpdate")
-    public CommonResponse addUpdate(@RequestBody @Validated Device device) {
+    public void addUpdate(@RequestBody @Validated Device device) {
         deviceService.addUpdate(device);
-        return CommonResponse.success();
     }
 
     @ApiOperation("扫描添加或修改设备")
     @PostMapping("/scanAddUpdate")
-    public CommonResponse scanAddUpdate(@RequestBody @Validated Device device) {
+    public void scanAddUpdate(@RequestBody @Validated Device device) {
         deviceService.addUpdate(device);
-        return CommonResponse.success();
     }
 
     @ApiOperation("删除设备")
     @DeleteMapping("/delete/{id}")
-    public CommonResponse delete(@PathVariable @NotBlank(message = "id不能为空") String id) {
+    public void delete(@PathVariable @NotBlank(message = "id不能为空") String id) {
         deviceService.delete(id);
-        return CommonResponse.success();
     }
 
     @ApiOperation("下发debug命令")
     @PostMapping("/sendDebug")
-    public CommonResponse sendDebug(@RequestBody Map<String, Object> orderMap) {
+    public void sendDebug(@RequestBody Map<String, Object> orderMap) {
         deviceService.sendDebug(orderMap);
-        return CommonResponse.success();
     }
 
     //todo 严格校验格式
     @ApiOperation("下发命令(严格校验)")
     @PostMapping("/sendCmd")
     @Permission(needValidate = false)
-    public CommonResponse sendCmd(@RequestBody Map<String, Object> orderMap) {
+    public void sendCmd(@RequestBody Map<String, Object> orderMap) {
         deviceService.sendCmd(orderMap);
-        return CommonResponse.success();
     }
 
     @ApiOperation("一键控制")
     @PostMapping("/oneButton")
     @Permission(needValidate = false)
-    public CommonResponse oneButton(@RequestBody Map<String, Object> orderMap) {
+    public void oneButton(@RequestBody Map<String, Object> orderMap) {
         deviceService.oneButton(orderMap);
-        return CommonResponse.success();
     }
 
     @ApiOperation("查询地图模式所有灯开关程度")
     @GetMapping("/mapModeLamps")
     @Permission(needValidate = false)
-    public DataResponse<List<Map<String, Object>>> mapModeLamps(@RequestParam String floorId) {
-        List<Map<String, Object>> res = deviceService.mapModeLamps(floorId);
-        return new DataResponse<>(res);
+    public List<Map<String, Object>> mapModeLamps(@RequestParam String floorId) {
+        return deviceService.mapModeLamps(floorId);
     }
 
 
