@@ -8,9 +8,6 @@ import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * @author ：dengyi(A.K.A Bear)
  * @date ：Created in 2023/7/28 16:12
@@ -26,19 +23,30 @@ public class ResponseHandler implements ResponseBodyAdvice<Object> {
 
     @Override
     public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType, Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
-
-        String path = request.getURI().getPath();
-//        Parameter parameter = returnType.getParameter();
-
         if (body instanceof Response) {
-            //todo 请求失败日志
             return body;
         } else {
-            Map<String, Object> resMap = new HashMap<>();
-            resMap.put("code", 10000);
-            resMap.put("message", "success");
-            resMap.put("data", body);
-            return resMap;
+            return new Response() {
+                @Override
+                public Boolean getStatus() {
+                    return true;
+                }
+
+                @Override
+                public Integer getCode() {
+                    return 10000;
+                }
+
+                @Override
+                public String getMessage() {
+                    return "success";
+                }
+
+                @Override
+                public Object getData() {
+                    return body;
+                }
+            };
         }
 
 

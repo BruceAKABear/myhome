@@ -44,12 +44,28 @@ public class GlobalExceptionHandler {
      * @return
      */
     @ExceptionHandler(BusinessException.class)
-    public Map<String, Object> businessException(BusinessException be) {
-        Map<String, Object> returnmap = new HashMap<>(4);
-        returnmap.put("status", false);
-        returnmap.put("code", be.getCode());
-        returnmap.put("message", be.getMessage());
-        return returnmap;
+    public Response businessException(BusinessException be) {
+        return new Response() {
+            @Override
+            public Boolean getStatus() {
+                return false;
+            }
+
+            @Override
+            public Integer getCode() {
+                return be.getCode();
+            }
+
+            @Override
+            public String getMessage() {
+                return be.getMessage();
+            }
+
+            @Override
+            public Object getData() {
+                return null;
+            }
+        };
     }
 
     @ExceptionHandler(IpRestrictException.class)

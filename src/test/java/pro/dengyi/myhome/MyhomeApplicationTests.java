@@ -44,6 +44,7 @@ class MyhomeApplicationTests {
         CountDownTimer countDownTimer = new CountDownTimer(5);
         countDownTimer.start();
 
+
     }
 
     @Autowired
@@ -198,31 +199,27 @@ class MyhomeApplicationTests {
 
     @Test
     public void dynamicLogic() {
-
-        /**
-         * conditionA:[
-         *  conditionA1:{
+        /*
+         * dynamic conditions parameter
          *
-         *  }
-         *  AND
-         *  conditionA2:{
+         * conditions:[
+         * conditionGroup:{
          *
-         *  }
-         *  OR
-         *  conditionA3:{
+         * innerConditions:[
+         * type:'device',
+         * field:'open',
          *
-         *  }
          *
          * ]
-         * AND
-         * CONDITIONb:{
-         *
          * }
          *
+         * ]
          *
          *
          *
-         */
+         *
+         *
+         * */
 
 
         ScriptEngine scriptEngine = new ScriptEngineManager().getEngineByName("JavaScript");
@@ -253,13 +250,15 @@ class MyhomeApplicationTests {
         //理想状态下一个类型只能有一个线程处理
         Map<String, Object> param = new HashMap<>();
         param.put("type", "abc");
-        pubSubUtil.publish(EventType.API_PROCESS_TIME,param);
-        pubSubUtil.publish(EventType.DEVICE_REPORT,param);
-        pubSubUtil.publish(EventType.NOTIFY_USER,param);
+        pubSubUtil.publish(EventType.API_PROCESS_TIME, param);
+        pubSubUtil.publish(EventType.DEVICE_REPORT, param);
+        pubSubUtil.publish(EventType.NOTIFY_USER, param);
 
-        pubSubUtil.publish(EventType.DEVICE_REPORT,param);
+        pubSubUtil.publish(EventType.DEVICE_REPORT, param);
         TimeUnit.SECONDS.sleep(20);
 
     }
+
+
 
 }
