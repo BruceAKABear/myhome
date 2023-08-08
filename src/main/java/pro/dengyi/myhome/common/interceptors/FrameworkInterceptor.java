@@ -44,6 +44,9 @@ public class FrameworkInterceptor implements HandlerInterceptor {
     private PubSubUtil pubSubUtil;
 
 
+    private final String[] EXCLUDE_URIS = {"/device/deviceLogin","/device/emqHook"};
+
+
     /**
      * 1. 通用参数封装
      * <p>
@@ -60,6 +63,14 @@ public class FrameworkInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
+        //限流  排除掉不需要限流的URI
+        if (!Arrays.asList(EXCLUDE_URIS).contains(request.getRequestURI())) {
+            Boolean acquireFlag = IpRateLimiter.tryAcquire(IpUtil.remoteIP(request), request.getRequestURI());
+            if (!acquireFlag) {
+                throw new BusinessException(100, "rete limit");
+            }
+        }
+
         //通过状态
         boolean throughFlag = true;
         if (handler instanceof HandlerMethod) {
