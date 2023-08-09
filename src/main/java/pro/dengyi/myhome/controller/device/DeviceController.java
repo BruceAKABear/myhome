@@ -15,6 +15,7 @@ import pro.dengyi.myhome.common.aop.annotations.IpRestrict;
 import pro.dengyi.myhome.common.aop.annotations.NoLog;
 import pro.dengyi.myhome.common.aop.annotations.Permission;
 import pro.dengyi.myhome.common.config.properties.SystemProperties;
+import pro.dengyi.myhome.common.response.IgnoreResponseHandler;
 import pro.dengyi.myhome.model.device.Device;
 import pro.dengyi.myhome.model.device.dto.*;
 import pro.dengyi.myhome.model.dto.ChangeFavoriteDto;
@@ -146,6 +147,7 @@ public class DeviceController {
     @NoLog
     @ApiOperation("设备登录")
     @PostMapping("/deviceLogin")
+    @IgnoreResponseHandler
     public Map<String, String> deviceLogin(@RequestBody DeviceLoginDto loginDto) {
         log.info("设备登录，设备登录信息为：{}", loginDto);
         Map<String, String> resMap = new HashMap<>(1);
@@ -184,6 +186,7 @@ public class DeviceController {
     @ApiOperation("EMQ钩子")
     @PostMapping("/emqHook")
     @NoLog
+    @IgnoreResponseHandler
     public void emqHook(@RequestBody Map<String, Object> params) {
         deviceService.emqHook(params);
 
