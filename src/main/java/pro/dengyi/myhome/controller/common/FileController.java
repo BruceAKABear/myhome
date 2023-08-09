@@ -8,7 +8,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pro.dengyi.myhome.common.aop.annotations.Permission;
-import pro.dengyi.myhome.common.response.DataResponse;
 import pro.dengyi.myhome.common.utils.IpUtil;
 
 import javax.servlet.ServletOutputStream;
@@ -62,7 +61,7 @@ public class FileController {
     @Permission
     @ApiOperation("上传文件")
     @PostMapping("/uploadFile")
-    public DataResponse<String> uploadFile(
+    public String uploadFile(
             @RequestPart("file") @RequestParam @NotNull(message = "文件不能为空") MultipartFile file)
             throws IOException {
         String dirPath = System.getProperties().get("user.dir") + "/files/";
@@ -88,7 +87,7 @@ public class FileController {
             }
 
         }
-        return new DataResponse<>(fileUrl);
+        return fileUrl;
     }
 
     @ApiOperation("预览文件")

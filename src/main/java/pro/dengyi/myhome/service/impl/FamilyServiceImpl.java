@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 import pro.dengyi.myhome.dao.FamilyDao;
 import pro.dengyi.myhome.model.dto.FamilyDto;
 import pro.dengyi.myhome.model.system.Family;
@@ -30,10 +31,17 @@ public class FamilyServiceImpl implements FamilyService {
     @Transactional
     @Override
     public void addUpdate(Family family) {
-        //只更新
-        family.setUpdateTime(LocalDateTime.now());
-        familyDao.updateById(family);
-        caffeineCache.invalidate("familyInfo");
+        if (ObjectUtils.isEmpty(family.getId())) {
+            family.setCreateTime(LocalDateTime.now());
+            family.setUpdateTime(LocalDateTime.now());
+            familyDao.insert(family);
+            //todo 缓存
+
+        } else {
+            family.setUpdateTime(LocalDateTime.now());
+            familyDao.updateById(family);
+            caffeineCache.invalidate("familyInfo");
+        }
     }
 
     @Override

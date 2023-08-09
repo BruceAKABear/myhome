@@ -1,5 +1,6 @@
 package pro.dengyi.myhome.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import pro.dengyi.myhome.model.automation.Scene;
 
 import java.util.List;
@@ -22,4 +23,6 @@ public interface SceneService {
     void delete(String id);
 
     Scene queryForUpdate(String sceneId);
+
+    IPage<Scene> page(Integer size, Integer page, String name);
 }

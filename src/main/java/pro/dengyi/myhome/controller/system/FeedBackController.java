@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pro.dengyi.myhome.common.aop.annotations.Permission;
 import pro.dengyi.myhome.model.system.FeedBack;
-import pro.dengyi.myhome.common.response.CommonResponse;
 import pro.dengyi.myhome.service.FeedBackService;
 
 /**
@@ -30,9 +29,8 @@ public class FeedBackController {
     @ApiOperation("新增反馈")
     @PostMapping("/add")
     @Permission(needValidate = false)
-    public CommonResponse add(@RequestBody FeedBack feedBack) {
+    public void add(@RequestBody FeedBack feedBack) {
         feedBackService.add(feedBack);
-        return CommonResponse.success();
     }
 
 }

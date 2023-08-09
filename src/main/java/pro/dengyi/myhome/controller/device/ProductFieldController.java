@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pro.dengyi.myhome.model.device.ProductField;
-import pro.dengyi.myhome.common.response.DataResponse;
 import pro.dengyi.myhome.service.ProductFieldService;
 
 import java.util.List;
@@ -30,9 +29,8 @@ public class ProductFieldController {
 
     @ApiOperation("查询产品字段集合")
     @GetMapping("/fieldList")
-    public DataResponse<List<ProductField>> fieldList(String deviceId, String productId) {
-        List<ProductField> fieldList = productFieldService.fieldList(deviceId, productId);
-        return new DataResponse<>(fieldList);
+    public List<ProductField> fieldList(String deviceId, String productId) {
+        return productFieldService.fieldList(deviceId, productId);
     }
 
 

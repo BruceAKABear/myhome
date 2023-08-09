@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pro.dengyi.myhome.common.aop.annotations.NoLog;
 import pro.dengyi.myhome.common.exception.BusinessException;
-import pro.dengyi.myhome.common.response.DataResponse;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -35,9 +34,9 @@ public class CommonController {
 
     @ApiOperation("请求异常")
     @GetMapping("/error")
-    public DataResponse<String> error(HttpServletRequest request) {
+    public String error(HttpServletRequest request) {
         log.error("错误请求，信息为：{}", JSON.toJSONString(request.getRequestURI()));
-        return new DataResponse<>("you may meet some error,concat the system manager if you want!");
+        return "you may meet some error,concat the system manager if you want!";
     }
 
 }

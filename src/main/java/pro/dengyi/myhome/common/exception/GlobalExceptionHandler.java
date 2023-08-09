@@ -1,18 +1,14 @@
 package pro.dengyi.myhome.common.exception;
 
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.MalformedJwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import pro.dengyi.myhome.common.response.CommonResponse;
 import pro.dengyi.myhome.common.response.Response;
 
 import javax.validation.ConstraintViolationException;
-import java.security.SignatureException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,7 +30,27 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public Response customException(Exception e) {
         log.error("框架异常，信息为:", e);
-        return new CommonResponse(ResponseEnum.SYSTEM_ERROR);
+        return new Response() {
+            @Override
+            public Boolean getStatus() {
+                return false;
+            }
+
+            @Override
+            public Integer getCode() {
+                return 11111;
+            }
+
+            @Override
+            public String getMessage() {
+                return "system error";
+            }
+
+            @Override
+            public Object getData() {
+                return null;
+            }
+        };
     }
 
     /**
@@ -126,11 +142,11 @@ public class GlobalExceptionHandler {
      * @param ee
      * @return
      */
-    @ExceptionHandler(ExpiredJwtException.class)
-    public Response jwtExpireException(ExpiredJwtException ee) {
-        log.error("jwt过期异常，信息为:", ee);
-        return new CommonResponse(ResponseEnum.LOGIN_EXPIRE);
-    }
+//    @ExceptionHandler(ExpiredJwtException.class)
+//    public Response jwtExpireException(ExpiredJwtException ee) {
+//        log.error("jwt过期异常，信息为:", ee);
+//        return new CommonResponse(ResponseEnum.LOGIN_EXPIRE);
+//    }
 
     /**
      * token异常处理类
@@ -138,10 +154,10 @@ public class GlobalExceptionHandler {
      * @param ee 参数异常类
      * @return
      */
-    @ExceptionHandler({MalformedJwtException.class, SignatureException.class})
-    public Response tokenError(Exception ee) {
-        log.error("token异常，信息为:", ee);
-        return new CommonResponse(ResponseEnum.LOGIN_EXPIRE);
-    }
+//    @ExceptionHandler({MalformedJwtException.class, SignatureException.class})
+//    public Response tokenError(Exception ee) {
+//        log.error("token异常，信息为:", ee);
+//        return new CommonResponse(ResponseEnum.LOGIN_EXPIRE);
+//    }
 
 }

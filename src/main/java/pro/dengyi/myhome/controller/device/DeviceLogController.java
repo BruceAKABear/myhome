@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import pro.dengyi.myhome.model.device.DeviceLog;
 import pro.dengyi.myhome.model.device.dto.LogByConditionDto;
 import pro.dengyi.myhome.model.device.dto.LogConditionDto;
-import pro.dengyi.myhome.common.response.DataResponse;
 import pro.dengyi.myhome.service.DeviceLogService;
 
 import java.util.List;
@@ -30,19 +29,17 @@ public class DeviceLogController {
 
     @ApiOperation("分页查询")
     @GetMapping("/page")
-    public DataResponse<IPage<DeviceLog>> page(Integer page, Integer size,
-                                               String deviceId) {
-        IPage<DeviceLog> pageRes = deviceLogService.page(page, size, deviceId);
-        return new DataResponse<>(pageRes);
+    public IPage<DeviceLog> page(Integer page, Integer size,
+                                 String deviceId) {
+        return deviceLogService.page(page, size, deviceId);
     }
 
-    @ApiOperation("查询设备log")
+    @ApiOperation("条件查询设备log")
     @PostMapping("/logByCondition")
-    public DataResponse<List<LogByConditionDto>> logByCondition(@RequestBody LogConditionDto dto) {
-        List<LogByConditionDto> list = deviceLogService.logByCondition(dto.getDeviceId(),
+    public List<LogByConditionDto> logByCondition(@RequestBody LogConditionDto dto) {
+        return deviceLogService.logByCondition(dto.getDeviceId(),
                 dto.getStartDateTime(),
                 dto.getEndDateTime(), dto.getStep());
-        return new DataResponse<>(list);
     }
 
 }

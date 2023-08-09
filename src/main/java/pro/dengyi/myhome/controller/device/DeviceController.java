@@ -15,8 +15,6 @@ import pro.dengyi.myhome.common.aop.annotations.IpRestrict;
 import pro.dengyi.myhome.common.aop.annotations.NoLog;
 import pro.dengyi.myhome.common.aop.annotations.Permission;
 import pro.dengyi.myhome.common.config.properties.SystemProperties;
-import pro.dengyi.myhome.common.response.CommonResponse;
-import pro.dengyi.myhome.common.response.DataResponse;
 import pro.dengyi.myhome.model.device.Device;
 import pro.dengyi.myhome.model.device.dto.*;
 import pro.dengyi.myhome.model.dto.ChangeFavoriteDto;
@@ -186,46 +184,44 @@ public class DeviceController {
     @ApiOperation("EMQ钩子")
     @PostMapping("/emqHook")
     @NoLog
-    public CommonResponse emqHook(@RequestBody Map<String, Object> params) {
+    public void emqHook(@RequestBody Map<String, Object> params) {
         deviceService.emqHook(params);
-        return CommonResponse.success();
+
     }
 
     @Deprecated
     @ApiOperation("单个设备固件升级")
     @PostMapping("/singleDeviceFirmwareUpdate")
-    public CommonResponse singleDeviceFirmwareUpdate(@RequestBody DeviceDto deviceDto) {
+    public void singleDeviceFirmwareUpdate(@RequestBody DeviceDto deviceDto) {
         deviceService.singleDeviceFirmwareUpdate(deviceDto);
-        return CommonResponse.success();
+
     }
 
     @ApiOperation("改变收藏设备")
     @PostMapping("/changeFavorite")
     @Permission(needValidate = false)
-    public CommonResponse changeFavorite(@RequestBody ChangeFavoriteDto favoriteDto) {
+    public void changeFavorite(@RequestBody ChangeFavoriteDto favoriteDto) {
         deviceService.changeFavorite(favoriteDto);
-        return CommonResponse.success();
+
     }
 
     @ApiOperation("收藏设备集合")
     @GetMapping("/favoriteDevices")
     @Permission(needValidate = false)
-    public DataResponse<List<FavoriteDevicesModel>> favoriteDevices() {
-        List<FavoriteDevicesModel> res = deviceService.favoriteDevices();
-        return new DataResponse<>(res);
+    public List<FavoriteDevicesModel> favoriteDevices() {
+        return deviceService.favoriteDevices();
     }
 
 
     @ApiOperation("设备操作日志")
     @GetMapping("/deviceControlLog")
     @Permission(needValidate = false)
-    public DataResponse<List<DeviceControlLogDto>> deviceControlLog(String userId, String roomId,
-                                                                    String deviceId, @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startTime,
-                                                                    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endTime, Integer page,
-                                                                    Integer size) {
-        List<DeviceControlLogDto> dtos = deviceService.deviceControlLog(userId, roomId, deviceId,
+    public List<DeviceControlLogDto> deviceControlLog(String userId, String roomId,
+                                                      String deviceId, @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startTime,
+                                                      @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endTime, Integer page,
+                                                      Integer size) {
+        return deviceService.deviceControlLog(userId, roomId, deviceId,
                 startTime, endTime, page, size);
-        return new DataResponse<>(dtos);
     }
 
 

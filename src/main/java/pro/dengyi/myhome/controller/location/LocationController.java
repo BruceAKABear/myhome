@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pro.dengyi.myhome.common.aop.annotations.Permission;
-import pro.dengyi.myhome.common.response.CommonResponse;
 import pro.dengyi.myhome.service.LocationService;
 
 /**
@@ -28,18 +27,16 @@ public class LocationController {
     @ApiOperation("上报信号最强beacon")
     @Permission(needValidate = false)
     @GetMapping("/uploadBeacon")
-    public CommonResponse uploadBeacon(String beaconUuid) {
+    public void uploadBeacon(String beaconUuid) {
         locationService.checkLocation(beaconUuid);
-        return CommonResponse.success();
     }
 
 
     @ApiOperation("根据最强信号强度beacon查询位置")
     @Permission(needValidate = false)
     @GetMapping("/checkLocation")
-    public CommonResponse checkLocation(String beaconUuid) {
+    public void checkLocation(String beaconUuid) {
         locationService.checkLocation(beaconUuid);
-        return CommonResponse.success();
     }
 
 

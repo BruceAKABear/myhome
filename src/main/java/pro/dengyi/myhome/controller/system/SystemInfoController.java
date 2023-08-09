@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import pro.dengyi.myhome.common.config.properties.SystemProperties;
-import pro.dengyi.myhome.common.response.DataResponse;
 
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
@@ -36,7 +35,7 @@ public class SystemInfoController {
 
     @ApiOperation("查询系统基础信息")
     @GetMapping("/basicInfo")
-    public DataResponse<Map<String, Object>> basicInfo() {
+    public Map<String, Object> basicInfo() {
         Map<String, Object> map = new HashMap<>();
         OperatingSystemMXBean osmxb = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
         Properties properties = System.getProperties();
@@ -56,7 +55,7 @@ public class SystemInfoController {
         String urlStatus = "http://" + systemProperties.getMqttHostIp() + ":18083/api/v5/stats";
         ResponseEntity<ArrayList> entityStatus = restTemplate.getForEntity(urlStatus, ArrayList.class);
         map.put("emqxStatus", entityStatus.getBody().get(0));
-        return new DataResponse<>(map);
+        return map;
     }
 
     //6bf8cb828bb8152c

@@ -1,6 +1,7 @@
 package pro.dengyi.myhome.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.github.benmanes.caffeine.cache.Cache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -129,5 +130,14 @@ public class SceneServiceImpl implements SceneService {
         scene.setActions(sceneActions);
         scene.setConditions(conditions);
         return scene;
+    }
+
+    @Override
+    public IPage<Scene> page(Integer size, Integer page, String name) {
+        size = size == null ? 10 : size;
+        page = page == null ? 1 : page;
+
+
+        return null;
     }
 }

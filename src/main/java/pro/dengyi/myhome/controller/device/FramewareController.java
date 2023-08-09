@@ -7,8 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pro.dengyi.myhome.model.device.Frameware;
-import pro.dengyi.myhome.common.response.CommonResponse;
-import pro.dengyi.myhome.common.response.DataResponse;
 import pro.dengyi.myhome.service.FramewareService;
 
 import javax.validation.constraints.NotBlank;
@@ -31,24 +29,23 @@ public class FramewareController {
 
     @ApiOperation("分页查询")
     @GetMapping("/page")
-    public DataResponse<IPage<Frameware>> page(Integer page, Integer size, String productId) {
-        IPage<Frameware> pageRes = framewareService.page(page, size, productId);
-        return new DataResponse<>(pageRes);
+    public IPage<Frameware> page(Integer page, Integer size, String productId) {
+        return framewareService.page(page, size, productId);
     }
 
     @ApiOperation("添加固件")
     @PostMapping("/add")
-    public CommonResponse add(@RequestBody @Validated Frameware frameware) {
+    public void add(@RequestBody @Validated Frameware frameware) {
         framewareService.add(frameware);
-        return CommonResponse.success();
+
     }
 
 
     @ApiOperation("删除固件")
     @DeleteMapping("/delete/{id}")
-    public CommonResponse delete(@PathVariable @NotBlank(message = "id不能为空") String id) {
+    public void delete(@PathVariable @NotBlank(message = "id不能为空") String id) {
         framewareService.delete(id);
-        return CommonResponse.success();
+
     }
 
 

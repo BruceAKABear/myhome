@@ -9,8 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import pro.dengyi.myhome.model.device.Product;
 import pro.dengyi.myhome.model.device.dto.ProductAddDto;
 import pro.dengyi.myhome.model.device.dto.ProductPageDto;
-import pro.dengyi.myhome.common.response.CommonResponse;
-import pro.dengyi.myhome.common.response.DataResponse;
 import pro.dengyi.myhome.service.ProductService;
 
 import javax.validation.constraints.NotBlank;
@@ -34,30 +32,26 @@ public class ProductController {
 
     @ApiOperation("新增或修改产品")
     @PostMapping("/addUpdate")
-    public CommonResponse addUpdate(@RequestBody @Validated ProductAddDto productAddDto) {
+    public void addUpdate(@RequestBody @Validated ProductAddDto productAddDto) {
         productService.addUpdate(productAddDto);
-        return CommonResponse.success();
     }
 
     @ApiOperation("删除分类")
     @DeleteMapping("/delete/{id}")
-    public CommonResponse delete(@PathVariable @NotBlank(message = "id不能为空") String id) {
+    public void delete(@PathVariable @NotBlank(message = "id不能为空") String id) {
         productService.delete(id);
-        return CommonResponse.success();
     }
 
     @ApiOperation("分页查询")
     @GetMapping("/page")
-    public DataResponse<IPage<ProductPageDto>> page(Integer page, Integer size, String name) {
-        IPage<ProductPageDto> pageResult = productService.page(page, size, name);
-        return new DataResponse<>(pageResult);
+    public IPage<ProductPageDto> page(Integer page, Integer size, String name) {
+        return productService.page(page, size, name);
     }
 
     @ApiOperation("查询产品下拉")
     @GetMapping("/list")
-    public DataResponse<List<Product>> categoryList() {
-        List<Product> products = productService.categoryList();
-        return new DataResponse<>(products);
+    public List<Product> categoryList() {
+        return productService.categoryList();
     }
 
 
