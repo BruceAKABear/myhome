@@ -3,10 +3,14 @@ package pro.dengyi.myhome.common.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import pro.dengyi.myhome.common.interceptors.FrameworkInterceptor;
+
+import java.util.List;
 
 /**
  * web基础配置
@@ -39,6 +43,13 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .allowCredentials(true)
                 .maxAge(3600)
                 .allowedHeaders("*");
+    }
+
+    //for response handler string type of response
+    @Override
+    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+        WebMvcConfigurer.super.configureMessageConverters(converters);
+        converters.add(0, new MappingJackson2HttpMessageConverter());
     }
 
     @Override
