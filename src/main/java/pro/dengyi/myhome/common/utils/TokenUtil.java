@@ -1,15 +1,14 @@
 package pro.dengyi.myhome.common.utils;
 
-import com.alibaba.fastjson.JSON;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
+import pro.dengyi.myhome.common.exception.BusinessException;
 import pro.dengyi.myhome.model.system.User;
 
-import java.time.LocalDate;
-import java.time.ZoneOffset;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.UUID;
 
 /**
  * token工具类
@@ -19,32 +18,22 @@ import java.util.Date;
  */
 @Slf4j
 public class TokenUtil {
+    static Cache<Object, Object> caffeine;
 
-    /**
-     * subject
-     */
-    public static final String SUBJECT = "myhome";
-    /**
-     * 过期时间
-     */
-    public static final long EXPIREDAYS = 30;
-    /**
-     * 加密秘钥
-     */
-    public static final String APPSECRET = "myhome123!@#";
+    static {
+        caffeine = Caffeine.newBuilder().build();
+    }
+
+    private static final Integer LOGIN_EXPIRE_SECONDS = 60 * 60;
 
 
-    /**
-     * 生成 jwt token方法
-     *
-     * @return token字符串
-     */
     public static String genToken(User user) {
-        String userJson = JSON.toJSONString(user);
-        return Jwts.builder().setSubject(SUBJECT).claim("userJson", userJson).setIssuedAt(new Date())
-                .setExpiration(Date.from(
-                        LocalDate.now().plusDays(EXPIREDAYS).atStartOfDay(ZoneOffset.ofHours(8)).toInstant()))
-                .signWith(SignatureAlgorithm.HS256, APPSECRET).compact();
+        String uuid = UUID.randomUUID().toString().replaceAll("-", "");
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("userData", user);
+        map.put("loginDateTime", LocalDateTime.now());
+        caffeine.put(uuid, map);
+        return uuid;
     }
 
     /**
@@ -54,8 +43,15 @@ public class TokenUtil {
      * @return
      */
     public static User decToken(String token) {
-        Claims body = Jwts.parser().setSigningKey(APPSECRET).parseClaimsJws(token).getBody();
-        String userJson = (String) body.get("userJson");
-        return JSON.parseObject(userJson, User.class);
+        Object ifPresent = caffeine.getIfPresent(token);
+        if (ifPresent == null) {
+            throw new BusinessException(1, "not login");
+        }
+        HashMap<String, Object> map = (HashMap<String, Object>) ifPresent;
+        LocalDateTime loginDateTime = (LocalDateTime) map.get("loginDateTime");
+        if (LocalDateTime.now().isAfter(loginDateTime.plusSeconds(LOGIN_EXPIRE_SECONDS))) {
+            throw new BusinessException(1, "login expire");
+        }
+        return (User) map.get("userData");
     }
 }
