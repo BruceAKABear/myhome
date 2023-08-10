@@ -34,8 +34,14 @@ public class OperationLog extends BaseModel {
 
     private String requestMethod;
 
+    private Boolean status;
+
+    private String error;
+
+    private Long takeTime;
+
     public OperationLog(String uId, String opName, String opIp, String requestUri,
-                        String requestMethod) {
+                        String requestMethod, Boolean status, String error, Long takeTime) {
         this.uId = uId;
         this.opName = opName;
         this.opIp = opIp;
@@ -43,5 +49,21 @@ public class OperationLog extends BaseModel {
         this.requestMethod = requestMethod;
         this.setCreateTime(LocalDateTime.now());
         this.setUpdateTime(LocalDateTime.now());
+        this.status = status;
+        this.error = error;
+        this.takeTime = takeTime;
+    }
+
+    public OperationLog(String uId, String opName, String opIp, String requestUri,
+                        String requestMethod, Boolean status, Long takeTime) {
+        this.uId = uId;
+        this.opName = opName;
+        this.opIp = opIp;
+        this.requestUri = requestUri;
+        this.requestMethod = requestMethod;
+        this.setCreateTime(LocalDateTime.now());
+        this.setUpdateTime(LocalDateTime.now());
+        this.status = status;
+        this.takeTime = takeTime;
     }
 }

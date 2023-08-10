@@ -1,6 +1,5 @@
 package pro.dengyi.myhome.common.interceptors;
 
-import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -9,15 +8,11 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
-import pro.dengyi.myhome.common.aop.annotations.NoLog;
 import pro.dengyi.myhome.common.aop.annotations.Permission;
 import pro.dengyi.myhome.common.config.properties.SystemProperties;
 import pro.dengyi.myhome.common.exception.BusinessException;
-import pro.dengyi.myhome.common.pubsub.EventType;
 import pro.dengyi.myhome.common.utils.*;
-import pro.dengyi.myhome.common.utils.queue.OperationLogQueue;
 import pro.dengyi.myhome.dao.PermissionFunctionDao;
-import pro.dengyi.myhome.model.system.OperationLog;
 import pro.dengyi.myhome.model.system.User;
 
 import javax.servlet.http.HttpServletRequest;
@@ -44,7 +39,7 @@ public class FrameworkInterceptor implements HandlerInterceptor {
     private PubSubUtil pubSubUtil;
 
 
-    private final String[] EXCLUDE_URIS = {"/device/deviceLogin","/device/emqHook"};
+    private final String[] EXCLUDE_URIS = {"/device/deviceLogin", "/device/emqHook"};
 
 
     /**
@@ -64,18 +59,10 @@ public class FrameworkInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
         //限流  排除掉不需要限流的URI
-        if (!Arrays.asList(EXCLUDE_URIS).contains(request.getRequestURI())) {
-            Boolean acquireFlag = IpRateLimiter.tryAcquire(IpUtil.remoteIP(request), request.getRequestURI());
-            if (!acquireFlag) {
-                throw new BusinessException(100, "rete limit");
-            }
-        }
-
+        rateLimit(request);
         //通过状态
         boolean throughFlag = true;
         if (handler instanceof HandlerMethod) {
-            //封装开始请求时间
-            ProcessTimeUtil.mark();
             //封装语言选项
             handleLanguage(request);
             String token = request.getHeader("token");
@@ -91,43 +78,15 @@ public class FrameworkInterceptor implements HandlerInterceptor {
         return throughFlag;
     }
 
-
-    /**
-     * 操作日志方法
-     *
-     * @param method
-     * @param token
-     * @param request
-     */
-    private void handleOpLog(Method method, String token, HttpServletRequest request) {
-        ApiOperation apiOperation = method.getAnnotation(ApiOperation.class);
-        NoLog noLogOnMethod = method.getAnnotation(NoLog.class);
-        NoLog noLogOnClass = method.getDeclaringClass().getAnnotation(NoLog.class);
-        //if no swagger annotation or hava no log annotation do need to do real log logic
-        if (apiOperation == null || noLogOnMethod != null || noLogOnClass != null) {
-            return;
-        }
-
-        String requestURI = request.getRequestURI();
-        String requestMethod = request.getMethod();
-        String opName = null;
-        if (apiOperation != null) {
-            opName = apiOperation.value();
-        }
-        String uIP = IpUtil.remoteIP(request);
-        String uId = null;
-        if (!ObjectUtils.isEmpty(token)) {
-            try {
-                User user = TokenUtil.decToken(token);
-                uId = user.getId();
-            } catch (Exception e) {
-                //token异常了
-                log.error("日记记录时用户token异常");
+    private void rateLimit(HttpServletRequest request) {
+        if (!Arrays.asList(EXCLUDE_URIS).contains(request.getRequestURI())) {
+            Boolean acquireFlag = IpRateLimiter.tryAcquire(IpUtil.remoteIP(request), request.getRequestURI());
+            if (!acquireFlag) {
+                throw new BusinessException(100, "rete limit");
             }
         }
-        OperationLog operationLog = new OperationLog(uId, opName, uIP, requestURI, requestMethod);
-        OperationLogQueue.publish(operationLog);
     }
+
 
     /**
      * 封装多语言
@@ -137,7 +96,7 @@ public class FrameworkInterceptor implements HandlerInterceptor {
     private void handleLanguage(HttpServletRequest request) {
         String lang = request.getHeader("lang");
         if (ObjectUtils.isEmpty(lang)) {
-            LocaleContextHolder.setLocale(Locale.CHINESE);
+            LocaleContextHolder.setLocale(Locale.SIMPLIFIED_CHINESE);
         } else {
             LocaleContextHolder.setLocale(new Locale(lang.toLowerCase()));
         }
@@ -152,8 +111,6 @@ public class FrameworkInterceptor implements HandlerInterceptor {
      */
     private void validatePermission(String token, Permission permission, Method method,
                                     HttpServletRequest request) {
-        //do log logic
-        handleOpLog(method, token, request);
         String requestURI = request.getRequestURI();
         if (permission.needLogIn()) {
             //校验登录
@@ -162,13 +119,8 @@ public class FrameworkInterceptor implements HandlerInterceptor {
                 throw new BusinessException(1, "未登录");
             }
             //校验token
-            User user;
-            try {
-                user = TokenUtil.decToken(token);
-            } catch (Exception e) {
-                log.error("try to decode login token error,the error is:{}", e);
-                throw new BusinessException(1, "token异常");
-            }
+            User user = TokenUtil.decToken(token);
+
             UserHolder.setUser(user);
             if (permission.needValidate()) {
                 if (!user.isSuperAdmin()) {
@@ -188,25 +140,6 @@ public class FrameworkInterceptor implements HandlerInterceptor {
         }
     }
 
-    @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response,
-                                Object handler, Exception ex) throws Exception {
-        long processTime = ProcessTimeUtil.processTime();
-        Map<String, Object> param = new HashMap<>();
-        param.put("requestURI", request.getRequestURI());
-        param.put("timems", processTime);
-        //if open log
-        if (systemProperties.getOpenProcessTimeLog()) {
-            pubSubUtil.publish(EventType.API_PROCESS_TIME, param);
-        }
-
-        //todo 超时预警 一定时间内只发一条
-        if (processTime >= systemProperties.getApiProcessLimitation()) {
-            log.error("请求时间超过阈值");
-        }
-        LocaleContextHolder.resetLocaleContext();
-        UserHolder.remove();
-    }
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
