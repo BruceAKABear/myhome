@@ -1,34 +1,32 @@
 package pro.dengyi.myhome.model.system;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.hibernate.validator.constraints.Length;
+import pro.dengyi.myhome.model.base.BaseModel;
 
 import javax.validation.constraints.NotBlank;
-import java.time.LocalDateTime;
 
 /**
  * @author BLab
  */
 @Data
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 @TableName("family")
 @ApiModel("家庭")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Family {
-
-    @ApiModelProperty(value = "家庭Id")
-    private String id;
+public class Family extends BaseModel {
 
     @ApiModelProperty(value = "天气appId")
-    @Length(max = 15)
     private String appId;
 
     @ApiModelProperty(value = "天气appSecret")
-    @Length(max = 15)
     private String appSecret;
 
     @ApiModelProperty(value = "家庭名")
@@ -36,12 +34,12 @@ public class Family {
     @Length(min = 3, max = 10)
     private String name;
 
-    @ApiModelProperty(value = "创建时间", hidden = true)
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime createTime;
+    @ApiModelProperty(value = "经度")
+    @NotBlank
+    private String longitude;
 
-    @ApiModelProperty(value = "更新时间", hidden = true)
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime updateTime;
+    @ApiModelProperty(value = "维度")
+    @NotBlank
+    private String latitude;
 
 }
