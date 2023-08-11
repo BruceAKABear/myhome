@@ -46,7 +46,7 @@ public class PermissionServiceImpl implements PermissionService {
         PermissionDto permissionDto = new PermissionDto();
         List<PermissionFunction> permissionFunctions;
         List<String> buttons;
-        if (UserHolder.getUser().isSuperAdmin()) {
+        if (UserHolder.getUser().getSuperAdmin()) {
             permissionFunctions = permissionFunctionDao.selectAllMenuFunction();
             buttons = permissionFunctionDao.selectAllButton();
         } else {

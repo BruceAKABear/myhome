@@ -123,7 +123,7 @@ public class FrameworkInterceptor implements HandlerInterceptor {
 
             UserHolder.setUser(user);
             if (permission.needValidate()) {
-                if (!user.isSuperAdmin()) {
+                if (!user.getSuperAdmin()) {
                     //非超管，校验权限
                     List<String> permURIs = permissionFunctionDao.selecAllPermUris(user);
                     Set<String> realPermURIs = new HashSet<>();

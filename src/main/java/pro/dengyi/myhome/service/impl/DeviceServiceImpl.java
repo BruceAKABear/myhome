@@ -445,7 +445,7 @@ public class DeviceServiceImpl implements DeviceService {
     @Override
     public void oneButton(Map<String, Object> orderMap) {
         User user = userDao.selectById(UserHolder.getUser().getId());
-        if (user.isSuperAdmin() || "1632628475547410434".equals(user.getRoleId())) {
+        if (user.getSuperAdmin() || "1632628475547410434".equals(user.getRoleId())) {
             String type = (String) orderMap.get("type");
             switch (type) {
                 case "switch":
