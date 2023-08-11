@@ -7,8 +7,6 @@ import org.springframework.stereotype.Component;
 import pro.dengyi.myhome.common.pubsub.Event;
 import pro.dengyi.myhome.common.pubsub.EventType;
 
-import java.util.Map;
-
 /**
  * @author ：dengyi(A.K.A Bear)
  * @date ：Created in 2023/6/20 15:39
@@ -22,7 +20,7 @@ public class PubSubUtil {
     private RingBuffer<Event> ringBuffer;
 
 
-    public void publish(EventType type, Map<String, Object> param) {
+    public void publish(EventType type, Object param) {
         long next = ringBuffer.next();
         try {
             Event event = ringBuffer.get(next);
