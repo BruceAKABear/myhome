@@ -12,7 +12,6 @@ import pro.dengyi.myhome.common.utils.UserHolder;
 import pro.dengyi.myhome.dao.UserDao;
 import pro.dengyi.myhome.model.system.User;
 import pro.dengyi.myhome.model.vo.LoginVo;
-import pro.dengyi.myhome.service.DDService;
 import pro.dengyi.myhome.service.UserService;
 
 import javax.validation.constraints.NotBlank;
@@ -32,8 +31,6 @@ public class UserController {
 
     @Autowired
     private UserService userService;
-    @Autowired
-    private DDService ddService;
     @Autowired
     private UserDao userDao;
 
@@ -97,6 +94,14 @@ public class UserController {
     @Permission
     public void addOrUpdate(@RequestBody @Validated User user) {
         userService.addOrUpdate(user);
+
+    }
+
+    @ApiOperation("强制踢用户下线")
+    @PostMapping("/kickOut")
+    @Permission
+    public void kickOut(@RequestBody User user) {
+        userService.kickOut(user);
 
     }
 

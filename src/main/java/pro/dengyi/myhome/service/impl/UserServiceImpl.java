@@ -9,21 +9,21 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
-import pro.dengyi.myhome.dao.PermRoleDeviceDao;
-import pro.dengyi.myhome.dao.PermUserDeviceDao;
-import pro.dengyi.myhome.dao.RoleDao;
-import pro.dengyi.myhome.dao.UserDao;
 import pro.dengyi.myhome.common.exception.BusinessException;
-import pro.dengyi.myhome.model.perm.PermRoleDevice;
-import pro.dengyi.myhome.model.perm.PermUserDevice;
-import pro.dengyi.myhome.model.system.User;
-import pro.dengyi.myhome.model.vo.LoginVo;
-import pro.dengyi.myhome.service.UserService;
 import pro.dengyi.myhome.common.utils.PasswordUtil;
 import pro.dengyi.myhome.common.utils.SwitchUtil;
 import pro.dengyi.myhome.common.utils.TokenUtil;
 import pro.dengyi.myhome.common.utils.UserHolder;
 import pro.dengyi.myhome.common.utils.queue.RoomSelectQueue;
+import pro.dengyi.myhome.dao.PermRoleDeviceDao;
+import pro.dengyi.myhome.dao.PermUserDeviceDao;
+import pro.dengyi.myhome.dao.RoleDao;
+import pro.dengyi.myhome.dao.UserDao;
+import pro.dengyi.myhome.model.perm.PermRoleDevice;
+import pro.dengyi.myhome.model.perm.PermUserDevice;
+import pro.dengyi.myhome.model.system.User;
+import pro.dengyi.myhome.model.vo.LoginVo;
+import pro.dengyi.myhome.service.UserService;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -145,7 +145,7 @@ public class UserServiceImpl implements UserService {
                                 userLambdaQueryWrapper -> userLambdaQueryWrapper.like(User::getName, name))
                         .select(User::getId, User::getName, User::getAvatar, User::getEmail, User::getSex,
                                 User::getHeight, User::getWeight, User::getAge, User::getCreateTime,
-                                User::getUpdateTime, User::isSuperAdmin, User::getRoleId, User::getEnable));
+                                User::getUpdateTime, User::getSuperAdmin, User::getRoleId, User::getEnable));
 
         for (User user : userIPage.getRecords()) {
 
@@ -222,5 +222,22 @@ public class UserServiceImpl implements UserService {
         User user = userDao.selectById(UserHolder.getUser().getId());
         user.setDisplayMode(modeParam.get("displayMode"));
         userDao.updateById(user);
+    }
+
+    @Override
+    public void kickOut(User user) {
+        if (!UserHolder.getUser().getSuperAdmin() && !UserHolder.getUser().getAdmin()) {
+            throw new BusinessException(1, "you can not call this method");
+        }
+        //自己不能踢自己，退出就可以了
+        if (UserHolder.getUser().getId().equals(user.getId())) {
+            throw new BusinessException(1, "自己不能踢自己");
+        }
+        //超管踢任何人，任何人都不能踢超管，管理员可以踢其他人
+        User userForKick = userDao.selectById(user.getId());
+        if (userForKick.getSuperAdmin()) {
+            throw new BusinessException(1, "you can not kick out super admin");
+        }
+        TokenUtil.kickOut(user.getId());
     }
 }

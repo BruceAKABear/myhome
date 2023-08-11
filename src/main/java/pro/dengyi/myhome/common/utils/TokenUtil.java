@@ -3,12 +3,15 @@ package pro.dengyi.myhome.common.utils;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import pro.dengyi.myhome.common.exception.BusinessException;
 import pro.dengyi.myhome.model.system.User;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * token工具类
@@ -53,5 +56,23 @@ public class TokenUtil {
             throw new BusinessException(1, "login expire");
         }
         return (User) map.get("userData");
+    }
+
+
+    public static void kickOut(String userId) {
+        ConcurrentMap<@NonNull Object, @NonNull Object> map = caffeine.asMap();
+
+        for (Object key : map.keySet()) {
+            Map<String, Object> stringObjectMap = (Map<String, Object>) map.get(key);
+
+            User userData = (User) stringObjectMap.get("userData");
+            if (userData.getId().equals(userId)) {
+                caffeine.invalidate(key);
+
+            }
+
+
+        }
+
     }
 }
