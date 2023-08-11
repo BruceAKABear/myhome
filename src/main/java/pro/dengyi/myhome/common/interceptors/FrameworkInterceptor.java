@@ -9,9 +9,11 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 import pro.dengyi.myhome.common.aop.annotations.Permission;
-import pro.dengyi.myhome.common.config.properties.SystemProperties;
 import pro.dengyi.myhome.common.exception.BusinessException;
-import pro.dengyi.myhome.common.utils.*;
+import pro.dengyi.myhome.common.utils.IpRateLimiter;
+import pro.dengyi.myhome.common.utils.IpUtil;
+import pro.dengyi.myhome.common.utils.TokenUtil;
+import pro.dengyi.myhome.common.utils.UserHolder;
 import pro.dengyi.myhome.dao.PermissionFunctionDao;
 import pro.dengyi.myhome.model.system.User;
 
@@ -33,12 +35,6 @@ public class FrameworkInterceptor implements HandlerInterceptor {
 
     @Autowired
     private PermissionFunctionDao permissionFunctionDao;
-    @Autowired
-    private SystemProperties systemProperties;
-    @Autowired
-    private PubSubUtil pubSubUtil;
-
-
     private final String[] EXCLUDE_URIS = {"/device/deviceLogin", "/device/emqHook"};
 
 
@@ -144,7 +140,8 @@ public class FrameworkInterceptor implements HandlerInterceptor {
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
                            ModelAndView modelAndView) throws Exception {
-
+        UserHolder.remove();
+        LocaleContextHolder.resetLocaleContext();
         HandlerInterceptor.super.postHandle(request, response, handler, modelAndView);
     }
 }
