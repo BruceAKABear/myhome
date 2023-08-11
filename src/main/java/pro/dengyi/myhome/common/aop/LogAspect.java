@@ -5,13 +5,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import pro.dengyi.myhome.common.aop.annotations.NoLog;
+import pro.dengyi.myhome.common.pubsub.EventType;
 import pro.dengyi.myhome.common.utils.IpUtil;
+import pro.dengyi.myhome.common.utils.PubSubUtil;
 import pro.dengyi.myhome.common.utils.UserHolder;
-import pro.dengyi.myhome.common.utils.queue.OperationLogQueue;
 import pro.dengyi.myhome.model.system.OperationLog;
 
 import javax.servlet.http.HttpServletRequest;
@@ -32,6 +34,8 @@ import javax.servlet.http.HttpServletRequest;
 @Aspect
 @Slf4j
 public class LogAspect {
+    @Autowired
+    private PubSubUtil pubSubUtil;
 
     private ThreadLocal<Long> startTime = new ThreadLocal<>();
 
@@ -68,7 +72,7 @@ public class LogAspect {
             uId = UserHolder.getUser().getId();
         }
         OperationLog operationLog = new OperationLog(uId, opName, uIP, requestURI, requestMethod, false, e.getMessage(), System.currentTimeMillis() - startTime.get());
-        OperationLogQueue.publish(operationLog);
+        pubSubUtil.publish(EventType.OPERATION_LOG, operationLog);
 
 
     }
@@ -95,8 +99,7 @@ public class LogAspect {
             uId = UserHolder.getUser().getId();
         }
         OperationLog operationLog = new OperationLog(uId, opName, uIP, requestURI, requestMethod, true, System.currentTimeMillis() - startTime.get());
-        OperationLogQueue.publish(operationLog);
-
+        pubSubUtil.publish(EventType.OPERATION_LOG, operationLog);
     }
 
 }
