@@ -34,6 +34,7 @@ import java.util.concurrent.Executor;
 @Slf4j
 @Component
 public class SystemInitializing {
+    private static final String INITIAL_DATA_ID = "1";
     @Autowired
     private FamilyDao familyDao;
     @Autowired
@@ -54,12 +55,14 @@ public class SystemInitializing {
         if (CollectionUtils.isEmpty(families)) {
             //new family
             Family newFamily = new Family();
+            newFamily.setId(INITIAL_DATA_ID);
             newFamily.setName("MyHome");
             newFamily.setCreateTime(LocalDateTime.now());
             newFamily.setUpdateTime(LocalDateTime.now());
             familyDao.insert(newFamily);
             //new admin user
             User newAdmin = new User();
+            newAdmin.setId(INITIAL_DATA_ID);
             newAdmin.setName("BLab");
             newAdmin.setPassw(PasswordUtil.encodePassword("admin123"));
             newAdmin.setEmail("abc@abc.com");
