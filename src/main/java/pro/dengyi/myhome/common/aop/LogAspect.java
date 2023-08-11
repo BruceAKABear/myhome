@@ -41,12 +41,12 @@ public class LogAspect {
 
 
     @Before(value = "apiOperationPointCut()")
-    public void before(JoinPoint joinPoint) {
+    public void beforeLog(JoinPoint joinPoint) {
         startTime.set(System.currentTimeMillis());
     }
 
     @AfterThrowing(value = "apiOperationPointCut()", throwing = "e")
-    public void doRestrict(JoinPoint joinPoint, Exception e) {
+    public void errorLog(JoinPoint joinPoint, Exception e) {
         ApiOperation apiOperation = ((MethodSignature) joinPoint.getSignature()).getMethod().getAnnotation(ApiOperation.class);
         NoLog noLogOnMethod = ((MethodSignature) joinPoint.getSignature()).getMethod().getAnnotation(NoLog.class);
         NoLog noLogOnClass = ((MethodSignature) joinPoint.getSignature()).getMethod().getAnnotation(NoLog.class);
@@ -74,7 +74,7 @@ public class LogAspect {
     }
 
     @AfterReturning(value = "apiOperationPointCut()")
-    public void doRestrict(JoinPoint joinPoint) {
+    public void successLog(JoinPoint joinPoint) {
         ApiOperation apiOperation = ((MethodSignature) joinPoint.getSignature()).getMethod().getAnnotation(ApiOperation.class);
         NoLog noLogOnMethod = ((MethodSignature) joinPoint.getSignature()).getMethod().getAnnotation(NoLog.class);
         NoLog noLogOnClass = ((MethodSignature) joinPoint.getSignature()).getMethod().getAnnotation(NoLog.class);
