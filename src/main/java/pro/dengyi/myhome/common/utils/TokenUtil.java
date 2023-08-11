@@ -7,6 +7,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import pro.dengyi.myhome.common.exception.BusinessException;
 import pro.dengyi.myhome.model.system.User;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,14 +22,13 @@ import java.util.concurrent.ConcurrentMap;
  */
 @Slf4j
 public class TokenUtil {
+    //过期时间1小时
+    private static final Integer LOGIN_EXPIRE_SECONDS = 60 * 60;
     static Cache<Object, Object> caffeine;
 
     static {
-        caffeine = Caffeine.newBuilder().build();
+        caffeine = Caffeine.newBuilder().expireAfterAccess(Duration.ofSeconds(LOGIN_EXPIRE_SECONDS)).build();
     }
-
-    private static final Integer LOGIN_EXPIRE_SECONDS = 60 * 60;
-
 
     public static String genToken(User user) {
         String uuid = UUID.randomUUID().toString().replaceAll("-", "");
@@ -46,15 +46,14 @@ public class TokenUtil {
      * @return
      */
     public static User decToken(String token) {
+        //框架自动续命，不用人为管
         Object ifPresent = caffeine.getIfPresent(token);
         if (ifPresent == null) {
-            throw new BusinessException(1, "not login");
+            //未登录或者登录过期
+            throw new BusinessException(1, "login.expire");
         }
+        //续命
         HashMap<String, Object> map = (HashMap<String, Object>) ifPresent;
-        LocalDateTime loginDateTime = (LocalDateTime) map.get("loginDateTime");
-        if (LocalDateTime.now().isAfter(loginDateTime.plusSeconds(LOGIN_EXPIRE_SECONDS))) {
-            throw new BusinessException(1, "login expire");
-        }
         return (User) map.get("userData");
     }
 
