@@ -4,10 +4,8 @@ import com.lmax.disruptor.WorkHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
-import pro.dengyi.myhome.dao.ApiProcessingTimeDao;
-import pro.dengyi.myhome.model.system.ApiProcessingTime;
-
-import java.time.LocalDateTime;
+import pro.dengyi.myhome.dao.OperationLogDao;
+import pro.dengyi.myhome.model.system.OperationLog;
 
 /**
  * @author ：dengyi(A.K.A Bear)
@@ -27,21 +25,15 @@ public class EventHandler implements WorkHandler<Event> {
 
     @Override
     public void onEvent(Event event) throws Exception {
-        System.err.println("thread is:" + Thread.currentThread().getName() + ":" + event.getEventType());
-
         switch (event.getEventType()) {
             case DEVICE_REPORT:
                 Thread.sleep(1000);
                 break;
-            case API_PROCESS_TIME:
-                ApiProcessingTime processingTime = new ApiProcessingTime();
-                processingTime.setUri((String) event.getParams().get("requestURI"));
-                processingTime.setTimes(Integer.parseInt(String.valueOf(event.getParams().get("timems"))));
-                processingTime.setCreateTime(LocalDateTime.now());
-                processingTime.setUpdateTime(LocalDateTime.now());
-                ApiProcessingTimeDao apiProcessingTimeDao = (ApiProcessingTimeDao) applicationContext.getBean("apiProcessingTimeDao");
-                apiProcessingTimeDao.insert(processingTime);
-                break;
+            case OPERATION_LOG:
+                OperationLogDao operationLogDao = applicationContext.getBean(OperationLogDao.class);
+                OperationLog params = (OperationLog) event.getParams();
+                operationLogDao.insert(params);
+
             case NOTIFY_USER:
                 Thread.sleep(10000);
 
