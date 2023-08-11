@@ -35,4 +35,6 @@ public interface UserService {
     void updateDisplayMode(Map<String, String> modeParam);
 
     void kickOut(User user);
+
+    void logout();
 }

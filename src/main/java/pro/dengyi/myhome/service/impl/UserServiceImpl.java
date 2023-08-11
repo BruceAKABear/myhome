@@ -36,7 +36,6 @@ import java.util.Map;
  */
 @Service
 public class UserServiceImpl implements UserService {
-
     @Autowired
     private UserDao userDao;
     @Autowired
@@ -87,10 +86,6 @@ public class UserServiceImpl implements UserService {
     public User info() {
         User user = userDao.selectById(UserHolder.getUser().getId());
         user.setPassw(null);
-        if ("1632628475547410434".equals(user.getRoleId())) {
-            user.setAdmin(true);
-        }
-
         return user;
     }
 
@@ -98,6 +93,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void addOrUpdate(User user) {
         if (ObjectUtils.isEmpty(user.getId())) {
+            user.setSuperAdmin(false);
             user.setEnable(true);
             LocalDateTime now = LocalDateTime.now();
             user.setCreateTime(now);
@@ -239,5 +235,11 @@ public class UserServiceImpl implements UserService {
             throw new BusinessException(1, "you can not kick out super admin");
         }
         TokenUtil.kickOut(user.getId());
+    }
+
+    @Override
+    public void logout() {
+        User user = UserHolder.getUser();
+        kickOut(user);
     }
 }
