@@ -48,6 +48,12 @@ public class UserController {
         return userService.login(loginVo);
     }
 
+    @ApiOperation("退出")
+    @GetMapping("/logout")
+    public void logout() {
+        userService.logout();
+    }
+
     @ApiOperation("更新个人信息")
     @PutMapping("/update")
     @Permission(needValidate = false)
