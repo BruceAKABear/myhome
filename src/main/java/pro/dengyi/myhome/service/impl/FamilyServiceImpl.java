@@ -12,7 +12,9 @@ import pro.dengyi.myhome.model.dto.FamilyDto;
 import pro.dengyi.myhome.model.system.Family;
 import pro.dengyi.myhome.service.FamilyService;
 
+import javax.annotation.Resource;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @author dengyi (email:dengyi@dengyi.pro)
@@ -21,8 +23,8 @@ import java.time.LocalDateTime;
 @Service
 public class FamilyServiceImpl implements FamilyService {
 
-    @Autowired
-    private Cache<String, Object> caffeineCache;
+    @Resource
+    private Cache<String, Object> systemCache;
 
     @Autowired
     private FamilyDao familyDao;
@@ -35,23 +37,39 @@ public class FamilyServiceImpl implements FamilyService {
             family.setCreateTime(LocalDateTime.now());
             family.setUpdateTime(LocalDateTime.now());
             familyDao.insert(family);
-            //todo 缓存
-
         } else {
             family.setUpdateTime(LocalDateTime.now());
             familyDao.updateById(family);
-            caffeineCache.invalidate("familyInfo");
         }
-    }
 
-    @Override
-    public FamilyDto info() {
-        return familyDao.selectFamilyDto();
+        List<FamilyDto> familyDtos = familyDao.selectFamilyInfos();
+        systemCache.put("familyInfos", familyDtos);
     }
 
     @Override
     public Boolean checkIsFirst() {
         return CollectionUtils.isEmpty(familyDao.selectList(new QueryWrapper<>()));
+    }
+
+    @Override
+    public List<FamilyDto> infoList() {
+        return (List<FamilyDto>) systemCache.get("familyInfos", key -> familyDao.selectFamilyInfos());
+    }
+
+    @Override
+    public FamilyDto infoById(String familyId) {
+        List<FamilyDto> familyDtos = (List<FamilyDto>) systemCache.get("familyInfos", key -> familyDao.selectFamilyInfos());
+        if (CollectionUtils.isEmpty(familyDtos)) {
+            List<FamilyDto> familyDtosNew = familyDao.selectFamilyInfos();
+            systemCache.put("familyInfos", familyDtosNew);
+            familyDtos = familyDtosNew;
+        }
+        for (FamilyDto familyDto : familyDtos) {
+            if (familyDto.getId().equals(familyId)) {
+                return familyDto;
+            }
+        }
+        return null;
     }
 
 }

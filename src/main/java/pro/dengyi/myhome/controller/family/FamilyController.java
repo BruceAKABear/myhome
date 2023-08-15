@@ -1,6 +1,5 @@
 package pro.dengyi.myhome.controller.family;
 
-import com.github.benmanes.caffeine.cache.Cache;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +9,9 @@ import pro.dengyi.myhome.common.aop.annotations.Permission;
 import pro.dengyi.myhome.model.dto.FamilyDto;
 import pro.dengyi.myhome.model.system.Family;
 import pro.dengyi.myhome.service.FamilyService;
+
+import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 /**
  * 家庭controller
@@ -21,10 +23,8 @@ import pro.dengyi.myhome.service.FamilyService;
 @RestController
 @Permission
 @RequestMapping("/family")
+@Validated
 public class FamilyController {
-
-    @Autowired
-    private Cache<String, Object> cache;
     @Autowired
     private FamilyService familyService;
 
@@ -34,10 +34,16 @@ public class FamilyController {
         familyService.addUpdate(family);
     }
 
-    @ApiOperation("查询家庭信息")
-    @GetMapping("/info")
-    public FamilyDto info() {
-        return (FamilyDto) cache.get("familyInfo", key -> familyService.info());
+    @ApiOperation("根据id查询家庭信息")
+    @GetMapping("/infoById")
+    public FamilyDto infoById(@RequestParam @NotBlank(message = "family id can not be blank") String familyId) {
+        return familyService.infoById(familyId);
+    }
+
+    @ApiOperation("查询家庭信息集合")
+    @GetMapping("/infoList")
+    public List<FamilyDto> infoList() {
+        return familyService.infoList();
     }
 
     @ApiOperation("查询是否是第一次登陆")

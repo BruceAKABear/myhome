@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="pro.dengyi.myhome.dao.FamilyDao">
-    <select id="selectFamilyDto" resultType="pro.dengyi.myhome.model.dto.FamilyDto">
-        SELECT
-            family.id,
-            family.`name`,
-            family.create_time,
-            family.update_time,
-            ( SELECT COUNT( * ) FROM family_floor ) AS floorCount,
-            ( SELECT COUNT( * ) FROM family_room ) AS roomCount,
-            ( SELECT COUNT( * ) FROM device_device ) AS deviceCount,
-            family.app_id,
-            family.app_secret
-        FROM
-            family
+    <select id="selectFamilyInfos" resultType="pro.dengyi.myhome.model.dto.FamilyDto">
+        SELECT family.id,
+               family.`name`,
+               family.create_time,
+               family.update_time,
+               (SELECT COUNT(*) FROM family_floor)  AS floorCount,
+               (SELECT COUNT(*) FROM family_room)   AS roomCount,
+               (SELECT COUNT(*) FROM device_device) AS deviceCount,
+               family.app_id,
+               family.app_secret
+        FROM family
     </select>
 </mapper>
