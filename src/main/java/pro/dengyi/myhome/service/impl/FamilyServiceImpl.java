@@ -1,6 +1,5 @@
 package pro.dengyi.myhome.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.benmanes.caffeine.cache.Cache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,7 +47,7 @@ public class FamilyServiceImpl implements FamilyService {
 
     @Override
     public Boolean checkIsFirst() {
-        return CollectionUtils.isEmpty(familyDao.selectList(new QueryWrapper<>()));
+        return CollectionUtils.isEmpty(familyDao.selectFamilyInfos());
     }
 
     @Override
