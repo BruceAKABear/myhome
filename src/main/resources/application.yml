@@ -12,3 +12,8 @@ spring:
       max-file-size: 10MB
   messages:
     basename: i18n/message
+# basic info from pom.xml or direct config
+project:
+  name: @project.artifactId@
+  version: @project.version@
+  log-location: ./logs
