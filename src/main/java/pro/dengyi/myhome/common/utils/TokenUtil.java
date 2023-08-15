@@ -5,6 +5,7 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import pro.dengyi.myhome.common.exception.BusinessException;
+import pro.dengyi.myhome.common.response.Response;
 import pro.dengyi.myhome.model.system.User;
 
 import java.time.Duration;
@@ -13,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentMap;
+
 
 /**
  * token工具类
@@ -50,7 +52,7 @@ public class TokenUtil {
         Object ifPresent = caffeine.getIfPresent(token);
         if (ifPresent == null) {
             //未登录或者登录过期
-            throw new BusinessException(1, "login.expire");
+            throw new BusinessException(Response.LOGIN_EXPIRE_CODE, "system.login.expire");
         }
         //续命
         HashMap<String, Object> map = (HashMap<String, Object>) ifPresent;
