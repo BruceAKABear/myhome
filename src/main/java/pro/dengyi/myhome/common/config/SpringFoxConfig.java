@@ -1,5 +1,6 @@
 package pro.dengyi.myhome.common.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -27,13 +28,17 @@ import java.util.List;
 @Configuration
 @EnableOpenApi
 public class SpringFoxConfig {
+    @Value("${project.name}")
+    private String name;
+    @Value("${project.version}")
+    private String version;
 
     @Bean
     public Docket api() {
         List<RequestParameter> list = new ArrayList<>();
         list.add(new RequestParameterBuilder()
                 .name("token")
-                .description("认证token")
+                .description("access token")
                 .in(ParameterType.HEADER)
                 .build());
         return new Docket(DocumentationType.SWAGGER_2)
@@ -47,14 +52,10 @@ public class SpringFoxConfig {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                // 页面标题
-                .title("MyHome-API文档")
-                // 创建人
-                .contact(new Contact("邓艺", "https://www.dengyi.pro", "dengyi@dengyi.pro"))
-                // 版本号
-                .version("0.0.1")
-                // 描述
-                .description("MyHome-API文档")
+                .title(name)
+                .contact(new Contact("Bruce", "https://www.dengyi.pro", "dengyi@dengyi.pro"))
+                .version(version)
+                .description(name + " API DOCS")
                 .build();
     }
 }
