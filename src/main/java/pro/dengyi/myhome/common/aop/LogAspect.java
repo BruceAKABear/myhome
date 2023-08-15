@@ -11,6 +11,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import pro.dengyi.myhome.common.aop.annotations.NoLog;
 import pro.dengyi.myhome.common.pubsub.EventType;
+import pro.dengyi.myhome.common.utils.I18nMessageUtil;
 import pro.dengyi.myhome.common.utils.IpUtil;
 import pro.dengyi.myhome.common.utils.PubSubUtil;
 import pro.dengyi.myhome.common.utils.UserHolder;
@@ -18,18 +19,6 @@ import pro.dengyi.myhome.model.system.OperationLog;
 
 import javax.servlet.http.HttpServletRequest;
 
-/**
- * 10.0.0.0 - 10.255.255.255 ; 172.16.0.0 - 172.31.255.255 ; 192.168.0.0 - 192.168.255.255 ;
- * <p>
- * 如果使用了代理才最终访问到服务器，代理需要设置 X-Forwarded-For 头
- * <p>
- * nginx的设置为： location / {  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; }
- *
- * @author ：dengyi(A.K.A Bear)
- * @date ：Created in 2023/3/13 15:28
- * @description：ip restrict aspect
- * @modified By：
- */
 @Component
 @Aspect
 @Slf4j
@@ -37,7 +26,7 @@ public class LogAspect {
     @Autowired
     private PubSubUtil pubSubUtil;
 
-    private ThreadLocal<Long> startTime = new ThreadLocal<>();
+    private final ThreadLocal<Long> startTime = new ThreadLocal<>();
 
     @Pointcut("@annotation(io.swagger.annotations.ApiOperation)")
     public void apiOperationPointCut() {
@@ -49,6 +38,15 @@ public class LogAspect {
         startTime.set(System.currentTimeMillis());
     }
 
+
+    /**
+     * the exception can enter this function is the business exception or basic code exception
+     * the param exception is outer the function it will be handler by spring framework ,so it can not enter the
+     * function
+     *
+     * @param joinPoint
+     * @param e
+     */
     @AfterThrowing(value = "apiOperationPointCut()", throwing = "e")
     public void errorLog(JoinPoint joinPoint, Exception e) {
         ApiOperation apiOperation = ((MethodSignature) joinPoint.getSignature()).getMethod().getAnnotation(ApiOperation.class);
@@ -71,7 +69,11 @@ public class LogAspect {
         if (UserHolder.getUser() != null) {
             uId = UserHolder.getUser().getId();
         }
-        OperationLog operationLog = new OperationLog(uId, opName, uIP, requestURI, requestMethod, false, e.getMessage(), System.currentTimeMillis() - startTime.get());
+        String message = e.getMessage();
+        if (message.contains(".")) {
+            message = I18nMessageUtil.get(message);
+        }
+        OperationLog operationLog = new OperationLog(uId, opName, uIP, requestURI, requestMethod, false, message, System.currentTimeMillis() - startTime.get());
         pubSubUtil.publish(EventType.OPERATION_LOG, operationLog);
 
 
