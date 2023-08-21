@@ -46,6 +46,8 @@ public class SpringFoxConfig {
                 .globalRequestParameters(list)
                 .select()
                 .apis(RequestHandlerSelectors.any())
+                //不显示错误的接口地址
+                .paths(PathSelectors.regex("(?!/error.*).*"))
                 .paths(PathSelectors.any())
                 .build();
     }

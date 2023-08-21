@@ -1,7 +1,5 @@
 package pro.dengyi.myhome.controller.common;
 
-import com.alibaba.fastjson.JSON;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,8 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pro.dengyi.myhome.common.aop.annotations.NoLog;
 import pro.dengyi.myhome.common.exception.BusinessException;
-
-import javax.servlet.http.HttpServletRequest;
+import springfox.documentation.annotations.ApiIgnore;
 
 /**
  * 文件controller
@@ -18,25 +15,23 @@ import javax.servlet.http.HttpServletRequest;
  * @author dengyi (email:dengyi@dengyi.pro)
  * @date 2022-06-30
  */
+@ApiIgnore
 @NoLog
 @Slf4j
-@Api(tags = "通用接口")
 @RestController
 @RequestMapping
 public class CommonController {
 
-
-    @ApiOperation("请求主页")
+    @ApiOperation(hidden = true,value = "")
     @GetMapping
     public void index() {
-        throw new BusinessException(2, "no use to visit /");
+        throw new BusinessException("system.common.nodata");
     }
 
-    @ApiOperation("请求异常")
+    @ApiOperation(hidden = true,value = "")
     @GetMapping("/error")
-    public String error(HttpServletRequest request) {
-        log.error("错误请求，信息为：{}", JSON.toJSONString(request.getRequestURI()));
-        return "you may meet some error,concat the system manager if you want!";
+    public String error() {
+        throw new BusinessException("system.common.error");
     }
 
 }
