@@ -20,7 +20,7 @@ public class MqttCheck {
     @Autowired
     private MqttClient mqttClient;
 
-    @Scheduled(cron = "0 0/1 * * * ?")
+//    @Scheduled(cron = "0 0/1 * * * ?")
     @Async
     public void checkTimer() throws MqttException {
         log.info("mqtt保活定时器启动,当前mqtt连接状态：{}", mqttClient.isConnected());

@@ -7,10 +7,12 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import pro.dengyi.myhome.common.aop.annotations.Permission;
 import pro.dengyi.myhome.model.dto.FloorPageDto;
 import pro.dengyi.myhome.model.system.Floor;
 import pro.dengyi.myhome.service.FloorService;
 
+import javax.annotation.Resource;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
 
@@ -22,20 +24,22 @@ import java.util.List;
  */
 @Validated
 @Api(tags = "楼层接口")
+@Permission
 @RestController
 @RequestMapping("/floor")
 public class FloorController {
 
     @Autowired
     private FloorService floorService;
-    @Autowired
+    @Resource
     private Cache cache;
 
     @ApiOperation("楼层分页查询")
     @GetMapping("/page")
     public IPage<FloorPageDto> page(Integer page, Integer size,
-                                    String floorName) {
-        return floorService.page(page, size, floorName);
+                                    String floorName, @RequestParam @NotBlank(message = "family id can not be blank")
+                                    String familyId) {
+        return floorService.page(page, size, floorName, familyId);
     }
 
     @ApiOperation("新增或修改楼层")

@@ -18,5 +18,5 @@ public interface FloorService {
 
     List<FloorPageDto> floorList();
 
-    IPage<FloorPageDto> page(Integer pageNumber, Integer pageSize, String floorName);
+    IPage<FloorPageDto> page(Integer pageNumber, Integer pageSize, String floorName, String familyId);
 }

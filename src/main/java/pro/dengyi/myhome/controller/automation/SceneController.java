@@ -29,12 +29,13 @@ public class SceneController {
     @Autowired
     private SceneService sceneService;
 
+
+
     //todo 相同条件不能存在
     @ApiOperation("新增或修改场景")
     @PostMapping("/addOrUpdate")
     public void addOrUpdate(@RequestBody Scene scene) {
         sceneService.addOrUpdate(scene);
-
     }
 
     @ApiOperation("查询供修改")

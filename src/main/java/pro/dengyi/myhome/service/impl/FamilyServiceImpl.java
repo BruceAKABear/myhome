@@ -1,11 +1,13 @@
 package pro.dengyi.myhome.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.benmanes.caffeine.cache.Cache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
+import pro.dengyi.myhome.common.exception.BusinessException;
 import pro.dengyi.myhome.dao.FamilyDao;
 import pro.dengyi.myhome.model.dto.FamilyDto;
 import pro.dengyi.myhome.model.system.Family;
@@ -33,6 +35,11 @@ public class FamilyServiceImpl implements FamilyService {
     @Override
     public void addUpdate(Family family) {
         if (ObjectUtils.isEmpty(family.getId())) {
+            Family familyExist = familyDao.selectOne(new LambdaQueryWrapper<Family>()
+                    .eq(Family::getName, family.getName()));
+            if (familyExist != null) {
+                throw new BusinessException("family.name.exist");
+            }
             family.setCreateTime(LocalDateTime.now());
             family.setUpdateTime(LocalDateTime.now());
             familyDao.insert(family);
@@ -40,7 +47,6 @@ public class FamilyServiceImpl implements FamilyService {
             family.setUpdateTime(LocalDateTime.now());
             familyDao.updateById(family);
         }
-
         List<FamilyDto> familyDtos = familyDao.selectFamilyInfos();
         systemCache.put("familyInfos", familyDtos);
     }

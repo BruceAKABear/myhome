@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import pro.dengyi.myhome.common.utils.PasswordUtil;
 import pro.dengyi.myhome.common.utils.queue.DeviceLogQueue;
-import pro.dengyi.myhome.common.utils.queue.OperationLogQueue;
 import pro.dengyi.myhome.common.utils.queue.RoomSelectQueue;
 import pro.dengyi.myhome.dao.DeviceLogDao;
 import pro.dengyi.myhome.dao.FamilyDao;
@@ -17,7 +16,6 @@ import pro.dengyi.myhome.dao.OperationLogDao;
 import pro.dengyi.myhome.dao.UserDao;
 import pro.dengyi.myhome.model.device.DeviceLog;
 import pro.dengyi.myhome.model.system.Family;
-import pro.dengyi.myhome.model.system.OperationLog;
 import pro.dengyi.myhome.model.system.User;
 
 import java.time.LocalDateTime;
@@ -32,7 +30,7 @@ import java.util.concurrent.Executor;
  * @modified By：
  */
 @Slf4j
-@Component
+//@Component
 public class SystemInitializing {
     private static final String INITIAL_DATA_ID = "1";
     @Autowired
@@ -50,7 +48,6 @@ public class SystemInitializing {
     @EventListener(ApplicationStartedEvent.class)
     @Async
     public void systemBoot() {
-        log.info("system boot successful!start to initializing system");
         List<Family> families = familyDao.selectList(null);
         if (CollectionUtils.isEmpty(families)) {
             //new family
@@ -65,7 +62,7 @@ public class SystemInitializing {
             newAdmin.setId(INITIAL_DATA_ID);
             newAdmin.setName("BLab");
             newAdmin.setPassw(PasswordUtil.encodePassword("admin123"));
-            newAdmin.setEmail("abc@abc.com");
+            newAdmin.setEmail("admin@myhome.com");
             newAdmin.setSuperAdmin(true);
             newAdmin.setAdmin(true);
             newAdmin.setEnable(true);
@@ -75,13 +72,6 @@ public class SystemInitializing {
         }
 
 
-        //操作日志处理线程
-        executor.execute(() -> {
-            while (true) {
-                OperationLog operationLog = OperationLogQueue.consume();
-                operationLogDao.insert(operationLog);
-            }
-        });
         //设备日志队列
         executor.execute(() -> {
             while (true) {

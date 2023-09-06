@@ -19,5 +19,5 @@ public interface FloorDao extends BaseMapper<Floor> {
     List<FloorPageDto> selectFloorDto();
 
     IPage<FloorPageDto> selectCustomPage(IPage<FloorPageDto> iPage,
-                                         @Param("floorName") String floorName);
+                                         @Param("floorName") String floorName, @Param("familyId") String familyId);
 }

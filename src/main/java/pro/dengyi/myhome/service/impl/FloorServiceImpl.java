@@ -8,9 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
+import pro.dengyi.myhome.common.exception.BusinessException;
 import pro.dengyi.myhome.dao.FloorDao;
 import pro.dengyi.myhome.dao.RoomDao;
-import pro.dengyi.myhome.common.exception.BusinessException;
 import pro.dengyi.myhome.model.dto.FloorPageDto;
 import pro.dengyi.myhome.model.system.Floor;
 import pro.dengyi.myhome.model.system.Room;
@@ -73,9 +73,9 @@ public class FloorServiceImpl implements FloorService {
     }
 
     @Override
-    public IPage<FloorPageDto> page(Integer pageNumber, Integer pageSize, String floorName) {
+    public IPage<FloorPageDto> page(Integer pageNumber, Integer pageSize, String floorName, String familyId) {
         IPage<FloorPageDto> iPage = new Page<>(pageNumber == null ? 1 : pageNumber,
                 pageSize == null ? 10 : pageSize);
-        return floorDao.selectCustomPage(iPage, floorName);
+        return floorDao.selectCustomPage(iPage, floorName, familyId);
     }
 }

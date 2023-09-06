@@ -20,7 +20,7 @@ import java.util.List;
  * @author dengyi (email:dengyi@dengyi.pro)
  * @date 2022-10-01
  */
-@Api(tags = "系统信息接口")
+@Api(tags = "权限接口")
 @RestController
 @RequestMapping("/permission")
 public class PermissionController {

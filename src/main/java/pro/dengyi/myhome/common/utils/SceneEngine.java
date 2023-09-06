@@ -1,11 +1,8 @@
 package pro.dengyi.myhome.common.utils;
 
-import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.benmanes.caffeine.cache.Cache;
 import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -20,7 +17,6 @@ import pro.dengyi.myhome.model.device.Device;
 import pro.dengyi.myhome.model.device.DeviceLog;
 
 import javax.script.Invocable;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -189,18 +185,18 @@ public class SceneEngine {
                         deviceId = device.getId();
                         controlProductId = device.getProductId();
                     }
-                    MqttMessage controlMessage = new MqttMessage(
-                            JSON.toJSONString(params).getBytes(StandardCharsets.UTF_8));
-                    controlMessage.setQos(1);
-                    try {
-                        String controlTopic = "control/" + controlProductId + "/" + deviceId;
-                        mqttClient.publish(controlTopic, controlMessage);
-                        DeviceLog controlLog = new DeviceLog(controlProductId, deviceId, controlTopic,
-                                JSON.toJSONString(params), "down", "scene", null);
-                        deviceLogDao.insert(controlLog);
-                    } catch (MqttException e) {
-                        throw new RuntimeException(e);
-                    }
+//                    MqttMessage controlMessage = new MqttMessage(
+//                            JSON.toJSONString(params).getBytes(StandardCharsets.UTF_8));
+//                    controlMessage.setQos(1);
+//                    try {
+//                        String controlTopic = "control/" + controlProductId + "/" + deviceId;
+//                        mqttClient.publish(controlTopic, controlMessage);
+//                        DeviceLog controlLog = new DeviceLog(controlProductId, deviceId, controlTopic,
+//                                JSON.toJSONString(params), "down", "scene", null);
+//                        deviceLogDao.insert(controlLog);
+//                    } catch (MqttException e) {
+//                        throw new RuntimeException(e);
+//                    }
 
 
                 }
@@ -244,7 +240,8 @@ public class SceneEngine {
                         new LambdaQueryWrapper<DeviceLog>().eq(DeviceLog::getDeviceId, deviceId)
                                 .eq(DeviceLog::getDirection, "up").orderByDesc(DeviceLog::getCreateTime)
                                 .last("limit 1").select(DeviceLog::getPayload)));
-        return (Map<String, Object>) JSON.parse(latestDeViceStatus);
+//        return (Map<String, Object>) JSON.parse(latestDeViceStatus);
+        return null;
     }
 
 

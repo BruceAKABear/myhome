@@ -2,14 +2,18 @@ package pro.dengyi.myhome.common.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import pro.dengyi.myhome.common.response.Response;
+import pro.dengyi.myhome.common.utils.I18nMessageUtil;
 
 import javax.validation.ConstraintViolationException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -28,7 +32,7 @@ public class GlobalExceptionHandler {
      * @return
      */
     @ExceptionHandler(Exception.class)
-    public Response customException(Exception e) {
+    public Response commonException(Exception e) {
         log.error("框架异常，信息为:", e);
         return new Response() {
             @Override
@@ -74,7 +78,7 @@ public class GlobalExceptionHandler {
 
             @Override
             public String getMessage() {
-                return be.getMessage();
+                return I18nMessageUtil.get(be.getMessage());
             }
 
             @Override
@@ -93,20 +97,36 @@ public class GlobalExceptionHandler {
         return returnmap;
     }
 
-    /**
-     * 参数异常处理类
-     *
-     * @param me 参数异常类
-     * @return
-     */
     @ExceptionHandler({
             MethodArgumentNotValidException.class,
             HttpMessageNotReadableException.class,
             IllegalArgumentException.class,
             ConstraintViolationException.class
     })
-    public Map<String, Object> parametersException(Exception me) {
+    public Response parametersException(Exception me) {
         log.error("请求参数异常，信息为:", me);
+        String message = null;
+
+        //get request param error
+        if (me instanceof ConstraintViolationException) {
+            ConstraintViolationException cve = (ConstraintViolationException) me;
+            message = cve.getMessage();
+        }
+        //post request body param error
+        if (me instanceof MethodArgumentNotValidException) {
+            MethodArgumentNotValidException methodArgumentNotValidException = (MethodArgumentNotValidException) me;
+            BindingResult bindingResult = methodArgumentNotValidException.getBindingResult();
+            List<ObjectError> allErrors = bindingResult.getAllErrors();
+            StringBuilder sb = new StringBuilder();
+            for (ObjectError oneError : allErrors) {
+                String messageIn = oneError.getDefaultMessage();
+                sb.append(messageIn);
+                sb.append(",");
+            }
+            message = sb.substring(0, sb.lastIndexOf(","));
+        }
+
+
         Map<String, Object> returnmap = new HashMap<>(3);
         // 执行状态
         returnmap.put("status", false);
@@ -116,7 +136,28 @@ public class GlobalExceptionHandler {
             returnmap.put("message", me.getMessage());
         }
 
-        return returnmap;
+        String finalMessage = message;
+        return new Response() {
+            @Override
+            public Boolean getStatus() {
+                return false;
+            }
+
+            @Override
+            public Integer getCode() {
+                return ERROR_CODE;
+            }
+
+            @Override
+            public String getMessage() {
+                return finalMessage;
+            }
+
+            @Override
+            public Object getData() {
+                return null;
+            }
+        };
     }
 
     /**
@@ -136,28 +177,5 @@ public class GlobalExceptionHandler {
         return returnmap;
     }
 
-    /**
-     * token过期处理
-     *
-     * @param ee
-     * @return
-     */
-//    @ExceptionHandler(ExpiredJwtException.class)
-//    public Response jwtExpireException(ExpiredJwtException ee) {
-//        log.error("jwt过期异常，信息为:", ee);
-//        return new CommonResponse(ResponseEnum.LOGIN_EXPIRE);
-//    }
-
-    /**
-     * token异常处理类
-     *
-     * @param ee 参数异常类
-     * @return
-     */
-//    @ExceptionHandler({MalformedJwtException.class, SignatureException.class})
-//    public Response tokenError(Exception ee) {
-//        log.error("token异常，信息为:", ee);
-//        return new CommonResponse(ResponseEnum.LOGIN_EXPIRE);
-//    }
 
 }

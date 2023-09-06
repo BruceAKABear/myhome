@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import pro.dengyi.myhome.common.aop.annotations.Permission;
 import pro.dengyi.myhome.model.system.FeedBack;
 import pro.dengyi.myhome.service.FeedBackService;
+import springfox.documentation.annotations.ApiIgnore;
 
 /**
  * @author ：dengyi(A.K.A Bear)
@@ -17,6 +18,7 @@ import pro.dengyi.myhome.service.FeedBackService;
  * @description：版本controller
  * @modified By：
  */
+@ApiIgnore
 @Permission
 @Api(tags = "反馈")
 @RestController

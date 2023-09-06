@@ -63,6 +63,9 @@ public class User extends BaseModel {
     @ApiModelProperty(value = "选中的语言")
     private String selectLang;
 
+    //todo 默认语言
+    //todo 默认家庭
+
     private Boolean superAdmin;
 
     @TableField(exist = false)

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
+import pro.dengyi.myhome.common.exception.BusinessException;
 import pro.dengyi.myhome.dao.SceneActionDao;
 import pro.dengyi.myhome.dao.SceneConditionDao;
 import pro.dengyi.myhome.dao.SceneDao;
@@ -44,14 +45,21 @@ public class SceneServiceImpl implements SceneService {
     public void addOrUpdate(Scene scene) {
 
         if (ObjectUtils.isEmpty(scene.getId())) {
-//            sceneDao.selectList(new LambdaQueryWrapper<Scene>().eq())
-
+            List<Scene> scenes = sceneDao.selectList(new LambdaQueryWrapper<Scene>().eq(Scene::getName, scene.getName()));
+            if (!CollectionUtils.isEmpty(scenes)) {
+                throw new BusinessException("scene.same.name.exist");
+            }
             //新增
             scene.setCreateTime(LocalDateTime.now());
             scene.setUpdateTime(LocalDateTime.now());
             sceneDao.insert(scene);
         } else {
             //修改
+            List<Scene> scenes = sceneDao.selectList(new LambdaQueryWrapper<Scene>().eq(Scene::getName,
+                    scene.getName()).ne(Scene::getId,scene.getId()));
+            if (!CollectionUtils.isEmpty(scenes)) {
+                throw new BusinessException("scene.same.name.exist");
+            }
             sceneDao.updateById(scene);
         }
         //全量删除后全量新增

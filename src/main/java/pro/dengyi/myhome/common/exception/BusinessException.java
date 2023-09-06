@@ -1,6 +1,8 @@
 package pro.dengyi.myhome.common.exception;
 
 
+import pro.dengyi.myhome.common.response.Response;
+
 /**
  * 业务异常类
  *
@@ -24,7 +26,7 @@ public class BusinessException extends RuntimeException {
      */
     public BusinessException(String message) {
         super(message);
-        this.code = 1;
+        this.code = Response.ERROR_CODE;
         this.message = message;
     }
 

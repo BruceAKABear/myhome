@@ -9,7 +9,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pro.dengyi.myhome.common.aop.annotations.Permission;
 import pro.dengyi.myhome.common.utils.UserHolder;
-import pro.dengyi.myhome.dao.UserDao;
 import pro.dengyi.myhome.model.system.User;
 import pro.dengyi.myhome.model.vo.LoginVo;
 import pro.dengyi.myhome.service.UserService;
@@ -31,8 +30,6 @@ public class UserController {
 
     @Autowired
     private UserService userService;
-    @Autowired
-    private UserDao userDao;
 
     @ApiOperation("分页查询")
     @GetMapping("/page")
@@ -59,7 +56,6 @@ public class UserController {
     @Permission(needValidate = false)
     public void update(@RequestBody @Validated User user) {
         userService.update(user);
-
     }
 
     @ApiOperation("查询个人信息")

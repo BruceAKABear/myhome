@@ -10,6 +10,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 import pro.dengyi.myhome.common.aop.annotations.Permission;
 import pro.dengyi.myhome.common.exception.BusinessException;
+import pro.dengyi.myhome.common.response.Response;
 import pro.dengyi.myhome.common.utils.IpRateLimiter;
 import pro.dengyi.myhome.common.utils.IpUtil;
 import pro.dengyi.myhome.common.utils.TokenUtil;
@@ -78,7 +79,7 @@ public class FrameworkInterceptor implements HandlerInterceptor {
         if (!Arrays.asList(EXCLUDE_URIS).contains(request.getRequestURI())) {
             Boolean acquireFlag = IpRateLimiter.tryAcquire(IpUtil.remoteIP(request), request.getRequestURI());
             if (!acquireFlag) {
-                throw new BusinessException(100, "rete limit");
+                throw new BusinessException(Response.RATE_LIMIT_CODE, "system.rate.limit");
             }
         }
     }

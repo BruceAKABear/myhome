@@ -14,8 +14,9 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
  * @description：
  * @modified By：
  */
-@RestControllerAdvice(basePackages ="pro.dengyi" )
+@RestControllerAdvice(basePackages = "pro.dengyi")
 public class ResponseHandler implements ResponseBodyAdvice<Object> {
+
     @Override
     public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
         return !returnType.hasMethodAnnotation(IgnoreResponseHandler.class);
@@ -26,6 +27,7 @@ public class ResponseHandler implements ResponseBodyAdvice<Object> {
         if (body instanceof Response) {
             return body;
         } else {
+
             return new Response() {
                 @Override
                 public Boolean getStatus() {
@@ -34,7 +36,7 @@ public class ResponseHandler implements ResponseBodyAdvice<Object> {
 
                 @Override
                 public Integer getCode() {
-                    return 10000;
+                    return SUCCESS_CODE;
                 }
 
                 @Override

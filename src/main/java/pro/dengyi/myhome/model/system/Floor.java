@@ -30,5 +30,8 @@ public class Floor extends BaseModel {
     @Length(min = 2, max = 10)
     private String name;
 
+    @NotBlank(message = "家庭id不能为空")
+    private String familyId;
+
 
 }

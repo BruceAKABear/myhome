@@ -7,7 +7,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
-import pro.dengyi.myhome.common.engine.CountDownTimer;
 import pro.dengyi.myhome.common.pubsub.EventType;
 import pro.dengyi.myhome.common.utils.JavaScriptEngine;
 import pro.dengyi.myhome.common.utils.PasswordUtil;
@@ -39,13 +38,6 @@ import java.util.concurrent.TimeUnit;
 
 @SpringBootTest(classes = MyhomeApplication.class, webEnvironment = WebEnvironment.DEFINED_PORT)
 class MyhomeApplicationTests {
-
-    public static void main(String[] args) {
-        CountDownTimer countDownTimer = new CountDownTimer(5);
-        countDownTimer.start();
-
-
-    }
 
     @Autowired
     private UserDao userDao;
@@ -130,71 +122,71 @@ class MyhomeApplicationTests {
     }
 
 
-    @Test
-    public void syncUser() throws ClassNotFoundException, SQLException {
-        Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-        Connection connection = DriverManager.getConnection(
-                "jdbc:sqlserver://10.18.2.209\\GDC1CONCUR01:1433;database=PeopleSoft_Sync", "FF_USER",
-                "FF2021");
-
-        Statement statement = connection.createStatement();
-        ResultSet rs = statement.executeQuery(
-                "select  EMAIL,EMPLID,EMPNAME from  PS_EMP_NEW_VW where COMPANYID='261'");
-        List<Map<String, String>> list = new ArrayList<>();
-        while (rs.next()) {
-            Map<String, String> map = new HashMap<>();
-            ResultSetMetaData md = rs.getMetaData();
-            int columnCount = md.getColumnCount();
-            for (int i = 1; i <= columnCount; i++) {
-                map.put(md.getColumnName(i), (String) rs.getObject(i));
-            }
-            list.add(map);
-        }
-        rs.close();
-        connection.close();
-
-        List<String> ouids = new ArrayList<>();
-        List<User> oldUsers = userDao.selectList(new LambdaQueryWrapper<>());
-
-        if (!CollectionUtils.isEmpty(oldUsers)) {
-            for (User oldUser : oldUsers) {
-                ouids.add(oldUser.getId());
-            }
-
-        }
-
-        List<User> newUser = new ArrayList<>();
-        if (!CollectionUtils.isEmpty(list)) {
-            for (Map<String, String> newU : list) {
-                if (!ouids.contains(newU.get("EMPLID"))) {
-                    User user = new User();
-                    user.setId(newU.get("EMPLID"));
-                    user.setName(newU.get("EMPNAME"));
-                    user.setEmail(newU.get("EMAIL"));
-                    user.setCreateTime(LocalDateTime.now());
-                    user.setUpdateTime(LocalDateTime.now());
-                    user.setSuperAdmin(false);
-                    user.setEnable(true);
-                    user.setPassw(PasswordUtil.encodePassword("12345678"));
-                    newUser.add(user);
-                }
-
-            }
-        }
-
-        if (!CollectionUtils.isEmpty(newUser)) {
-            for (User user : newUser) {
-                if (!ObjectUtils.isEmpty(user.getEmail())) {
-                    userDao.insert(user);
-                }
-
-            }
-
-        }
-
-        System.out.println(list);
-
-    }
+//    @Test
+//    public void syncUser() throws ClassNotFoundException, SQLException {
+//        Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+//        Connection connection = DriverManager.getConnection(
+//                "jdbc:sqlserver://10.18.2.209\\GDC1CONCUR01:1433;database=PeopleSoft_Sync", "FF_USER",
+//                "FF2021");
+//
+//        Statement statement = connection.createStatement();
+//        ResultSet rs = statement.executeQuery(
+//                "select  EMAIL,EMPLID,EMPNAME from  PS_EMP_NEW_VW where COMPANYID='261'");
+//        List<Map<String, String>> list = new ArrayList<>();
+//        while (rs.next()) {
+//            Map<String, String> map = new HashMap<>();
+//            ResultSetMetaData md = rs.getMetaData();
+//            int columnCount = md.getColumnCount();
+//            for (int i = 1; i <= columnCount; i++) {
+//                map.put(md.getColumnName(i), (String) rs.getObject(i));
+//            }
+//            list.add(map);
+//        }
+//        rs.close();
+//        connection.close();
+//
+//        List<String> ouids = new ArrayList<>();
+//        List<User> oldUsers = userDao.selectList(new LambdaQueryWrapper<>());
+//
+//        if (!CollectionUtils.isEmpty(oldUsers)) {
+//            for (User oldUser : oldUsers) {
+//                ouids.add(oldUser.getId());
+//            }
+//
+//        }
+//
+//        List<User> newUser = new ArrayList<>();
+//        if (!CollectionUtils.isEmpty(list)) {
+//            for (Map<String, String> newU : list) {
+//                if (!ouids.contains(newU.get("EMPLID"))) {
+//                    User user = new User();
+//                    user.setId(newU.get("EMPLID"));
+//                    user.setName(newU.get("EMPNAME"));
+//                    user.setEmail(newU.get("EMAIL"));
+//                    user.setCreateTime(LocalDateTime.now());
+//                    user.setUpdateTime(LocalDateTime.now());
+//                    user.setSuperAdmin(false);
+//                    user.setEnable(true);
+//                    user.setPassw(PasswordUtil.encodePassword("12345678"));
+//                    newUser.add(user);
+//                }
+//
+//            }
+//        }
+//
+//        if (!CollectionUtils.isEmpty(newUser)) {
+//            for (User user : newUser) {
+//                if (!ObjectUtils.isEmpty(user.getEmail())) {
+//                    userDao.insert(user);
+//                }
+//
+//            }
+//
+//        }
+//
+//        System.out.println(list);
+//
+//    }
 
 
     @Test
@@ -250,7 +242,7 @@ class MyhomeApplicationTests {
         //理想状态下一个类型只能有一个线程处理
         Map<String, Object> param = new HashMap<>();
         param.put("type", "abc");
-        pubSubUtil.publish(EventType.API_PROCESS_TIME, param);
+        pubSubUtil.publish(EventType.OPERATION_LOG, param);
         pubSubUtil.publish(EventType.DEVICE_REPORT, param);
         pubSubUtil.publish(EventType.NOTIFY_USER, param);
 
@@ -258,7 +250,6 @@ class MyhomeApplicationTests {
         TimeUnit.SECONDS.sleep(20);
 
     }
-
 
 
 }

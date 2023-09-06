@@ -55,15 +55,15 @@ public class UserServiceImpl implements UserService {
                 new LambdaQueryWrapper<User>().eq(User::getEmail, loginVo.getEmail()));
         if (user != null) {
             if (!user.getEnable()) {
-                throw new BusinessException(11001, "用户已停用不能登录");
+                throw new BusinessException("system.login.user.disable");
             }
             if (PasswordUtil.match(loginVo.getPassword(), user.getPassw())) {
                 return TokenUtil.genToken(user);
             } else {
-                throw new BusinessException(11002, "邮箱或密码错误");
+                throw new BusinessException("system.login.usernameorpassworderror");
             }
         } else {
-            throw new BusinessException(11003, "用户不存在");
+            throw new BusinessException("system.login.usernotexist");
         }
     }
 
@@ -176,7 +176,8 @@ public class UserServiceImpl implements UserService {
     public void delete(String id) {
         //不能删除
         if (UserHolder.getUser().getId().equals(id)) {
-            throw new BusinessException(1, "不能删除自己");
+            //todo
+            throw new BusinessException("user.cannot");
         }
         userDao.deleteById(id);
         //删除设备关联

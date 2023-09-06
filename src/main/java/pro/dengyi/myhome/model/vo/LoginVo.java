@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 /**
  * 登录数据实体
@@ -16,11 +17,12 @@ import javax.validation.constraints.NotBlank;
 @ApiModel("登录实体")
 public class LoginVo {
 
-    @ApiModelProperty(required = true, value = "邮箱", example = "dengyi@dengyi.pro")
-    @NotBlank
+    @ApiModelProperty(required = true, value = "邮箱", example = "abc@abc.com")
+    @NotBlank(message = "email can not be null")
+    @Size
     private String email;
 
-    @ApiModelProperty(required = true, value = "密码", example = "12345678")
-    @NotBlank
+    @ApiModelProperty(required = true, value = "密码", example = "admin123")
+    @NotBlank(message = "password can not be null")
     private String password;
 }

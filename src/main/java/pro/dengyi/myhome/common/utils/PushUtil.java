@@ -1,9 +1,6 @@
 package pro.dengyi.myhome.common.utils;
 
-import com.alibaba.fastjson.JSON;
 import org.springframework.stereotype.Component;
-import pro.dengyi.myhome.controller.push.AppWebsocket;
-import pro.dengyi.myhome.controller.push.BackendWebsocket;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,10 +27,10 @@ public class PushUtil {
         pushParams.put("deviceId", deviceId);
         pushParams.put("roomId", roomId);
         pushParams.put("currentStatus", currentStatus);
-        //推送至前端
-        AppWebsocket.sendMessage2Device(JSON.toJSONString(pushParams));
-        //推送至管理后台
-        BackendWebsocket.sendMessage2Device(JSON.toJSONString(pushParams));
+//        //推送至前端
+//        AppWebsocket.sendMessage2Device(JSON.toJSONString(pushParams));
+//        //推送至管理后台
+//        BackendWebsocket.sendMessage2Device(JSON.toJSONString(pushParams));
     }
 
     /**
@@ -48,10 +45,10 @@ public class PushUtil {
         pushParams.put("deviceId", deviceId);
         pushParams.put("deviceName", deviceName);
         pushParams.put("onOff", onOffLine);
-        //推送至前端
-        AppWebsocket.sendMessage2Device(JSON.toJSONString(pushParams));
-        //推送至管理后台
-        BackendWebsocket.sendMessage2Device(JSON.toJSONString(pushParams));
+//        //推送至前端
+//        AppWebsocket.sendMessage2Device(JSON.toJSONString(pushParams));
+//        //推送至管理后台
+//        BackendWebsocket.sendMessage2Device(JSON.toJSONString(pushParams));
     }
 
     public static void positionPush(String userId, String floorId, String roomId) {
@@ -60,7 +57,7 @@ public class PushUtil {
         pushParams.put("floorId", floorId);
         pushParams.put("roomId", roomId);
         //推送至前端
-        AppWebsocket.sendMessage2Device(userId, JSON.toJSONString(pushParams));
+//        AppWebsocket.sendMessage2Device(userId, JSON.toJSONString(pushParams));
     }
 
 }

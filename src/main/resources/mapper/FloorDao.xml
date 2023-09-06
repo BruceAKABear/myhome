@@ -3,18 +3,18 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="pro.dengyi.myhome.dao.FloorDao">
   <select id="selectFloorDto" resultType="pro.dengyi.myhome.model.dto.FloorPageDto">
-    SELECT family_floor.id,
-           family_floor.`name`,
-           (SELECT COUNT(id)
-            FROM family_room
-            WHERE family_room.floor_id = family_floor.id) AS roomCount,
-           (SELECT COUNT(*)
-            FROM device_device
-                   INNER JOIN family_room ON device_device.room_id = family_room.id
-                   INNER JOIN family_floor ON family_floor.id = family_room.floor_id
-              AND family_floor.id = family_floor.id
-            WHERE device_device.room_id = family_room.id) AS deviceCount
-    FROM family_floor
+      SELECT family_floor.id,
+             family_floor.`name`,
+             (SELECT COUNT(id)
+              FROM family_room
+              WHERE family_room.floor_id = family_floor.id) AS roomCount,
+             (SELECT COUNT(*)
+              FROM device_device
+                       INNER JOIN family_room ON device_device.room_id = family_room.id
+                       INNER JOIN family_floor ON family_floor.id = family_room.floor_id
+                  AND family_floor.id = family_floor.id
+              WHERE device_device.room_id = family_room.id) AS deviceCount
+      FROM family_floor
   </select>
   <select id="selectCustomPage" resultType="pro.dengyi.myhome.model.dto.FloorPageDto">
     SELECT family_floor.id,
@@ -30,6 +30,7 @@
     ) AS deviceCount
     FROM family_floor AS family_floor
     WHERE 1 = 1
+    and family_floor.family_id=#{familyId}
     <if test="floorName!=null and floorName!=''">
       and family_floor.`name` LIKE concat('%',#{floorName},'%')
     </if>

@@ -1,6 +1,5 @@
 package pro.dengyi.myhome.service.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -15,19 +14,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
+import pro.dengyi.myhome.common.config.properties.SystemProperties;
+import pro.dengyi.myhome.common.utils.PushUtil;
+import pro.dengyi.myhome.common.utils.UserHolder;
+import pro.dengyi.myhome.common.utils.queue.DeviceLogQueue;
 import pro.dengyi.myhome.dao.*;
-import pro.dengyi.myhome.common.exception.BusinessException;
 import pro.dengyi.myhome.model.device.*;
 import pro.dengyi.myhome.model.device.dto.*;
 import pro.dengyi.myhome.model.dto.ChangeFavoriteDto;
 import pro.dengyi.myhome.model.system.Floor;
 import pro.dengyi.myhome.model.system.Room;
 import pro.dengyi.myhome.model.system.User;
-import pro.dengyi.myhome.common.config.properties.SystemProperties;
 import pro.dengyi.myhome.service.DeviceService;
-import pro.dengyi.myhome.common.utils.PushUtil;
-import pro.dengyi.myhome.common.utils.UserHolder;
-import pro.dengyi.myhome.common.utils.queue.DeviceLogQueue;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -132,25 +130,25 @@ public class DeviceServiceImpl implements DeviceService {
     @Override
     public void sendDebug(Map<String, Object> orderMap) {
 
-        String deviceId = (String) orderMap.get("deviceId");
-        Device device = deviceDao.selectById(deviceId);
-        if (device.getOnline()) {
-
-            String controlTopic = "control/" + device.getProductId() + "/" + device.getId();
-            MqttMessage message = new MqttMessage(
-                    JSON.toJSONString(orderMap).getBytes(StandardCharsets.UTF_8));
-            message.setQos(1);
-            try {
-                mqttClient.publish(controlTopic, message);
-                DeviceLog deviceLog = new DeviceLog(device.getProductId(), deviceId, controlTopic,
-                        JSON.toJSONString(orderMap), "down");
-                DeviceLogQueue.publish(deviceLog);
-            } catch (MqttException e) {
-                log.error("发送命令失败", e);
-            }
-        } else {
-            throw new BusinessException(18002, "设备离线不能发送命令");
-        }
+//        String deviceId = (String) orderMap.get("deviceId");
+//        Device device = deviceDao.selectById(deviceId);
+//        if (device.getOnline()) {
+//
+//            String controlTopic = "control/" + device.getProductId() + "/" + device.getId();
+//            MqttMessage message = new MqttMessage(
+//                    JSON.toJSONString(orderMap).getBytes(StandardCharsets.UTF_8));
+//            message.setQos(1);
+//            try {
+//                mqttClient.publish(controlTopic, message);
+//                DeviceLog deviceLog = new DeviceLog(device.getProductId(), deviceId, controlTopic,
+//                        JSON.toJSONString(orderMap), "down");
+//                DeviceLogQueue.publish(deviceLog);
+//            } catch (MqttException e) {
+//                log.error("发送命令失败", e);
+//            }
+//        } else {
+//            throw new BusinessException(18002, "设备离线不能发送命令");
+//        }
     }
 
     @Transactional
@@ -197,24 +195,24 @@ public class DeviceServiceImpl implements DeviceService {
         otaParam.setTargetVersion(frameware.getVersion());
         otaParam.setTargetUrl(frameware.getUrl());
 
-        String otaString = JSON.toJSONString(otaParam);
+//        String otaString = JSON.toJSONString(otaParam);
 
-        MqttMessage message = new MqttMessage(otaString.getBytes(StandardCharsets.UTF_8));
-        message.setQos(1);
-        try {
-            mqttClient.publish(otaTopic, message);
-//      DeviceLog deviceLog = new DeviceLog();
-//      deviceLog.setProductId(deviceDto.getProductId());
-//      deviceLog.setDeviceId(deviceDto.getId());
-//      deviceLog.setTopicName(otaTopic);
-//      deviceLog.setPayload(otaString);
-//      deviceLog.setDirection(1);
-//      deviceLog.setCreateTime(LocalDateTime.now());
-//      deviceLog.setUpdateTime(LocalDateTime.now());
-//      deviceLogDao.insert(deviceLog);
-        } catch (MqttException e) {
-            log.error("发送命令失败", e);
-        }
+//        MqttMessage message = new MqttMessage(otaString.getBytes(StandardCharsets.UTF_8));
+//        message.setQos(1);
+//        try {
+//            mqttClient.publish(otaTopic, message);
+////      DeviceLog deviceLog = new DeviceLog();
+////      deviceLog.setProductId(deviceDto.getProductId());
+////      deviceLog.setDeviceId(deviceDto.getId());
+////      deviceLog.setTopicName(otaTopic);
+////      deviceLog.setPayload(otaString);
+////      deviceLog.setDirection(1);
+////      deviceLog.setCreateTime(LocalDateTime.now());
+////      deviceLog.setUpdateTime(LocalDateTime.now());
+////      deviceLogDao.insert(deviceLog);
+//        } catch (MqttException e) {
+//            log.error("发送命令失败", e);
+//        }
 
     }
 
@@ -301,11 +299,11 @@ public class DeviceServiceImpl implements DeviceService {
 
                     for (int i = 0; i <= deviceLogs.size() - 1; i++) {
 
-                        Map map = JSON.parseObject(deviceLogs.get(i).getPayload(), Map.class);
-                        if ((int) map.get("pm10") != 65535) {
-                            deviceLog = deviceLogs.get(i);
-                            break;
-                        }
+//                        Map map = JSON.parseObject(deviceLogs.get(i).getPayload(), Map.class);
+//                        if ((int) map.get("pm10") != 65535) {
+//                            deviceLog = deviceLogs.get(i);
+//                            break;
+//                        }
                     }
 
                 } else {
@@ -324,6 +322,8 @@ public class DeviceServiceImpl implements DeviceService {
     @Transactional
     @Override
     public void changeFavorite(ChangeFavoriteDto favoriteDto) {
+
+        //todo 队列
 
         if (favoriteDto.getFavorite()) {
             DeviceUserFavorite favorite = new DeviceUserFavorite();
