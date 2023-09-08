@@ -19,16 +19,13 @@ import java.util.Map;
  * @description：场景controller
  * @modified By：
  */
-
 @Api(tags = "场景接口")
 @Validated
 @RestController
 @RequestMapping("/scene")
 public class SceneController {
-
     @Autowired
     private SceneService sceneService;
-
 
 
     //todo 相同条件不能存在

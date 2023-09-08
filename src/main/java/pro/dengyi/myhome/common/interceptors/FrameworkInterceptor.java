@@ -13,7 +13,7 @@ import pro.dengyi.myhome.common.exception.BusinessException;
 import pro.dengyi.myhome.common.response.Response;
 import pro.dengyi.myhome.common.utils.IpRateLimiter;
 import pro.dengyi.myhome.common.utils.IpUtil;
-import pro.dengyi.myhome.common.utils.TokenUtil;
+import pro.dengyi.myhome.common.utils.UserUtil;
 import pro.dengyi.myhome.common.utils.UserHolder;
 import pro.dengyi.myhome.dao.PermissionFunctionDao;
 import pro.dengyi.myhome.model.system.User;
@@ -116,7 +116,7 @@ public class FrameworkInterceptor implements HandlerInterceptor {
                 throw new BusinessException(1, "未登录");
             }
             //校验token
-            User user = TokenUtil.decToken(token);
+            User user = UserUtil.decToken(token);
 
             UserHolder.setUser(user);
             if (permission.needValidate()) {

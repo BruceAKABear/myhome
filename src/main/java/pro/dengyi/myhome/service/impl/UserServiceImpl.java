@@ -12,8 +12,8 @@ import org.springframework.util.ObjectUtils;
 import pro.dengyi.myhome.common.exception.BusinessException;
 import pro.dengyi.myhome.common.utils.PasswordUtil;
 import pro.dengyi.myhome.common.utils.SwitchUtil;
-import pro.dengyi.myhome.common.utils.TokenUtil;
 import pro.dengyi.myhome.common.utils.UserHolder;
+import pro.dengyi.myhome.common.utils.UserUtil;
 import pro.dengyi.myhome.common.utils.queue.RoomSelectQueue;
 import pro.dengyi.myhome.dao.PermRoleDeviceDao;
 import pro.dengyi.myhome.dao.PermUserDeviceDao;
@@ -58,7 +58,7 @@ public class UserServiceImpl implements UserService {
                 throw new BusinessException("system.login.user.disable");
             }
             if (PasswordUtil.match(loginVo.getPassword(), user.getPassw())) {
-                return TokenUtil.genToken(user);
+                return UserUtil.genToken(user);
             } else {
                 throw new BusinessException("system.login.usernameorpassworderror");
             }
@@ -235,12 +235,12 @@ public class UserServiceImpl implements UserService {
         if (userForKick.getSuperAdmin()) {
             throw new BusinessException(1, "you can not kick out super admin");
         }
-        TokenUtil.kickOut(user.getId());
+
     }
 
     @Override
     public void logout() {
         User user = UserHolder.getUser();
-        kickOut(user);
+        UserUtil.kickOut(user.getId());
     }
 }

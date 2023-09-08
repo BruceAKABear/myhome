@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import pro.dengyi.myhome.model.system.User;
-import pro.dengyi.myhome.common.utils.TokenUtil;
+import pro.dengyi.myhome.common.utils.UserUtil;
 
 import javax.validation.constraints.NotBlank;
 import javax.websocket.*;
@@ -88,7 +88,7 @@ public class BackendWebsocket {
     public void onOpen(Session session, @PathParam("token") String token) {
         if (!ObjectUtils.isEmpty(token)) {
             this.session = session;
-            User user = TokenUtil.decToken(token);
+            User user = UserUtil.decToken(token);
             this.user = user;
 
             if (devicesInfoMaps.containsKey(user.getId())) {
