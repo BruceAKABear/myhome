@@ -8,6 +8,8 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import pro.dengyi.myhome.model.base.BaseModel;
 
+import javax.validation.constraints.NotBlank;
+
 /**
  * @author ：dengyi(A.K.A Bear)
  * @date ：Created in 2023/2/2 14:32
@@ -28,8 +30,10 @@ public class SceneAction extends BaseModel {
 
     private String deviceId;
 
+    @NotBlank
     private String deviceProperty;
 
+    @NotBlank
     private String propertyValue;
 
 
