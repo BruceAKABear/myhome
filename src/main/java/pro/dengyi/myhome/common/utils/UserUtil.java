@@ -9,21 +9,18 @@ import pro.dengyi.myhome.common.response.Response;
 import pro.dengyi.myhome.model.system.User;
 
 import java.time.Duration;
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentMap;
 
 
 /**
- * token工具类
+ * 用户工具类
  *
  * @author dengyi (email:dengyi@dengyi.pro)
  * @date 2022-01-23
  */
 @Slf4j
-public class TokenUtil {
+public class UserUtil {
     //过期时间1小时
     private static final Integer LOGIN_EXPIRE_SECONDS = 60 * 60;
     static Cache<Object, Object> caffeine;
@@ -34,17 +31,14 @@ public class TokenUtil {
 
     public static String genToken(User user) {
         String uuid = UUID.randomUUID().toString().replaceAll("-", "");
-        HashMap<String, Object> map = new HashMap<>();
-        map.put("userData", user);
-        map.put("loginDateTime", LocalDateTime.now());
-        caffeine.put(uuid, map);
+        caffeine.put(uuid, user);
         return uuid;
     }
 
     /**
      * 解析token
      *
-     * @param token
+     * @param token 用户token
      * @return
      */
     public static User decToken(String token) {
@@ -54,25 +48,21 @@ public class TokenUtil {
             //未登录或者登录过期
             throw new BusinessException(Response.LOGIN_EXPIRE_CODE, "system.login.expire");
         }
-        //续命
-        HashMap<String, Object> map = (HashMap<String, Object>) ifPresent;
-        return (User) map.get("userData");
+        return (User) ifPresent;
     }
 
-
+    /**
+     * 将用户提出系统
+     *
+     * @param userId 用户id
+     */
     public static void kickOut(String userId) {
         ConcurrentMap<@NonNull Object, @NonNull Object> map = caffeine.asMap();
-
         for (Object key : map.keySet()) {
-            Map<String, Object> stringObjectMap = (Map<String, Object>) map.get(key);
-
-            User userData = (User) stringObjectMap.get("userData");
-            if (userData.getId().equals(userId)) {
+            User user = (User) map.get(key);
+            if (user.getId().equals(userId)) {
                 caffeine.invalidate(key);
-
             }
-
-
         }
 
     }
