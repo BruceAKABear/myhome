@@ -9,12 +9,10 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 import pro.dengyi.myhome.common.aop.annotations.Permission;
+import pro.dengyi.myhome.common.enums.RequestType;
 import pro.dengyi.myhome.common.exception.BusinessException;
 import pro.dengyi.myhome.common.response.Response;
-import pro.dengyi.myhome.common.utils.IpRateLimiter;
-import pro.dengyi.myhome.common.utils.IpUtil;
-import pro.dengyi.myhome.common.utils.UserUtil;
-import pro.dengyi.myhome.common.utils.UserHolder;
+import pro.dengyi.myhome.common.utils.*;
 import pro.dengyi.myhome.dao.PermissionFunctionDao;
 import pro.dengyi.myhome.model.system.User;
 
@@ -62,6 +60,8 @@ public class FrameworkInterceptor implements HandlerInterceptor {
         if (handler instanceof HandlerMethod) {
             //封装语言选项
             handleLanguage(request);
+            //handle request type
+            handleRequestType(request);
             String token = request.getHeader("token");
             Method method = ((HandlerMethod) handler).getMethod();
             Permission permissionInMethod = method.getAnnotation(Permission.class);
@@ -73,6 +73,15 @@ public class FrameworkInterceptor implements HandlerInterceptor {
 
         }
         return throughFlag;
+    }
+
+    private void handleRequestType(HttpServletRequest request) {
+        String userAgent = request.getHeader("User-Agent");
+        RequestType requestType = RequestType.PC;
+        if (userAgent != null && userAgent.contains("Mobile")) {
+            requestType = RequestType.PHONE;
+        }
+        RequestTypeHolder.setType(requestType);
     }
 
     private void rateLimit(HttpServletRequest request) {
@@ -143,6 +152,7 @@ public class FrameworkInterceptor implements HandlerInterceptor {
                            ModelAndView modelAndView) throws Exception {
         UserHolder.remove();
         LocaleContextHolder.resetLocaleContext();
+        RequestTypeHolder.remove();
         HandlerInterceptor.super.postHandle(request, response, handler, modelAndView);
     }
 }

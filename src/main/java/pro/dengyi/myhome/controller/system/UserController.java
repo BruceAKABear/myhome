@@ -42,6 +42,8 @@ public class UserController {
 
     /**
      * 手机端登录永不过期
+     * <p>
+     * pc端一小时过期
      *
      * @param loginVo
      * @return

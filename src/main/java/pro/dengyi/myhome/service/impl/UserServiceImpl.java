@@ -9,7 +9,6 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
-import pro.dengyi.myhome.common.enums.LoginType;
 import pro.dengyi.myhome.common.exception.BusinessException;
 import pro.dengyi.myhome.common.utils.PasswordUtil;
 import pro.dengyi.myhome.common.utils.SwitchUtil;
@@ -53,11 +52,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String login(LoginVo loginVo, HttpServletRequest request) {
-        String userAgent = request.getHeader("User-Agent");
-        LoginType loginType = LoginType.PC;
-        if (userAgent != null && userAgent.contains("Mobile")) {
-            loginType = LoginType.PHONE;
-        }
+//        String userAgent = request.getHeader("User-Agent");
+//        LoginType loginType = LoginType.PC;
+//        if (userAgent != null && userAgent.contains("Mobile")) {
+//            loginType = LoginType.PHONE;
+//        }
         User user = userDao.selectOne(
                 new LambdaQueryWrapper<User>().eq(User::getEmail, loginVo.getEmail()));
         if (user != null) {
@@ -65,7 +64,7 @@ public class UserServiceImpl implements UserService {
                 throw new BusinessException("system.login.user.disable");
             }
             if (PasswordUtil.match(loginVo.getPassword(), user.getPassw())) {
-                return UserUtil.genToken(user, loginType);
+                return UserUtil.genToken(user);
             } else {
                 throw new BusinessException("system.login.usernameorpassworderror");
             }

@@ -6,7 +6,7 @@ package pro.dengyi.myhome.common.enums;
  * @description：
  * @modified By：
  */
-public enum LoginType {
+public enum RequestType {
     PC,
     PHONE
 }
