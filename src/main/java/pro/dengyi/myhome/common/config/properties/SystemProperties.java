@@ -58,4 +58,10 @@ public class SystemProperties {
     private Long apiProcessLimitation = 60L;
     private String notifyUserEmails;
 
+    //当前订阅模式
+    private String currentPayMode;
+
+    //极客模式 开启后将可以自行添加设备
+    private Boolean geekMode;
+
 }

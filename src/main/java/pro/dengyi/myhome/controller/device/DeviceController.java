@@ -29,6 +29,9 @@ import java.util.Map;
 
 /**
  * 设备controller
+ * <p>
+ * <p>
+ * 软件订阅收费模式，订阅收费还要基于设备数进行分级
  *
  * @author dengyi (email:dengyi@dengyi.pro)
  * @date 2022-01-23

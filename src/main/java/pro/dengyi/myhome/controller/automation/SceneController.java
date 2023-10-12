@@ -27,7 +27,8 @@ public class SceneController {
     @Autowired
     private SceneService sceneService;
 
-
+    // () and () or()  房间有人 and 亮度传感器<300 and ( 08:00<时间<12:00 or 13:00<时间<17:00)  开灯
+    //
     //todo 相同条件不能存在
     @ApiOperation("新增或修改场景")
     @PostMapping("/addOrUpdate")
@@ -37,7 +38,7 @@ public class SceneController {
 
     @ApiOperation("查询供修改")
     @GetMapping("/queryForUpdate")
-    public Scene queryForUpdate(@RequestParam String sceneId) {
+    public Scene queryForUpdate(@RequestParam @NotBlank String sceneId) {
         return sceneService.queryForUpdate(sceneId);
     }
 

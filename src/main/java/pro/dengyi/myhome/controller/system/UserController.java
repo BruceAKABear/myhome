@@ -13,6 +13,7 @@ import pro.dengyi.myhome.model.system.User;
 import pro.dengyi.myhome.model.vo.LoginVo;
 import pro.dengyi.myhome.service.UserService;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotBlank;
 import java.util.Map;
 
@@ -38,11 +39,18 @@ public class UserController {
         return userService.page(page, size, name);
     }
 
+
+    /**
+     * 手机端登录永不过期
+     *
+     * @param loginVo
+     * @return
+     */
     @ApiOperation("登录")
     @PostMapping("/login")
     @Permission(needLogIn = false, needValidate = false)
-    public String login(@RequestBody @Validated LoginVo loginVo) {
-        return userService.login(loginVo);
+    public String login(@RequestBody @Validated LoginVo loginVo, HttpServletRequest request) {
+        return userService.login(loginVo, request);
     }
 
     @ApiOperation("退出")

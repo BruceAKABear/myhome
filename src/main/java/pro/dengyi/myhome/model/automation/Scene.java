@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import pro.dengyi.myhome.common.enums.RelationEnum;
 import pro.dengyi.myhome.model.base.BaseModel;
 
 import javax.validation.constraints.NotBlank;
@@ -24,7 +25,7 @@ import java.util.List;
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 @TableName("scene_scene")
-@ApiModel("设备关联实体")
+@ApiModel("场景实体")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Scene extends BaseModel {
 
@@ -40,11 +41,15 @@ public class Scene extends BaseModel {
     @ApiModelProperty("启用状态")
     private Boolean enable;
 
+
+    private List<ConditionGroup> conditionGroups;
+
     @NotBlank(message = "条件集合不能为空")
     @ApiModelProperty("条件集合")
     @TableField(exist = false)
     @Size(min = 1, message = "条件长度必须大于等于1")
     private List<SceneCondition> conditions;
+
 
     @NotBlank(message = "执行集合不能为空")
     @ApiModelProperty("执行集合")
@@ -53,4 +58,9 @@ public class Scene extends BaseModel {
     private List<SceneAction> actions;
 
 
+    private class ConditionGroup {
+        private RelationEnum relation;
+
+        private List<SceneCondition> conditions;
+    }
 }

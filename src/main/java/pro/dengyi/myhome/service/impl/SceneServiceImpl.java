@@ -53,37 +53,46 @@ public class SceneServiceImpl implements SceneService {
             scene.setCreateTime(LocalDateTime.now());
             scene.setUpdateTime(LocalDateTime.now());
             sceneDao.insert(scene);
+            //全量更新
+            completeUpdate(scene.getConditions(), scene.getActions(), scene.getId());
         } else {
             //修改
             List<Scene> scenes = sceneDao.selectList(new LambdaQueryWrapper<Scene>().eq(Scene::getName,
-                    scene.getName()).ne(Scene::getId,scene.getId()));
+                    scene.getName()).ne(Scene::getId, scene.getId()));
             if (!CollectionUtils.isEmpty(scenes)) {
                 throw new BusinessException("scene.same.name.exist");
             }
             sceneDao.updateById(scene);
-        }
-        //全量删除后全量新增
-        sceneConditionDao.delete(
-                new LambdaQueryWrapper<SceneCondition>().eq(SceneCondition::getSceneId, scene.getId()));
-        sceneActionDao.delete(
-                new LambdaQueryWrapper<SceneAction>().eq(SceneAction::getSceneId, scene.getId()));
-        //全量新增
-        List<SceneAction> actions = scene.getActions();
-        for (SceneAction action : actions) {
-            action.setSceneId(scene.getId());
-            action.setCreateTime(LocalDateTime.now());
-            action.setUpdateTime(LocalDateTime.now());
-            sceneActionDao.insert(action);
-        }
-        List<SceneCondition> conditions = scene.getConditions();
-        for (SceneCondition condition : conditions) {
-            condition.setSceneId(scene.getId());
-            condition.setCreateTime(LocalDateTime.now());
-            condition.setUpdateTime(LocalDateTime.now());
-            sceneConditionDao.insert(condition);
+            //全量更新
+            completeUpdate(scene.getConditions(), scene.getActions(), scene.getId());
         }
         //清除缓存
         cache.invalidate("condition");
+
+    }
+
+    /**
+     * 全量更新
+     *
+     * @param conditions
+     * @param actions
+     * @param sceneId
+     */
+    private void completeUpdate(List<SceneCondition> conditions, List<SceneAction> actions, String sceneId) {
+        sceneConditionDao.delete(new LambdaQueryWrapper<SceneCondition>().eq(SceneCondition::getSceneId, sceneId));
+        sceneActionDao.delete(new LambdaQueryWrapper<SceneAction>().eq(SceneAction::getSceneId, sceneId));
+        conditions.forEach(item -> {
+            item.setSceneId(sceneId);
+            item.setCreateTime(LocalDateTime.now());
+            item.setUpdateTime(LocalDateTime.now());
+            sceneConditionDao.insert(item);
+        });
+        actions.forEach(item -> {
+            item.setSceneId(sceneId);
+            item.setCreateTime(LocalDateTime.now());
+            item.setUpdateTime(LocalDateTime.now());
+            sceneActionDao.insert(item);
+        });
 
     }
 
@@ -120,9 +129,9 @@ public class SceneServiceImpl implements SceneService {
     @Override
     public void delete(String id) {
         sceneDao.deleteById(id);
-        sceneConditionDao.delete(
-                new LambdaQueryWrapper<SceneCondition>().eq(SceneCondition::getSceneId, id));
+        sceneConditionDao.delete(new LambdaQueryWrapper<SceneCondition>().eq(SceneCondition::getSceneId, id));
         sceneActionDao.delete(new LambdaQueryWrapper<SceneAction>().eq(SceneAction::getSceneId, id));
+        //todo 从缓存中删除
     }
 
     @Override
