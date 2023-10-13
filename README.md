@@ -44,6 +44,9 @@ remember, safety is the most important thing for MyHome system, do not break it 
 
 we store all information in local database, that means privacy are guarantee.
 
+## feel less
+
+most powerful system is you can not feel its exist
 ## For normal Users
 
 in order, you can use this system,you need to let your MyHome administrator add you to the system,

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.benmanes.caffeine.cache.Cache;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import pro.dengyi.myhome.dao.DeviceDao;
@@ -43,6 +44,14 @@ public class SceneEngine {
     @Autowired
     private SceneDao sceneDao;
 
+    /**
+     *
+     * @param applicationContext
+     */
+    public static void init(ApplicationContext applicationContext) {
+
+    }
+
 
     /**
      * 触发场景逻辑
@@ -53,7 +62,6 @@ public class SceneEngine {
      */
     public void trigger(String triggerDeviceId, List<SceneCondition> conditions,
                         MqttClient mqttClient) {
-
         // 场景条件为空，不执行逻辑
         if (CollectionUtils.isEmpty(conditions)) {
             return;

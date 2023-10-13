@@ -40,7 +40,7 @@ public class User extends BaseModel {
     private String email;
 
     @ApiModelProperty(value = "性别")
-    private Integer sex;
+    private Integer gender;
 
     @ApiModelProperty(value = "身高")
     private Integer height;

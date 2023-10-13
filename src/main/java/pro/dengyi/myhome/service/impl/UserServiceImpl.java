@@ -52,11 +52,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String login(LoginVo loginVo, HttpServletRequest request) {
-//        String userAgent = request.getHeader("User-Agent");
-//        LoginType loginType = LoginType.PC;
-//        if (userAgent != null && userAgent.contains("Mobile")) {
-//            loginType = LoginType.PHONE;
-//        }
         User user = userDao.selectOne(
                 new LambdaQueryWrapper<User>().eq(User::getEmail, loginVo.getEmail()));
         if (user != null) {
@@ -145,7 +140,7 @@ public class UserServiceImpl implements UserService {
         IPage<User> userIPage = userDao.selectPage(pageParam,
                 new LambdaQueryWrapper<User>().and(!(ObjectUtils.isEmpty(name)),
                                 userLambdaQueryWrapper -> userLambdaQueryWrapper.like(User::getName, name))
-                        .select(User::getId, User::getName, User::getAvatar, User::getEmail, User::getSex,
+                        .select(User::getId, User::getName, User::getAvatar, User::getEmail, User::getGender,
                                 User::getHeight, User::getWeight, User::getAge, User::getCreateTime,
                                 User::getUpdateTime, User::getSuperAdmin, User::getRoleId, User::getEnable));
 

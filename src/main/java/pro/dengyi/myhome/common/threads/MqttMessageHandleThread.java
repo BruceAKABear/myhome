@@ -26,7 +26,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * mqtt消息处理线程
+ * mqtt message handle thread
+ * we handle all device logic in this class
+ *
  *
  * @author dengyi (email:dengyi@dengyi.pro)
  * @date 2022-01-26
@@ -96,6 +98,17 @@ public class MqttMessageHandleThread {
 
 
     //todo 升级控制 3次未成功的话就不在下发 报出异常通知，目的免得一直在重启
+
+    /**
+     * if device  upgrade over 3 times are not successful ,we stop control device upgrade and sen a email
+     * <p>
+     * to  admin users, also we need to handle auto upgrade and manual
+     *
+     * @param productId
+     * @param deviceId
+     * @param message
+     * @param mqttClient
+     */
     private void deviceVersionControl(String productId, String deviceId, String message,
                                       MqttClient mqttClient) {
         //判断固件版本更新
