@@ -50,7 +50,7 @@ public class FamilyServiceImpl implements FamilyService {
             familyDao.updateById(family);
         }
         List<FamilyDto> familyDtos = familyDao.selectFamilyInfos();
-        systemCache.put("familyInfos", familyDtos);
+//        systemCache.put("familyInfos", familyDtos);
     }
 
     @Override
@@ -60,7 +60,8 @@ public class FamilyServiceImpl implements FamilyService {
 
     @Override
     public List<FamilyDto> infoList() {
-        return (List<FamilyDto>) systemCache.get("familyInfos", key -> familyDao.selectFamilyInfos());
+        Page<FamilyDto> familyDtoPage = familyDao.selectCustomPage(new Page<>(1, -1), null);
+        return familyDtoPage.getRecords();
     }
 
     @Override
@@ -68,7 +69,7 @@ public class FamilyServiceImpl implements FamilyService {
         List<FamilyDto> familyDtos = (List<FamilyDto>) systemCache.get("familyInfos", key -> familyDao.selectFamilyInfos());
         if (CollectionUtils.isEmpty(familyDtos)) {
             List<FamilyDto> familyDtosNew = familyDao.selectFamilyInfos();
-            systemCache.put("familyInfos", familyDtosNew);
+//            systemCache.put("familyInfos", familyDtosNew);
             familyDtos = familyDtosNew;
         }
         for (FamilyDto familyDto : familyDtos) {
@@ -83,10 +84,7 @@ public class FamilyServiceImpl implements FamilyService {
     public IPage<FamilyDto> page(Integer page, Integer size, String name) {
         page = page == null ? 1 : page;
         size = size == null ? 10 : size;
-        Page<FamilyDto> familyPage = familyDao.selectCustomPage(new Page<>(page, size), name);
-
-
-        return null;
+        return familyDao.selectCustomPage(new Page<>(page, size), name);
     }
 
 }

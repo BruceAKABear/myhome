@@ -51,6 +51,9 @@ public class User extends BaseModel {
     @ApiModelProperty(value = "年龄")
     private Integer age;
 
+    @ApiModelProperty(value = "选择的家庭ID")
+    private String selectedFamilyId;
+
     @ApiModelProperty(value = "选择的楼层ID")
     private String selectedFloorId;
 

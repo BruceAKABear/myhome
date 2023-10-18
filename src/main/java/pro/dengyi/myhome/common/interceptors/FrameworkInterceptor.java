@@ -63,6 +63,11 @@ public class FrameworkInterceptor implements HandlerInterceptor {
             //handle request type
             handleRequestType(request);
             String token = request.getHeader("token");
+            String familyId = request.getHeader("familyId");
+            if (!ObjectUtils.isEmpty(familyId)) {
+                FamilyHolder.setFamilyId(familyId);
+            }
+
             Method method = ((HandlerMethod) handler).getMethod();
             Permission permissionInMethod = method.getAnnotation(Permission.class);
             Permission permissionInClass = method.getDeclaringClass().getAnnotation(Permission.class);
@@ -153,6 +158,7 @@ public class FrameworkInterceptor implements HandlerInterceptor {
         UserHolder.remove();
         LocaleContextHolder.resetLocaleContext();
         RequestTypeHolder.remove();
+        FamilyHolder.remove();
         HandlerInterceptor.super.postHandle(request, response, handler, modelAndView);
     }
 }

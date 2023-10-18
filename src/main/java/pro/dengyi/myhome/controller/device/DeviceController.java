@@ -137,6 +137,7 @@ public class DeviceController {
 
 
     /**
+     * //todo we need to control the connection devices by subscribe plan
      * device login controller
      * <p>
      * the most important thing is the device ip must internal ip because the whole system in internal

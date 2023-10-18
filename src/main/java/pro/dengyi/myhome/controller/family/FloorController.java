@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pro.dengyi.myhome.common.aop.annotations.Permission;
+import pro.dengyi.myhome.common.utils.FamilyHolder;
 import pro.dengyi.myhome.model.dto.FloorPageDto;
 import pro.dengyi.myhome.model.system.Floor;
 import pro.dengyi.myhome.service.FloorService;
@@ -36,9 +37,8 @@ public class FloorController {
 
     @ApiOperation("楼层分页查询")
     @GetMapping("/page")
-    public IPage<FloorPageDto> page(Integer page, Integer size,
-                                    String floorName, @RequestParam @NotBlank(message = "family id can not be blank")
-                                    String familyId) {
+    public IPage<FloorPageDto> page(Integer page, Integer size, String floorName) {
+        String familyId = FamilyHolder.familyId();
         return floorService.page(page, size, floorName, familyId);
     }
 
@@ -51,6 +51,8 @@ public class FloorController {
     @ApiOperation("楼层集合")
     @GetMapping("/floorList")
     public List<FloorPageDto> floorList() {
+        String familyId = FamilyHolder.familyId();
+
         return (List<FloorPageDto>) cache.get("floorList",
                 k -> floorService.floorList());
     }
