@@ -1,6 +1,8 @@
 package pro.dengyi.myhome.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.benmanes.caffeine.cache.Cache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -74,6 +76,16 @@ public class FamilyServiceImpl implements FamilyService {
                 return familyDto;
             }
         }
+        return null;
+    }
+
+    @Override
+    public IPage<FamilyDto> page(Integer page, Integer size, String name) {
+        page = page == null ? 1 : page;
+        size = size == null ? 10 : size;
+        Page<FamilyDto> familyPage = familyDao.selectCustomPage(new Page<>(page, size), name);
+
+
         return null;
     }
 

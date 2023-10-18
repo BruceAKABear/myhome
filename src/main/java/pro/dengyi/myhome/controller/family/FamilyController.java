@@ -1,5 +1,6 @@
 package pro.dengyi.myhome.controller.family;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,13 @@ import java.util.List;
 public class FamilyController {
     @Autowired
     private FamilyService familyService;
+
+    @ApiOperation("分页")
+    @GetMapping("/page")
+    public IPage<FamilyDto> page(Integer page, Integer size, String name) {
+        return familyService.page(page, size, name);
+    }
+
 
     @ApiOperation(value = "新增或修改家庭")
     @PostMapping("/addUpdate")

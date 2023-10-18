@@ -1,5 +1,6 @@
 package pro.dengyi.myhome.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import pro.dengyi.myhome.model.dto.FamilyDto;
 import pro.dengyi.myhome.model.system.Family;
 
@@ -18,4 +19,6 @@ public interface FamilyService {
     List<FamilyDto> infoList();
 
     FamilyDto infoById(String familyId);
+
+    IPage<FamilyDto> page(Integer page, Integer size, String name);
 }

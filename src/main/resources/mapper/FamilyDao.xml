@@ -13,4 +13,21 @@
                family.app_secret
         FROM family
     </select>
+    <select id="selectCustomPage" resultType="pro.dengyi.myhome.model.dto.FamilyDto">
+        SELECT family.id,
+        family.`name`,
+        family.create_time,
+        family.update_time,
+        (SELECT COUNT(*) FROM family_floor) AS floorCount,
+        (SELECT COUNT(*) FROM family_room) AS roomCount,
+        (SELECT COUNT(*) FROM device_device) AS deviceCount,
+        family.app_id,
+        family.app_secret
+        <where>
+            <if test="name != null and name != ''">
+                and family.`name`=#{name}
+            </if>
+        </where>
+        FROM family
+    </select>
 </mapper>
