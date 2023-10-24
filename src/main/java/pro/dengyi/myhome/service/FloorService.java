@@ -16,7 +16,7 @@ public interface FloorService {
 
     void delete(String id);
 
-    List<FloorPageDto> floorList();
+    List<FloorPageDto> floorList(String familyId);
 
     IPage<FloorPageDto> page(Integer pageNumber, Integer pageSize, String floorName, String familyId);
 }

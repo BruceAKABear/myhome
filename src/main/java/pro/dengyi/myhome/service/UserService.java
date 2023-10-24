@@ -38,4 +38,6 @@ public interface UserService {
     void kickOut(User user);
 
     void logout();
+
+    void updateSelectFamily(Map<String, String> familyParam);
 }

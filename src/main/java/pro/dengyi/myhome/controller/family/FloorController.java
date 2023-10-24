@@ -54,7 +54,7 @@ public class FloorController {
         String familyId = FamilyHolder.familyId();
 
         return (List<FloorPageDto>) cache.get("floorList",
-                k -> floorService.floorList());
+                k -> floorService.floorList(familyId));
     }
 
     @ApiOperation("删除楼层")

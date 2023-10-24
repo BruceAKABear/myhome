@@ -189,6 +189,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void updateSelectLang(Map<String, String> langParam) {
+        //todo handle this logic in queue
         User user = userDao.selectById(UserHolder.getUser().getId());
         user.setSelectLang(langParam.get("lang"));
         userDao.updateById(user);
@@ -243,5 +244,14 @@ public class UserServiceImpl implements UserService {
     public void logout() {
         User user = UserHolder.getUser();
         UserUtil.kickOut(user.getId());
+    }
+
+    @Override
+    public void updateSelectFamily(Map<String, String> familyParam) {
+        //todo handle this logic in queue
+        User user = userDao.selectById(UserHolder.getUser().getId());
+        user.setSelectedFamilyId(familyParam.get("familyId"));
+        user.setUpdateTime(LocalDateTime.now());
+        userDao.updateById(user);
     }
 }
