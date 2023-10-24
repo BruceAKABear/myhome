@@ -3,7 +3,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/myhome?characterEncoding=utf8&useSSL=false&rewriteBatchedStatements=true&allowPublicKeyRetrieval=true
     username: root
-    password: dengyi1991
+    password: 123456
     hikari:
       connection-init-sql: SET NAMES utf8mb4
   # 兼容swagger3.0 将默认的PathPatternMatcher替换为ant风格，向下兼容

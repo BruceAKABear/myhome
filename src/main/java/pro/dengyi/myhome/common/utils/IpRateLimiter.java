@@ -4,6 +4,7 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -17,7 +18,7 @@ public class IpRateLimiter {
     private static final Cache<Object, Object> caffeine;
 
     //限制多少秒可以请求一次
-    private static final Integer ONCE_PER_SECOND = 1;
+    private static final Integer ONCE_PER_MILLION = 100;
 
     static {
         caffeine = Caffeine.newBuilder()
@@ -33,7 +34,7 @@ public class IpRateLimiter {
             return true;
         }
         LocalTime timeSave = (LocalTime) ifPresent;
-        if (LocalTime.now().isAfter(timeSave.plusSeconds(ONCE_PER_SECOND))) {
+        if (LocalTime.now().isAfter(timeSave.plus(ONCE_PER_MILLION, ChronoUnit.MILLIS))) {
             caffeine.put(clientIp + requestUri, LocalTime.now());
             return true;
         }
