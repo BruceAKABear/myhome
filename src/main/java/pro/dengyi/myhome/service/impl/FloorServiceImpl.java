@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 import pro.dengyi.myhome.common.exception.BusinessException;
+import pro.dengyi.myhome.common.utils.FamilyHolder;
 import pro.dengyi.myhome.dao.FloorDao;
 import pro.dengyi.myhome.dao.RoomDao;
 import pro.dengyi.myhome.model.dto.FloorPageDto;
@@ -37,22 +38,24 @@ public class FloorServiceImpl implements FloorService {
     @Transactional
     @Override
     public void addUpdate(Floor floor) {
+        Floor existFloor = floorDao.selectOne(
+                new LambdaQueryWrapper<Floor>().eq(Floor::getName, floor.getName())
+                        .eq(Floor::getFamilyId, FamilyHolder.familyId())
+        );
         if (ObjectUtils.isEmpty(floor.getId())) {
-            //校验楼层名
-            boolean exists = floorDao.exists(
-                    new LambdaQueryWrapper<Floor>().eq(Floor::getName, floor.getName()));
-            if (exists) {
-                throw new BusinessException(13001, "同名楼层已存在");
+            if (existFloor != null) {
+                throw new BusinessException("floor.add.name.exist");
             }
             floor.setCreateTime(LocalDateTime.now());
             floor.setUpdateTime(LocalDateTime.now());
             floorDao.insert(floor);
         } else {
+            if (existFloor != null && !existFloor.getId().equals(floor.getId())) {
+                throw new BusinessException("floor.update.name.exist");
+            }
             floor.setUpdateTime(LocalDateTime.now());
             floorDao.updateById(floor);
         }
-
-        cache.invalidate("floorList");
     }
 
     @Transactional
@@ -60,15 +63,13 @@ public class FloorServiceImpl implements FloorService {
     public void delete(String id) {
         Long roomCount = roomDao.selectCount(new LambdaQueryWrapper<Room>().eq(Room::getFloorId, id));
         if (roomCount != 0) {
-            throw new BusinessException(13002, "楼层下存在房间不能删除");
+            throw new BusinessException("floor.delete.fail.contain.room");
         }
         floorDao.deleteById(id);
-
-        cache.invalidate("floorList");
     }
 
     @Override
-    public List<FloorPageDto> floorList() {
+    public List<FloorPageDto> floorList(String familyId) {
         return floorDao.selectFloorDto();
     }
 

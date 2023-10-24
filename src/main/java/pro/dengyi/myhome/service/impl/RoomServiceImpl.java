@@ -8,9 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
+import pro.dengyi.myhome.common.exception.BusinessException;
 import pro.dengyi.myhome.dao.DeviceDao;
 import pro.dengyi.myhome.dao.RoomDao;
-import pro.dengyi.myhome.common.exception.BusinessException;
 import pro.dengyi.myhome.model.device.Device;
 import pro.dengyi.myhome.model.dto.RoomDto;
 import pro.dengyi.myhome.model.system.Room;
@@ -37,22 +37,25 @@ public class RoomServiceImpl implements RoomService {
     @Transactional
     @Override
     public void addUpdate(Room room) {
+        Room roomSaved = roomDao.selectOne(
+                new LambdaQueryWrapper<Room>().eq(Room::getFloorId, room.getFloorId())
+                        .eq(Room::getName, room.getName()));
+
         if (ObjectUtils.isEmpty(room.getId())) {
-            Room roomSaved = roomDao.selectOne(
-                    new LambdaQueryWrapper<Room>().eq(Room::getFloorId, room.getFloorId())
-                            .eq(Room::getName, room.getName()));
+
             if (roomSaved != null) {
-                throw new BusinessException(14001, "同楼层同名房间已存在");
+                throw new BusinessException("room.add.name.exist");
             }
             room.setCreateTime(LocalDateTime.now());
             room.setUpdateTime(LocalDateTime.now());
             roomDao.insert(room);
         } else {
+            if (roomSaved != null && !roomSaved.equals(room.getId())) {
+                throw new BusinessException("room.update.name.exist");
+            }
             room.setUpdateTime(LocalDateTime.now());
             roomDao.updateById(room);
         }
-        cache.invalidate("roomList");
-        cache.invalidate("roomListByFloorId:" + room.getFloorId());
     }
 
     @Transactional
@@ -61,7 +64,7 @@ public class RoomServiceImpl implements RoomService {
         Long deviceCount = deviceDao.selectCount(
                 new LambdaQueryWrapper<Device>().eq(Device::getRoomId, id));
         if (deviceCount != 0) {
-            throw new BusinessException(14002, "房间下还存在设备");
+            throw new BusinessException("room.delete.fail.contain.devices");
         }
         Room room = roomDao.selectById(id);
 

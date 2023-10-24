@@ -36,21 +36,24 @@ public class FamilyServiceImpl implements FamilyService {
     @Transactional
     @Override
     public void addUpdate(Family family) {
+        Family familyExist = familyDao.selectOne(new LambdaQueryWrapper<Family>()
+                .eq(Family::getName, family.getName()));
+
         if (ObjectUtils.isEmpty(family.getId())) {
-            Family familyExist = familyDao.selectOne(new LambdaQueryWrapper<Family>()
-                    .eq(Family::getName, family.getName()));
             if (familyExist != null) {
-                throw new BusinessException("family.name.exist");
+                throw new BusinessException("family.add.name.exist");
             }
             family.setCreateTime(LocalDateTime.now());
             family.setUpdateTime(LocalDateTime.now());
             familyDao.insert(family);
         } else {
+            //make sure not change to another name exist
+            if (familyExist != null && !familyExist.getId().equals(family.getId())) {
+                throw new BusinessException("family.update.name.exist");
+            }
             family.setUpdateTime(LocalDateTime.now());
             familyDao.updateById(family);
         }
-        List<FamilyDto> familyDtos = familyDao.selectFamilyInfos();
-//        systemCache.put("familyInfos", familyDtos);
     }
 
     @Override

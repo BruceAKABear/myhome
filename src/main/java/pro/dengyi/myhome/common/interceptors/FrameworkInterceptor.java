@@ -106,9 +106,7 @@ public class FrameworkInterceptor implements HandlerInterceptor {
      */
     private void handleLanguage(HttpServletRequest request) {
         String lang = request.getHeader("lang");
-        if (ObjectUtils.isEmpty(lang)) {
-            LocaleContextHolder.setLocale(Locale.SIMPLIFIED_CHINESE);
-        } else {
+        if (!ObjectUtils.isEmpty(lang)) {
             LocaleContextHolder.setLocale(new Locale(lang.toLowerCase()));
         }
     }
@@ -126,8 +124,7 @@ public class FrameworkInterceptor implements HandlerInterceptor {
         if (permission.needLogIn()) {
             //校验登录
             if (ObjectUtils.isEmpty(token)) {
-                log.error("permission module>>>>>> user not login!,uri:{}", requestURI);
-                throw new BusinessException(1, "未登录");
+                throw new BusinessException(Response.LOGIN_EXPIRE_CODE, "system.login.expire");
             }
             //校验token
             User user = UserUtil.decToken(token);

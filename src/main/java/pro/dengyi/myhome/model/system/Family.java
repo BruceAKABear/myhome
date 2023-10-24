@@ -31,7 +31,7 @@ public class Family extends BaseModel {
 
     @ApiModelProperty(value = "家庭名")
     @NotBlank
-    @Length(min = 3, max = 10)
+    @Length(min = 1, max = 50)
     private String name;
 
     @ApiModelProperty(value = "经度")

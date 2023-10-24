@@ -80,6 +80,13 @@ public class UserController {
     @Permission(needLogIn = false, needValidate = false)
     public void updateSelectLang(@RequestBody Map<String, String> langParam) {
         userService.updateSelectLang(langParam);
+    }
+
+    @ApiOperation("更新选择的家庭")
+    @PostMapping("/updateSelectFamily")
+    @Permission(needValidate = false)
+    public void updateSelectFamily(@RequestBody Map<String, String> familyParam) {
+        userService.updateSelectFamily(familyParam);
 
     }
 

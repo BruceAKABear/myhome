@@ -7,6 +7,7 @@ import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
+import pro.dengyi.myhome.common.utils.I18nMessageUtil;
 
 /**
  * @author ：dengyi(A.K.A Bear)
@@ -41,7 +42,7 @@ public class ResponseHandler implements ResponseBodyAdvice<Object> {
 
                 @Override
                 public String getMessage() {
-                    return "success";
+                    return I18nMessageUtil.get("system.operation.success");
                 }
 
                 @Override
