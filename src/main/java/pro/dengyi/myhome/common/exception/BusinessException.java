@@ -4,15 +4,24 @@ package pro.dengyi.myhome.common.exception;
 import pro.dengyi.myhome.common.response.Response;
 
 /**
- * 业务异常类
+ * business exception class
  *
  * @author dengy
  */
 public class BusinessException extends RuntimeException {
 
-    private Integer code;
-    private String message;
+    private final Integer code;
+    private final String message;
 
+
+    /**
+     * specific exception
+     * <p>
+     * inorder to return a code to frontend for the frontend hand the specific logic
+     *
+     * @param code
+     * @param message
+     */
     public BusinessException(Integer code, String message) {
         super(message);
         this.code = code;

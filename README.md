@@ -29,12 +29,14 @@ so, if you want to use MyHome,you need to install mariadb,EMQX,Java8
 
 ## Safety first!
 
-now a days ,the data safety are more and more important for us,but when we use some assistant app
-such as home automation system,usually we need to approve the user protocol, they force us to agree
-their though,if you disagree it you can not use it.
+nowadays,the data safety and devices safety are more and more important to us.
+
+normal home automation system are based on cloud,it is easy to use for sure,because you don't need to think about where
+to install the main system. but ,you private data is more important then you think,I dont want to let a company to read my
+personal data if they want, they force us to agree their user protocol,if you disagree it you can not use it.
 
 but everything changed right now,MyHome born with data localized store and no need to connect to the internet
-for logical process.every thing are in your local server,actually you can install it in cloud such as azure
+for logical process. Every thing is in your local server,actually you can install it in cloud such as azure
 or google cloud in order to use it in lang range, but I think if you want to realize it, you should
 use .
 

@@ -25,7 +25,7 @@ public class EventHandler implements WorkHandler<Event> {
 
     @Override
     public void onEvent(Event event) throws Exception {
-        switch (event.getEventType()) {
+        switch (event.getEventTypeEnum()) {
             case DEVICE_REPORT:
                 Thread.sleep(1000);
                 break;
@@ -39,7 +39,7 @@ public class EventHandler implements WorkHandler<Event> {
 
                 break;
             default:
-                log.error("not supported event type in event handler:{}", event.getEventType());
+                log.error("not supported event type in event handler event is:{}", event.getEventTypeEnum());
         }
 
 

@@ -11,7 +11,7 @@ import lombok.Data;
 @Data
 public class Event {
 
-    private EventType eventType;
+    private EventTypeEnum eventTypeEnum;
 
     private String message;
 

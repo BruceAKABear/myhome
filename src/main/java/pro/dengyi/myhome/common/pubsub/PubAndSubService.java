@@ -1,11 +1,9 @@
-package pro.dengyi.myhome.common.utils;
+package pro.dengyi.myhome.common.pubsub;
 
 import com.lmax.disruptor.RingBuffer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import pro.dengyi.myhome.common.pubsub.Event;
-import pro.dengyi.myhome.common.pubsub.EventType;
 
 /**
  * @author ：dengyi(A.K.A Bear)
@@ -15,16 +13,16 @@ import pro.dengyi.myhome.common.pubsub.EventType;
  */
 @Slf4j
 @Component
-public class PubSubUtil {
+public class PubAndSubService {
     @Autowired
     private RingBuffer<Event> ringBuffer;
 
 
-    public void publish(EventType type, Object param) {
+    public void publish(EventTypeEnum type, Object param) {
         long next = ringBuffer.next();
         try {
             Event event = ringBuffer.get(next);
-            event.setEventType(type);
+            event.setEventTypeEnum(type);
             event.setParams(param);
         } catch (Exception e) {
             log.error("failed to add event to messageModelRingBuffer:{}", e.getMessage());
