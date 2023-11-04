@@ -107,6 +107,10 @@ public class DeviceController {
         deviceService.delete(id);
     }
 
+    /**
+     * send debug order to device ,this api only in develop mode can do
+     * @param orderMap
+     */
     @ApiOperation("下发debug命令")
     @PostMapping("/sendDebug")
     public void sendDebug(@RequestBody Map<String, Object> orderMap) {

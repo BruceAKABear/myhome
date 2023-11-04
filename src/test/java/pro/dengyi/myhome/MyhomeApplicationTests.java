@@ -5,12 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.ObjectUtils;
-import pro.dengyi.myhome.common.pubsub.EventType;
+import pro.dengyi.myhome.common.pubsub.EventTypeEnum;
 import pro.dengyi.myhome.common.utils.JavaScriptEngine;
-import pro.dengyi.myhome.common.utils.PasswordUtil;
-import pro.dengyi.myhome.common.utils.PubSubUtil;
+import pro.dengyi.myhome.common.pubsub.PubAndSubService;
 import pro.dengyi.myhome.dao.DeviceDao;
 import pro.dengyi.myhome.dao.PermUserDeviceDao;
 import pro.dengyi.myhome.dao.SceneDao;
@@ -28,9 +25,7 @@ import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.MemoryUsage;
-import java.sql.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -235,18 +230,18 @@ class MyhomeApplicationTests {
 
 
     @Autowired
-    private PubSubUtil pubSubUtil;
+    private PubAndSubService pubAndSubService;
 
     @Test
     public void pubsubTest() throws InterruptedException {
         //理想状态下一个类型只能有一个线程处理
         Map<String, Object> param = new HashMap<>();
         param.put("type", "abc");
-        pubSubUtil.publish(EventType.OPERATION_LOG, param);
-        pubSubUtil.publish(EventType.DEVICE_REPORT, param);
-        pubSubUtil.publish(EventType.NOTIFY_USER, param);
+        pubAndSubService.publish(EventTypeEnum.OPERATION_LOG, param);
+        pubAndSubService.publish(EventTypeEnum.DEVICE_REPORT, param);
+        pubAndSubService.publish(EventTypeEnum.NOTIFY_USER, param);
 
-        pubSubUtil.publish(EventType.DEVICE_REPORT, param);
+        pubAndSubService.publish(EventTypeEnum.DEVICE_REPORT, param);
         TimeUnit.SECONDS.sleep(20);
 
     }

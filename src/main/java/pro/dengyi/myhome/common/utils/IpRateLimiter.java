@@ -9,6 +9,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * rate limiter based on ip and uri
+ *
  * @author ：dengyi(A.K.A Bear)
  * @date ：Created in 2023/8/8 15:28
  * @description：

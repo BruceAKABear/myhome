@@ -6,8 +6,16 @@ package pro.dengyi.myhome.common.pubsub;
  * @description：
  * @modified By：
  */
-public enum EventType {
+public enum EventTypeEnum {
+
+    /**
+     * device report
+     */
     DEVICE_REPORT,
+
+    /**
+     * save operation log
+     */
     OPERATION_LOG,
     NOTIFY_USER
 }
