@@ -3,6 +3,7 @@ package pro.dengyi.myhome.common.utils;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.TimeUnit;
@@ -18,24 +19,23 @@ public class IpRateLimiter {
     private static final Cache<Object, Object> caffeine;
 
     //限制多少秒可以请求一次
-    private static final Integer ONCE_PER_MILLION = 100;
+    private static final Integer ONCE_PER_MILLION = 10;
 
     static {
-        caffeine = Caffeine.newBuilder()
-                .expireAfterAccess(30, TimeUnit.MINUTES)
-                .initialCapacity(100).build();
+        caffeine = Caffeine.newBuilder().expireAfterAccess(30, TimeUnit.MINUTES).initialCapacity(100).build();
     }
 
 
     public static Boolean tryAcquire(String clientIp, String requestUri) {
-        Object ifPresent = caffeine.getIfPresent(clientIp + requestUri);
+        Object ifPresent = caffeine.getIfPresent(clientIp + ":" + requestUri);
         if (ifPresent == null) {
-            caffeine.put(clientIp + requestUri, LocalTime.now());
+            caffeine.put(clientIp + ":" + requestUri, LocalDateTime.now());
             return true;
         }
-        LocalTime timeSave = (LocalTime) ifPresent;
-        if (LocalTime.now().isAfter(timeSave.plus(ONCE_PER_MILLION, ChronoUnit.MILLIS))) {
-            caffeine.put(clientIp + requestUri, LocalTime.now());
+        LocalDateTime timeSave = (LocalDateTime) ifPresent;
+        LocalDateTime timePlus = timeSave.plus(ONCE_PER_MILLION, ChronoUnit.MILLIS);
+        if (timePlus.isAfter(timeSave)) {
+            caffeine.put(clientIp + requestUri, LocalDateTime.now());
             return true;
         }
 
