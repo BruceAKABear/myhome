@@ -5,6 +5,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import javax.jmdns.JmDNS;
+import javax.jmdns.ServiceInfo;
+import java.net.InetAddress;
 
 /**
  * the handler for control plan
@@ -20,6 +23,11 @@ public class SubscribeHandler {
     @PostConstruct
     public void getSubscribePlan() {
         String deviceMac = "abccd";
+
+//        JmDNS jmdns = JmDNS.create(InetAddress.getLocalHost());
+//        ServiceInfo serviceInfo = ServiceInfo.create("_http._tcp.local.", "appName", 8848, "path=index.html");
+//        jmdns.registerService(serviceInfo);
+
     }
 
 
