@@ -108,7 +108,7 @@ public class DeviceController {
     }
 
     /**
-     * send debug order to device ,this api only in develop mode can do
+     * send debug order to a device, this api only in develop mode can do
      * @param orderMap
      */
     @ApiOperation("下发debug命令")

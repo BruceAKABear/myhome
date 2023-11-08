@@ -26,7 +26,7 @@ public class SceneCondition extends BaseModel {
 
     private String sceneId;
 
-    //type有device和time
+    //type: device time
     private String type;
 
     private LocalTime startTime;
@@ -36,7 +36,7 @@ public class SceneCondition extends BaseModel {
 
     private String deviceProperty;
     private String propertyValue;
-
+    //first one is null
     private String relation;
 
 }
