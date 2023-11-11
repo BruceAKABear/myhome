@@ -1,11 +1,13 @@
 package pro.dengyi.myhome.commercial;
 
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.util.Enumeration;
+import javax.jmdns.JmDNS;
+import javax.jmdns.ServiceInfo;
+import java.net.InetAddress;
 
 /**
  * the handler for control plan
@@ -18,35 +20,26 @@ import java.util.Enumeration;
 
 @Component
 public class SubscribeHandler {
-
-    private String defaultPlan = "primary";
-
     @PostConstruct
-    public void initSubscribePlan() throws SocketException {
-        Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
+    public void getSubscribePlan() {
+        String deviceMac = "abccd";
 
-        while (networkInterfaces.hasMoreElements()) {
-            NetworkInterface networkInterface = networkInterfaces.nextElement();
+//        JmDNS jmdns = JmDNS.create(InetAddress.getLocalHost());
+//        ServiceInfo serviceInfo = ServiceInfo.create("_http._tcp.local.", "appName", 8848, "path=index.html");
+//        jmdns.registerService(serviceInfo);
 
-            if (!networkInterface.isVirtual() && !networkInterface.isLoopback()) {
-                byte[] mac = networkInterface.getHardwareAddress();
+    }
 
-                // 判断MAC地址是否存在
-                if (mac != null) {
-                    StringBuilder macAddress = new StringBuilder();
-                    for (int i = 0; i < mac.length; i++) {
-                        macAddress.append(String.format("%02X", mac[i]));
-                        if (i < mac.length - 1) {
-                            macAddress.append("-");
-                        }
-                    }
-                    System.err.println("MAC Address: " + macAddress.toString());
-                }
-            }
-        }
 
-        System.err.println("out in post construct");
-
+    /**
+     * an async timer to check online  subscribe plan to control how many devices the hardware can connect
+     * <p>
+     * every 5 min
+     */
+    @Scheduled(cron = "0 0/5 * * * ? ")
+    @Async
+    public void subscribePlanCheck() {
+        getSubscribePlan();
     }
 
 

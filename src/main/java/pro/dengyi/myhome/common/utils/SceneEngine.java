@@ -166,7 +166,7 @@ public class SceneEngine {
                 }
 
             }
-
+//同真为真 and 一真为真 or 
             boolean process = true;
             for (boolean flag : flags) {
                 if (!flag) {
