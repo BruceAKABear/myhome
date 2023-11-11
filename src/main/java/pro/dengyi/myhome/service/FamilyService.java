@@ -21,4 +21,6 @@ public interface FamilyService {
     FamilyDto infoById(String familyId);
 
     IPage<FamilyDto> page(Integer page, Integer size, String name);
+
+    void delete(String id);
 }

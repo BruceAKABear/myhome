@@ -35,6 +35,12 @@ public class FamilyController {
         return familyService.page(page, size, name);
     }
 
+    @ApiOperation("下拉")
+    @GetMapping("/list")
+    public IPage<FamilyDto> list() {
+        return familyService.page(1, -1, null);
+    }
+
 
     @ApiOperation(value = "新增或修改家庭")
     @PostMapping("/addUpdate")
@@ -58,6 +64,12 @@ public class FamilyController {
     @GetMapping("/checkIsFirst")
     public Boolean checkIsFirst() {
         return familyService.checkIsFirst();
+    }
+
+    @ApiOperation("删除家庭")
+    @DeleteMapping("/delete/{id}")
+    public void delete(@PathVariable @NotBlank String id) {
+        familyService.delete(id);
     }
 
 

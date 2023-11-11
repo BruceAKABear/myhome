@@ -36,8 +36,7 @@ public class FamilyServiceImpl implements FamilyService {
     @Transactional
     @Override
     public void addUpdate(Family family) {
-        Family familyExist = familyDao.selectOne(new LambdaQueryWrapper<Family>()
-                .eq(Family::getName, family.getName()));
+        Family familyExist = familyDao.selectOne(new LambdaQueryWrapper<Family>().eq(Family::getName, family.getName()));
 
         if (ObjectUtils.isEmpty(family.getId())) {
             if (familyExist != null) {
@@ -88,6 +87,13 @@ public class FamilyServiceImpl implements FamilyService {
         page = page == null ? 1 : page;
         size = size == null ? 10 : size;
         return familyDao.selectCustomPage(new Page<>(page, size), name);
+    }
+
+    @Transactional
+    @Override
+    public void delete(String id) {
+
+        familyDao.deleteById(id);
     }
 
 }

@@ -16,6 +16,8 @@
     <select id="selectCustomPage" resultType="pro.dengyi.myhome.model.dto.FamilyDto">
         SELECT family.id,
         family.`name`,
+        family.longitude,
+        family.latitude,
         family.create_time,
         family.update_time,
         (SELECT COUNT(*) FROM family_floor) AS floorCount,
@@ -23,11 +25,12 @@
         (SELECT COUNT(*) FROM device_device) AS deviceCount,
         family.app_id,
         family.app_secret
+        FROM family
+
         <where>
             <if test="name != null and name != ''">
-                and family.`name`=#{name}
+                and family.`name` like concat('%',#{name},'%')
             </if>
         </where>
-        FROM family
     </select>
 </mapper>

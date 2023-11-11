@@ -14,4 +14,6 @@ public class FloorPageDto extends Floor {
 
     private Integer roomCount;
     private Integer deviceCount;
+
+    private String familyName;
 }

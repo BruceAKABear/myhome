@@ -17,23 +17,26 @@
       FROM family_floor
   </select>
   <select id="selectCustomPage" resultType="pro.dengyi.myhome.model.dto.FloorPageDto">
-    SELECT family_floor.id,
-    family_floor.`name`,
-    family_floor.create_time,
-    family_floor.update_time,
-    (SELECT COUNT(id) FROM family_room WHERE family_floor.id = family_room.floor_id) AS roomCount,
-    (
-    SELECT COUNT(*)
-    FROM device_device
-    INNER JOIN family_room AS r ON device_device.room_id = r.id
-    WHERE family_floor.id = r.floor_id
-    ) AS deviceCount
-    FROM family_floor AS family_floor
-    WHERE 1 = 1
-    and family_floor.family_id=#{familyId}
-    <if test="floorName!=null and floorName!=''">
-      and family_floor.`name` LIKE concat('%',#{floorName},'%')
-    </if>
+      SELECT
+      family_floor.id,
+      family_floor.family_id,
+      family_floor.`name`,
+      family_floor.create_time,
+      family_floor.update_time,
+      ( SELECT COUNT( id ) FROM family_room WHERE family_floor.id = family_room.floor_id ) AS roomCount,
+      ( SELECT COUNT(*) FROM device_device INNER JOIN family_room AS r ON device_device.room_id = r.id WHERE
+      family_floor.id = r.floor_id ) AS deviceCount,
+      family.`name` AS familyName
+      FROM
+      family_floor
+      LEFT JOIN family ON family_floor.family_id = family.id
+      WHERE 1 = 1
+      <if test="familyId != null and familyId != ''">
+          and family_floor.family_id=#{familyId}
+      </if>
+      <if test="floorName!=null and floorName!=''">
+          and family_floor.`name` LIKE concat('%',#{floorName},'%')
+      </if>
 
   </select>
 </mapper>

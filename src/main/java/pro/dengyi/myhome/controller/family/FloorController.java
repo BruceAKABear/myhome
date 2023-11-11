@@ -42,6 +42,12 @@ public class FloorController {
         return floorService.page(page, size, floorName, familyId);
     }
 
+    @ApiOperation("后台楼层分页查询")
+    @GetMapping("/pageBackend")
+    public IPage<FloorPageDto> pageBackend(Integer page, Integer size, String familyId, String floorName) {
+        return floorService.page(page, size, floorName, familyId);
+    }
+
     @ApiOperation("新增或修改楼层")
     @PostMapping("/addUpdate")
     public void addUpdate(@RequestBody @Validated Floor floor) {
@@ -53,8 +59,7 @@ public class FloorController {
     public List<FloorPageDto> floorList() {
         String familyId = FamilyHolder.familyId();
 
-        return (List<FloorPageDto>) cache.get("floorList",
-                k -> floorService.floorList(familyId));
+        return (List<FloorPageDto>) cache.get("floorList", k -> floorService.floorList(familyId));
     }
 
     @ApiOperation("删除楼层")
