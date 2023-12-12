@@ -27,19 +27,16 @@ public class SceneController {
     @Autowired
     private SceneService sceneService;
 
-    // () and () or()  房间有人 and 亮度传感器<300 and ( 08:00<时间<12:00 or 13:00<时间<17:00)  开灯
-    //
-    //todo 相同条件不能存在
     @ApiOperation("新增或修改场景")
     @PostMapping("/addOrUpdate")
-    public void addOrUpdate(@RequestBody Scene scene) {
+    public void addOrUpdate(@RequestBody @Validated Scene scene) {
         sceneService.addOrUpdate(scene);
     }
 
     @ApiOperation("查询供修改")
-    @GetMapping("/queryForUpdate")
-    public Scene queryForUpdate(@RequestParam @NotBlank String sceneId) {
-        return sceneService.queryForUpdate(sceneId);
+    @GetMapping("/queryById")
+    public Scene queryById(@RequestParam @NotBlank String sceneId) {
+        return sceneService.queryById(sceneId);
     }
 
     @ApiOperation("场景启停")
@@ -59,6 +56,7 @@ public class SceneController {
     public List<Scene> list() {
         return sceneService.list();
     }
+
 
     @ApiOperation("分页查询")
     @GetMapping("/page")

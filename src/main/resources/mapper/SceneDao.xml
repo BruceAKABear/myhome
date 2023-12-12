@@ -27,23 +27,26 @@
                 LEFT JOIN scene_condition ON scene_scene.id = scene_condition.scene_id
                 LEFT JOIN scene_action ON scene_action.scene_id = scene_scene.id
     </select>
+    <select id="selectCustomPage"
+            resultType="pro.dengyi.myhome.model.automation.Scene">
+
+    </select>
 
 
     <resultMap id="scene-detail-result-map" type="pro.dengyi.myhome.model.automation.Scene">
         <result column="id" property="id"/>
         <result column="name" property="name"/>
-        <result column="description" property="description"/>
         <result column="enable" property="enable"/>
 
-        <collection property="conditions" ofType="pro.dengyi.myhome.model.automation.SceneCondition">
-            <result column="cid" property="id"/>
-            <result column="ctype" property="type"/>
-            <result column="cend_time" property="endTime"/>
-            <result column="cdevice_id" property="deviceId"/>
-            <result column="cdevice_property" property="deviceProperty"/>
-            <result column="cproperty_value" property="propertyValue"/>
-            <result column="crelation" property="relation"/>
-        </collection>
+<!--        <collection property="conditions" ofType="pro.dengyi.myhome.model.automation.SceneCondition">-->
+<!--            <result column="cid" property="id"/>-->
+<!--            <result column="ctype" property="type"/>-->
+<!--            <result column="cend_time" property="endTime"/>-->
+<!--            <result column="cdevice_id" property="deviceId"/>-->
+<!--            <result column="cdevice_property" property="deviceProperty"/>-->
+<!--            <result column="cproperty_value" property="propertyValue"/>-->
+<!--            <result column="crelation" property="relation"/>-->
+<!--        </collection>-->
 
         <collection property="actions" ofType="pro.dengyi.myhome.model.automation.SceneAction">
 

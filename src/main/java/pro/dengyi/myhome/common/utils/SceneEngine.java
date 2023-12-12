@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author ：dengyi(A.K.A Bear)
@@ -45,10 +46,10 @@ public class SceneEngine {
     private SceneDao sceneDao;
 
     /**
-     *
      * @param applicationContext
      */
     public static void init(ApplicationContext applicationContext) {
+        applicationContext.getBean("");
 
     }
 
@@ -56,44 +57,36 @@ public class SceneEngine {
     /**
      * 触发场景逻辑
      *
-     * @param triggerDeviceId 触发设备id
-     * @param conditions      系统中条件集合
-     * @param mqttClient      mqtt客户端
+     * @param deviceId   触发设备id
+     * @param conditions 系统中条件集合
+     * @param mqttClient mqtt客户端
      */
-    public void trigger(String triggerDeviceId, List<SceneCondition> conditions,
-                        MqttClient mqttClient) {
+    public void trigger(String deviceId, List<SceneCondition> conditions, MqttClient mqttClient) {
         // 场景条件为空，不执行逻辑
         if (CollectionUtils.isEmpty(conditions)) {
             return;
         }
         //设备没在任何条件中，不执行逻辑
-        if (!inCondition(triggerDeviceId, conditions)) {
+        if (!inCondition(deviceId, conditions)) {
             return;
         }
         //场景 条件分组
         Map<String, List<SceneCondition>> sceneGroups = conditionGroups(conditions);
         //执行逻辑
-        startLogic(triggerDeviceId, sceneGroups, mqttClient);
+        startLogic(deviceId, sceneGroups, mqttClient);
     }
 
 
     /**
-     * 判断给定条件集合中是否包含目标设备
+     * judgement whether trigger device is include in conditions or not
      *
-     * @param triggerDeviceId 目标设备id
-     * @param conditions      条件集合
+     * @param deviceId   trigger device id
+     * @param conditions condition group
      * @return
      */
-    private boolean inCondition(String triggerDeviceId, List<SceneCondition> conditions) {
-        boolean containFlag = false;
-        for (SceneCondition condition : conditions) {
-            if ("device".equals(condition.getType()) && condition.getDeviceId().equals(triggerDeviceId)) {
-                //只要有包含就立即退出循环
-                containFlag = true;
-                break;
-            }
-        }
-        return containFlag;
+    private boolean inCondition(String deviceId, List<SceneCondition> conditions) {
+        List<String> deviceIds = conditions.stream().map(SceneCondition::getDeviceId).collect(Collectors.toList());
+        return deviceIds.contains(deviceId);
     }
 
     private Map<String, List<SceneCondition>> conditionGroups(List<SceneCondition> conditions) {
@@ -101,22 +94,21 @@ public class SceneEngine {
 
         Map<String, List<SceneCondition>> mapList = new HashMap<>();
 
-        for (SceneCondition condition : conditions) {
-            List<SceneCondition> sceneConditions;
-            if (mapList.containsKey(condition.getSceneId())) {
-                sceneConditions = mapList.get(condition.getSceneId());
-            } else {
-                sceneConditions = new ArrayList<>();
-            }
-            sceneConditions.add(condition);
-            mapList.put(condition.getSceneId(), sceneConditions);
-        }
+//        for (SceneCondition condition : conditions) {
+//            List<SceneCondition> sceneConditions;
+//            if (mapList.containsKey(condition.getSceneId())) {
+//                sceneConditions = mapList.get(condition.getSceneId());
+//            } else {
+//                sceneConditions = new ArrayList<>();
+//            }
+//            sceneConditions.add(condition);
+//            mapList.put(condition.getSceneId(), sceneConditions);
+//        }
         return mapList;
     }
 
 
-    private void startLogic(String triggerDeviceId, Map<String, List<SceneCondition>> sceneGroups,
-                            MqttClient mqttClient) {
+    private void startLogic(String triggerDeviceId, Map<String, List<SceneCondition>> sceneGroups, MqttClient mqttClient) {
 
         for (String sceneId : sceneGroups.keySet()) {
             Scene scene = sceneDao.selectById(sceneId);
@@ -143,18 +135,12 @@ public class SceneEngine {
                         break;
                     case "device":
                         //目标
-                        Map<String, Object> triggerDeviceStatusMap = getLatestDeviceStatus(
-                                condition.getDeviceId());
+                        Map<String, Object> triggerDeviceStatusMap = getLatestDeviceStatus(condition.getDeviceId());
                         try {
-                            JavaScriptEngine.engine.eval(
-                                    "function doCal(triggerDevice,conditionDeviceProperty, conditionRelation, conditionValue) {\n"
-                                            + "    return eval(triggerDevice[conditionDeviceProperty] + conditionRelation + conditionValue)\n"
-                                            + "\n" + "}\n");
+                            JavaScriptEngine.engine.eval("function doCal(triggerDevice,conditionDeviceProperty, conditionRelation, conditionValue) {\n" + "    return eval(triggerDevice[conditionDeviceProperty] + conditionRelation + conditionValue)\n" + "\n" + "}\n");
 
                             Invocable invocable = (Invocable) JavaScriptEngine.engine;
-                            boolean calResult = (boolean) invocable.invokeFunction("doCal",
-                                    triggerDeviceStatusMap, condition.getDeviceProperty(), condition.getRelation(),
-                                    condition.getPropertyValue());
+                            boolean calResult = (boolean) invocable.invokeFunction("doCal", triggerDeviceStatusMap, condition.getDeviceProperty(), condition.getRelation(), condition.getPropertyValue());
 
                             flags[i] = calResult;
                         } catch (Exception e) {
@@ -177,8 +163,7 @@ public class SceneEngine {
 
             //目前只有and条件，因此全判断
             if (process) {
-                List<SceneAction> sceneActions = sceneActionDao.selectList(
-                        new LambdaQueryWrapper<SceneAction>().eq(SceneAction::getSceneId, sceneId));
+                List<SceneAction> sceneActions = sceneActionDao.selectList(new LambdaQueryWrapper<SceneAction>().eq(SceneAction::getSceneId, sceneId));
                 //将多条件归纳为单设备map
                 Map<String, List<SceneAction>> mapActions = collectActions2Devices(sceneActions);
                 for (String deviceId : mapActions.keySet()) {
@@ -186,8 +171,7 @@ public class SceneEngine {
                     Map<String, Object> params = new HashMap<>();
                     String controlProductId = null;
                     for (SceneAction sceneAction : oneDeviceSceneActions) {
-                        params.put(sceneAction.getDeviceProperty(),
-                                Boolean.parseBoolean(sceneAction.getPropertyValue()));
+                        params.put(sceneAction.getDeviceProperty(), Boolean.parseBoolean(sceneAction.getPropertyValue()));
                         //todo 可以优化
                         Device device = deviceDao.selectById(sceneAction.getDeviceId());
                         deviceId = device.getId();
@@ -243,11 +227,7 @@ public class SceneEngine {
      * @return
      */
     private Map<String, Object> getLatestDeviceStatus(String deviceId) {
-        String latestDeViceStatus = (String) cache.get("latestDeviceStatus:" + deviceId,
-                k -> deviceLogDao.selectOne(
-                        new LambdaQueryWrapper<DeviceLog>().eq(DeviceLog::getDeviceId, deviceId)
-                                .eq(DeviceLog::getDirection, "up").orderByDesc(DeviceLog::getCreateTime)
-                                .last("limit 1").select(DeviceLog::getPayload)));
+        String latestDeViceStatus = (String) cache.get("latestDeviceStatus:" + deviceId, k -> deviceLogDao.selectOne(new LambdaQueryWrapper<DeviceLog>().eq(DeviceLog::getDeviceId, deviceId).eq(DeviceLog::getDirection, "up").orderByDesc(DeviceLog::getCreateTime).last("limit 1").select(DeviceLog::getPayload)));
 //        return (Map<String, Object>) JSON.parse(latestDeViceStatus);
         return null;
     }

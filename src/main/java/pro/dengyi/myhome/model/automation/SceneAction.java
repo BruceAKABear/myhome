@@ -27,6 +27,8 @@ public class SceneAction extends BaseModel {
     private String sceneId;
 
     private String type;
+    //延迟时间，为空就不延迟立刻执行，有值就延迟到结束
+    private String delayTime;
 
     private String deviceId;
 

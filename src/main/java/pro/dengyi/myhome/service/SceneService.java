@@ -22,7 +22,7 @@ public interface SceneService {
 
     void delete(String id);
 
-    Scene queryForUpdate(String sceneId);
+    Scene queryById(String sceneId);
 
     IPage<Scene> page(Integer size, Integer page, String name);
 }
