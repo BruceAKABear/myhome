@@ -18,11 +18,11 @@ import pro.dengyi.myhome.model.automation.Scene;
 import pro.dengyi.myhome.model.automation.SceneAction;
 import pro.dengyi.myhome.model.automation.SceneCondition;
 import pro.dengyi.myhome.model.automation.SceneConditionGroup;
+import pro.dengyi.myhome.model.automation.dto.SceneChangeDto;
 import pro.dengyi.myhome.service.SceneService;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author ：dengyi(A.K.A Bear)
@@ -40,9 +40,10 @@ public class SceneServiceImpl implements SceneService {
     @Autowired
     private SceneConditionDao sceneConditionDao;
     @Autowired
-    private Cache cache;
-    @Autowired
     private SceneConditionGroupDao sceneConditionGroupDao;
+
+    @Autowired
+    private Cache sceneCache;
 
 
     @Transactional
@@ -106,8 +107,7 @@ public class SceneServiceImpl implements SceneService {
         sceneConditionGroupDao.delete(new LambdaQueryWrapper<SceneConditionGroup>().eq(SceneConditionGroup::getSceneId, sceneId));
         sceneConditionDao.delete(new LambdaQueryWrapper<SceneCondition>().eq(SceneCondition::getSceneId, sceneId));
         sceneActionDao.delete(new LambdaQueryWrapper<SceneAction>().eq(SceneAction::getSceneId, sceneId));
-        //2. clear cache
-        //3. save new data to database
+        //2. save new data to the database
         for (SceneConditionGroup sceneConditionGroup : sceneConditionGroups) {
             sceneConditionGroup.setSceneId(sceneId);
             sceneConditionGroupDao.insert(sceneConditionGroup);
@@ -123,33 +123,24 @@ public class SceneServiceImpl implements SceneService {
             sceneAction.setSceneId(sceneId);
             sceneActionDao.insert(sceneAction);
         }
-        //4. update cache
-    }
-
-    @Override
-    public List<Scene> list() {
-        List<Scene> scenes = sceneDao.selectList(new LambdaQueryWrapper<>());
-        if (!CollectionUtils.isEmpty(scenes)) {
-            for (Scene scene : scenes) {
-                List<SceneAction> sceneActions = sceneActionDao.selectList(new LambdaQueryWrapper<SceneAction>().eq(SceneAction::getSceneId, scene.getId()));
-//                List<SceneCondition> sceneConditions = sceneConditionDao.selectList(new LambdaQueryWrapper<SceneCondition>().eq(SceneCondition::getSceneId, scene.getId()));
-                // scene.setConditions(sceneConditions);
-                scene.setActions(sceneActions);
-            }
-        }
-        return sceneDao.selectList(new LambdaQueryWrapper<>());
+        //3. update cache
+        enableSceneCache(sceneId);
     }
 
     @Transactional
     @Override
-    public void changeEnable(Map<String, Object> params) {
-        String sceneId = (String) params.get("sceneId");
-        boolean enable = (boolean) params.get("enable");
+    public void changeEnable(SceneChangeDto dto) {
         Scene scene = new Scene();
-        scene.setId(sceneId);
-        scene.setEnable(enable);
+        scene.setId(dto.getSceneId());
+        scene.setEnable(dto.getEnable());
         scene.setUpdateTime(LocalDateTime.now());
         sceneDao.updateById(scene);
+        //handle data in cache
+        if (dto.getEnable()) {
+            enableSceneCache(dto.getSceneId());
+        } else {
+            disableSceneCache(dto.getSceneId());
+        }
     }
 
 
@@ -160,27 +151,34 @@ public class SceneServiceImpl implements SceneService {
         sceneConditionGroupDao.delete(new LambdaQueryWrapper<SceneConditionGroup>().eq(SceneConditionGroup::getSceneId, sceneId));
         sceneConditionDao.delete(new LambdaQueryWrapper<SceneCondition>().eq(SceneCondition::getSceneId, sceneId));
         sceneActionDao.delete(new LambdaQueryWrapper<SceneAction>().eq(SceneAction::getSceneId, sceneId));
-        //todo 从缓存中删除
+        disableSceneCache(sceneId);
     }
 
-    @Override
-    public Scene queryById(String sceneId) {
-        //todo
-
-        Scene scene = sceneDao.selectById(sceneId);
-//        List<SceneAction> sceneActions = sceneActionDao.selectList(new LambdaQueryWrapper<SceneAction>().eq(SceneAction::getSceneId, sceneId));
-
-//        List<SceneCondition> conditions = sceneConditionDao.selectList(new LambdaQueryWrapper<SceneCondition>().eq(SceneCondition::getSceneId, sceneId));
-
-        // scene.setActions(sceneActions);
-        // scene.setConditions(conditions);
-        return scene;
-    }
 
     @Override
-    public IPage<Scene> page(Integer size, Integer page, String name) {
-        size = size == null ? 10 : size;
+    public IPage<Scene> page(Integer page, Integer size, String name, String sceneId) {
         page = page == null ? 1 : page;
-        return sceneDao.selectCustomPage(new Page<Scene>(page, size), name);
+        size = size == null ? 10 : size;
+        Page<Object> pageParam = new Page<>(page, size);
+
+
+        return sceneDao.selectCustomPage( name, sceneId);
     }
+
+
+    private void enableSceneCache(String sceneId) {
+        Scene scene = page(1, 1, null, sceneId).getRecords().get(0);
+        sceneCache.put(sceneId, scene);
+    }
+
+    /**
+     * disable the scene
+     *
+     * @param sceneId
+     */
+    private void disableSceneCache(String sceneId) {
+        sceneCache.invalidate(sceneId);
+    }
+
+
 }

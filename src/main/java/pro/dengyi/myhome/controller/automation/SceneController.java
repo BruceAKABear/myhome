@@ -7,11 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pro.dengyi.myhome.model.automation.Scene;
+import pro.dengyi.myhome.model.automation.dto.SceneChangeDto;
 import pro.dengyi.myhome.service.SceneService;
 
 import javax.validation.constraints.NotBlank;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author ：dengyi(A.K.A Bear)
@@ -36,13 +36,13 @@ public class SceneController {
     @ApiOperation("查询供修改")
     @GetMapping("/queryById")
     public Scene queryById(@RequestParam @NotBlank String sceneId) {
-        return sceneService.queryById(sceneId);
+        return sceneService.page(1, 1, null, sceneId).getRecords().get(0);
     }
 
     @ApiOperation("场景启停")
     @PostMapping("/changeEnable")
-    public void changeEnable(@RequestBody Map<String, Object> params) {
-        sceneService.changeEnable(params);
+    public void changeEnable(@RequestBody @Validated SceneChangeDto dto) {
+        sceneService.changeEnable(dto);
     }
 
     @ApiOperation("删除场景")
@@ -54,14 +54,14 @@ public class SceneController {
     @ApiOperation("列表")
     @GetMapping("/list")
     public List<Scene> list() {
-        return sceneService.list();
+        return sceneService.page(1, -1, null, null).getRecords();
     }
 
 
     @ApiOperation("分页查询")
     @GetMapping("/page")
     public IPage<Scene> page(Integer size, Integer page, String name) {
-        return sceneService.page(size, page, name);
+        return sceneService.page(page, size, name, null);
     }
 
 
