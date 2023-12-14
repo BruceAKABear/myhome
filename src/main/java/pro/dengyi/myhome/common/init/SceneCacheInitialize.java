@@ -3,6 +3,8 @@ package pro.dengyi.myhome.common.init;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.github.benmanes.caffeine.cache.Cache;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import pro.dengyi.myhome.model.automation.Scene;
 import pro.dengyi.myhome.service.SceneService;
@@ -23,6 +25,8 @@ public class SceneCacheInitialize {
     @Autowired
     private Cache sceneCache;
 
+
+    @EventListener(ApplicationReadyEvent.class)
     public void initCache() {
         IPage<Scene> page = sceneService.page(1, -1, null, null);
         List<Scene> enableScenes = page.getRecords().stream().filter(Scene::getEnable).collect(Collectors.toList());
