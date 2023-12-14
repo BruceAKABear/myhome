@@ -69,12 +69,25 @@
                 AND scene_scene.id = #{sceneId}
             </if>
         </where>
-        limit 0,1)as abc on scene_scene.id=abc.id
-
-
+        limit #{start},#{end})as abc on scene_scene.id=abc.id
         ORDER BY
         scene_condition_group.order_number ASC,
         scene_condition.order_number ASC
+    </select>
+    <select id="selectTotalCount" resultType="java.lang.Integer">
+
+        SELECT
+        COUNT(*)
+        FROM
+        scene_scene
+        <where>
+            <if test="name !=null and name != ''">
+                AND scene_scene.`name` like concat('%',#{name},"%")
+            </if>
+            <if test="sceneId !=null and sceneId != ''">
+                AND scene_scene.id = #{sceneId}
+            </if>
+        </where>
     </select>
 
 
@@ -123,7 +136,7 @@
                type="pro.dengyi.myhome.model.automation.SceneConditionGroup">
         <result column="conditionGroupOrderNumber" property="orderNumber"/>
         <result column="conditionGroupRelation" property="relation"/>
-        <collection property="conditions" resultMap="conditionmap"></collection>
+        <collection property="conditions" resultMap="conditionmap"/>
     </resultMap>
 
     <resultMap id="conditionmap"

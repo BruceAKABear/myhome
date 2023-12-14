@@ -19,5 +19,7 @@ public interface SceneDao extends BaseMapper<Scene> {
 
     List<Scene> sceneListAndDetails();
 
-    IPage<Scene> selectCustomPage(@Param("name") String name, @Param("sceneId") String sceneId);
+    List<Scene> selectCustomPage(Integer start, Integer end, @Param("name") String name, @Param("sceneId") String sceneId);
+
+    Integer selectTotalCount(@Param("name") String name, @Param("sceneId") String sceneId);
 }

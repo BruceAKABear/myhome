@@ -159,10 +159,14 @@ public class SceneServiceImpl implements SceneService {
     public IPage<Scene> page(Integer page, Integer size, String name, String sceneId) {
         page = page == null ? 1 : page;
         size = size == null ? 10 : size;
-        Page<Object> pageParam = new Page<>(page, size);
-
-
-        return sceneDao.selectCustomPage( name, sceneId);
+        Page<Scene> pageParam = new Page<>(page, size);
+        Integer start = (page - 1) * size;
+        Integer end = size;
+        Integer totalSize = sceneDao.selectTotalCount(name, sceneId);
+        List<Scene> scenes = sceneDao.selectCustomPage(start, end, name, sceneId);
+        pageParam.setRecords(scenes);
+        pageParam.setTotal(totalSize);
+        return pageParam;
     }
 
 
