@@ -8,10 +8,10 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import pro.dengyi.myhome.common.enums.RelationEnum;
 import pro.dengyi.myhome.model.base.BaseModel;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
 
@@ -33,34 +33,19 @@ public class Scene extends BaseModel {
     @NotBlank(message = "场景名称不能为空")
     private String name;
 
-
-    @ApiModelProperty("名称")
-    @NotBlank(message = "场景名称不能为空")
-    private String description;
-
     @ApiModelProperty("启用状态")
     private Boolean enable;
 
-
-    private List<ConditionGroup> conditionGroups;
-
-    @NotBlank(message = "条件集合不能为空")
-    @ApiModelProperty("条件集合")
+    @NotNull(message = "条件组不能为空")
     @TableField(exist = false)
-    @Size(min = 1, message = "条件长度必须大于等于1")
-    private List<SceneCondition> conditions;
+    private List<SceneConditionGroup> sceneConditionGroups;
 
 
-    @NotBlank(message = "执行集合不能为空")
+    @NotNull(message = "执行集合不能为空")
     @ApiModelProperty("执行集合")
     @TableField(exist = false)
     @Size(min = 1, message = "动作长度必须大于等于1")
     private List<SceneAction> actions;
 
 
-    private class ConditionGroup {
-        private RelationEnum relation;
-
-        private List<SceneCondition> conditions;
-    }
 }

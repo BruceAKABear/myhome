@@ -1,4 +1,4 @@
-package pro.dengyi.myhome.common.utils;
+package pro.dengyi.myhome.common.utils.rate;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;

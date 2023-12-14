@@ -2,9 +2,9 @@ package pro.dengyi.myhome.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import pro.dengyi.myhome.model.automation.Scene;
+import pro.dengyi.myhome.model.automation.dto.SceneChangeDto;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author ：dengyi(A.K.A Bear)
@@ -16,13 +16,11 @@ public interface SceneService {
 
     void addOrUpdate(Scene scene);
 
-    List<Scene> list();
 
-    void changeEnable(Map<String, Object> params);
+    void changeEnable(SceneChangeDto dto);
 
     void delete(String id);
 
-    Scene queryForUpdate(String sceneId);
 
-    IPage<Scene> page(Integer size, Integer page, String name);
+    IPage<Scene> page(Integer page, Integer size, String name, String sceneId);
 }

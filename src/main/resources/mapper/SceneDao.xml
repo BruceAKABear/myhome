@@ -1,51 +1,114 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="pro.dengyi.myhome.dao.SceneDao">
     <select id="sceneListAndDetails" resultMap="scene-detail-result-map">
+        SELECT scene_scene.id,
+               scene_scene.`name`,
+               scene_scene.description,
+               scene_scene.`enable`,
+               scene_scene.create_time,
+               scene_scene.update_time,
+               scene_condition.id              AS cid,
+               scene_condition.type            AS ctype,
+               scene_condition.start_time      AS cstart_time,
+               scene_condition.end_time        AS cend_time,
+               scene_condition.device_id       AS cdevice_id,
+               scene_condition.device_property AS cdevice_property,
+               scene_condition.relation        AS crelation,
+               scene_condition.property_value  AS cproperty_value,
+               scene_action.id                 AS aid,
+               scene_action.type               AS atype,
+               scene_action.device_id          AS adevice_id,
+               scene_action.device_property    AS adevice_property,
+               scene_action.property_value     AS aproperty_value
+        FROM scene_scene
+                 RIGHT JOIN scene_condition
+                           ON scene_scene.id = scene_condition.scene_id
+                 RIGHT JOIN scene_action
+                           ON scene_action.scene_id = scene_scene.id
+    </select>
+    <select id="selectCustomPage"
+            resultMap="singleResultMap">
+
         SELECT
-            scene_scene.id,
-            scene_scene.`name`,
-            scene_scene.description,
-            scene_scene.`enable`,
-            scene_scene.create_time,
-            scene_scene.update_time,
-            scene_condition.id AS cid,
-            scene_condition.type AS ctype,
-            scene_condition.start_time AS cstart_time,
-            scene_condition.end_time AS cend_time,
-            scene_condition.device_id AS cdevice_id,
-            scene_condition.device_property AS cdevice_property,
-            scene_condition.relation AS crelation,
-            scene_condition.property_value AS cproperty_value,
-            scene_action.id AS aid,
-            scene_action.type AS atype,
-            scene_action.device_id AS adevice_id,
-            scene_action.device_property AS adevice_property,
-            scene_action.property_value AS aproperty_value
+        scene_scene.id AS sceneId,
+        scene_scene.`name` AS sceneName,
+        scene_scene.`enable` AS sceneEnable,
+        scene_scene.create_time AS sceneCreateTime,
+        scene_scene.update_time AS sceneUpdateTime,
+        scene_condition_group.order_number AS conditionGroupOrderNumber,
+        scene_condition_group.relation AS conditionGroupRelation,
+        scene_condition.type AS conditionType,
+        scene_condition.start_time AS conditionStartTime,
+        scene_condition.end_time AS conditionEndTime,
+        scene_condition.device_id AS conditionDeviceId,
+        scene_condition.device_property AS conditionDeviceProperty,
+        scene_condition.relation AS conditionRelation,
+        scene_condition.property_value AS conditionPropertyValue,
+        scene_condition.operator AS conditionOperator,
+        scene_condition.order_number AS conditionOrderNumber,
+        scene_action.type AS actionType,
+        scene_action.device_id AS actionDeviceId,
+        scene_action.device_property AS actionProperty,
+        scene_action.property_value AS actionPropertyValue
         FROM
-            scene_scene
-                LEFT JOIN scene_condition ON scene_scene.id = scene_condition.scene_id
-                LEFT JOIN scene_action ON scene_action.scene_id = scene_scene.id
+        scene_scene
+        RIGHT JOIN scene_condition_group ON scene_scene.id =
+        scene_condition_group.scene_id
+        RIGHT JOIN scene_condition ON scene_condition_group.id =
+        scene_condition.condition_group_id
+        RIGHT JOIN scene_action ON scene_action.scene_id = scene_scene.id
+        inner join (select id from
+        scene_scene
+        <where>
+            <if test="name !=null and name != ''">
+                AND scene_scene.`name` like concat('%',#{name},"%")
+            </if>
+            <if test="sceneId !=null and sceneId != ''">
+                AND scene_scene.id = #{sceneId}
+            </if>
+        </where>
+        limit #{start},#{end})as abc on scene_scene.id=abc.id
+        ORDER BY
+        scene_condition_group.order_number ASC,
+        scene_condition.order_number ASC
+    </select>
+    <select id="selectTotalCount" resultType="java.lang.Integer">
+
+        SELECT
+        COUNT(*)
+        FROM
+        scene_scene
+        <where>
+            <if test="name !=null and name != ''">
+                AND scene_scene.`name` like concat('%',#{name},"%")
+            </if>
+            <if test="sceneId !=null and sceneId != ''">
+                AND scene_scene.id = #{sceneId}
+            </if>
+        </where>
     </select>
 
 
-    <resultMap id="scene-detail-result-map" type="pro.dengyi.myhome.model.automation.Scene">
+    <resultMap id="scene-detail-result-map"
+               type="pro.dengyi.myhome.model.automation.Scene">
         <result column="id" property="id"/>
         <result column="name" property="name"/>
-        <result column="description" property="description"/>
         <result column="enable" property="enable"/>
 
-        <collection property="conditions" ofType="pro.dengyi.myhome.model.automation.SceneCondition">
-            <result column="cid" property="id"/>
-            <result column="ctype" property="type"/>
-            <result column="cend_time" property="endTime"/>
-            <result column="cdevice_id" property="deviceId"/>
-            <result column="cdevice_property" property="deviceProperty"/>
-            <result column="cproperty_value" property="propertyValue"/>
-            <result column="crelation" property="relation"/>
-        </collection>
+        <!--        <collection property="conditions" ofType="pro.dengyi.myhome.model.automation.SceneCondition">-->
+        <!--            <result column="cid" property="id"/>-->
+        <!--            <result column="ctype" property="type"/>-->
+        <!--            <result column="cend_time" property="endTime"/>-->
+        <!--            <result column="cdevice_id" property="deviceId"/>-->
+        <!--            <result column="cdevice_property" property="deviceProperty"/>-->
+        <!--            <result column="cproperty_value" property="propertyValue"/>-->
+        <!--            <result column="crelation" property="relation"/>-->
+        <!--        </collection>-->
 
-        <collection property="actions" ofType="pro.dengyi.myhome.model.automation.SceneAction">
+        <collection property="actions"
+                    ofType="pro.dengyi.myhome.model.automation.SceneAction">
 
             <result column="aid" property="id"/>
             <result column="atype" property="type"/>
@@ -54,5 +117,47 @@
             <result column="aproperty_value" property="propertyValue"/>
         </collection>
 
+    </resultMap>
+
+    <resultMap id="singleResultMap"
+               type="pro.dengyi.myhome.model.automation.Scene">
+        <result column="sceneId" property="id"/>
+        <result column="sceneName" property="name"/>
+        <result column="sceneEnable" property="enable"/>
+        <result column="sceneCreateTime" property="createTime"/>
+        <result column="sceneUpdateTime" property="updateTime"/>
+        <collection property="sceneConditionGroups"
+                    resultMap="conditiongroupmap"/>
+        <collection property="actions" resultMap="actionsMap"/>
+    </resultMap>
+
+
+    <resultMap id="conditiongroupmap"
+               type="pro.dengyi.myhome.model.automation.SceneConditionGroup">
+        <result column="conditionGroupOrderNumber" property="orderNumber"/>
+        <result column="conditionGroupRelation" property="relation"/>
+        <collection property="conditions" resultMap="conditionmap"/>
+    </resultMap>
+
+    <resultMap id="conditionmap"
+               type="pro.dengyi.myhome.model.automation.SceneCondition">
+        <result column="conditionType" property="type"/>
+        <result column="conditionStartTime" property="startTime"/>
+        <result column="conditionEndTime" property="endTime"/>
+        <result column="conditionDeviceId" property="deviceId"/>
+        <result column="conditionDeviceProperty" property="deviceProperty"/>
+        <result column="conditionRelation" property="relation"/>
+        <result column="conditionPropertyValue" property="propertyValue"/>
+        <result column="conditionOperator" property="operator"/>
+        <result column="conditionOrderNumber" property="orderNumber"/>
+    </resultMap>
+
+    <resultMap id="actionsMap"
+               type="pro.dengyi.myhome.model.automation.SceneAction">
+        <result column="actionType" property="type"/>
+        <result column="actionDelayTime" property="delayTime"/>
+        <result column="actionDeviceId" property="deviceId"/>
+        <result column="actionProperty" property="deviceProperty"/>
+        <result column="actionPropertyValue" property="propertyValue"/>
     </resultMap>
 </mapper>

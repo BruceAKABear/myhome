@@ -5,8 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import pro.dengyi.myhome.common.mqtt.MyHomeMqttServer;
 import pro.dengyi.myhome.common.utils.PasswordUtil;
 import pro.dengyi.myhome.common.utils.queue.DeviceLogQueue;
 import pro.dengyi.myhome.common.utils.queue.RoomSelectQueue;
@@ -18,6 +18,7 @@ import pro.dengyi.myhome.model.device.DeviceLog;
 import pro.dengyi.myhome.model.system.Family;
 import pro.dengyi.myhome.model.system.User;
 
+import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -90,6 +91,15 @@ public class SystemInitializing {
             }
         });
 
+
+    }
+
+
+    @PostConstruct
+    public void startMqtt() {
+
+        MyHomeMqttServer server = new MyHomeMqttServer(1883);
+        server.startUp();
 
     }
 

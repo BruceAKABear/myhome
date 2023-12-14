@@ -1,6 +1,8 @@
 package pro.dengyi.myhome.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 import pro.dengyi.myhome.model.automation.Scene;
 
@@ -17,4 +19,7 @@ public interface SceneDao extends BaseMapper<Scene> {
 
     List<Scene> sceneListAndDetails();
 
+    List<Scene> selectCustomPage(Integer start, Integer end, @Param("name") String name, @Param("sceneId") String sceneId);
+
+    Integer selectTotalCount(@Param("name") String name, @Param("sceneId") String sceneId);
 }

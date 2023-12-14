@@ -1,11 +1,13 @@
 package pro.dengyi.myhome.model.automation;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import pro.dengyi.myhome.common.enums.RelationEnum;
 import pro.dengyi.myhome.model.base.BaseModel;
 
 import java.time.LocalTime;
@@ -24,19 +26,30 @@ import java.time.LocalTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SceneCondition extends BaseModel {
 
+    //index from 0 to max
+    private Integer orderNumber;
+
+    //first relation is null
+    private RelationEnum relation;
+
     private String sceneId;
+    private String conditionGroupId;
 
     //type: device time
     private String type;
 
+    @JsonFormat(pattern = "HH:mm")
     private LocalTime startTime;
+    @JsonFormat(pattern = "HH:mm")
     private LocalTime endTime;
 
+    //设备id
     private String deviceId;
-
+    //设备
     private String deviceProperty;
+    //操作符
+    private String operator;
+    //值
     private String propertyValue;
-    //first one is null
-    private String relation;
 
 }

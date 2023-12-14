@@ -7,6 +7,7 @@ import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.logging.LoggingSystem;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +38,8 @@ import java.util.Map;
 @Component
 public class MqttMessageHandleThread {
 
+    private LoggingSystem loggingSystem;
+
     @Autowired
     private DeviceDao deviceDao;
     @Autowired
@@ -63,10 +66,14 @@ public class MqttMessageHandleThread {
     @Async("executor")
     @Transactional
     public void handleMessage(String topic, MqttMessage message, MqttClient mqttClient) {
+        // 相对于系统来说
+        // up/deviceId 上，设备上平台收
+        // down/deviceId 下，平台下设备收
         log.info("收到消息:topic:{},消息内容:{}", topic, message.toString());
         String[] topicArray = topic.split("/");
         String productId = topicArray[1];
         String deviceId = topicArray[2];
+        //要不要取消产品id，从topic中。加在其中后在消费消息时获取产品信息更方便，缺点是硬件的固件烧录麻烦
 
         Device device = (Device) cache.get("device:" + deviceId, pa -> deviceDao.selectById(deviceId));
         //设备日志,队列进行异步存储
