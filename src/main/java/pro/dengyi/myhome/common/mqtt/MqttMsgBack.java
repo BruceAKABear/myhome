@@ -3,8 +3,6 @@ package pro.dengyi.myhome.common.mqtt;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.mqtt.*;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +10,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
-public class MyHomeMqttMsgBack {
+public class MqttMsgBack {
 
     /**
      * 确认连接请求
@@ -44,7 +42,7 @@ public class MyHomeMqttMsgBack {
     public static void puback(Channel channel, MqttMessage mqttMessage) {
         MqttPublishMessage mqttPublishMessage = (MqttPublishMessage) mqttMessage;
         MqttFixedHeader mqttFixedHeaderInfo = mqttPublishMessage.fixedHeader();
-        MqttQoS qos = (MqttQoS) mqttFixedHeaderInfo.qosLevel();
+        MqttQoS qos = mqttFixedHeaderInfo.qosLevel();
         byte[] headBytes = new byte[mqttPublishMessage.payload().readableBytes()];
         mqttPublishMessage.payload().readBytes(headBytes);
         String data = new String(headBytes);
@@ -52,8 +50,10 @@ public class MyHomeMqttMsgBack {
 
         switch (qos) {
             case AT_MOST_ONCE:        //	至多一次
+                //QOS0
                 break;
             case AT_LEAST_ONCE:        //	至少一次
+                //QOS1
                 //	构建返回报文， 可变报头
                 MqttMessageIdVariableHeader mqttMessageIdVariableHeaderBack =
                         MqttMessageIdVariableHeader.from(mqttPublishMessage.variableHeader().messageId());
@@ -64,17 +64,22 @@ public class MyHomeMqttMsgBack {
                 log.debug("back--" + pubAck.toString());
                 channel.writeAndFlush(pubAck);
                 break;
-            case EXACTLY_ONCE:        //	刚好一次
-                //	构建返回报文， 固定报头
-                MqttFixedHeader mqttFixedHeaderBack2 = new MqttFixedHeader(MqttMessageType.PUBREC, false, MqttQoS.AT_LEAST_ONCE, false, 0x02);
-                //	构建返回报文， 可变报头
-                MqttMessageIdVariableHeader mqttMessageIdVariableHeaderBack2 =
-                        MqttMessageIdVariableHeader.from(mqttPublishMessage.variableHeader().messageId());
-                MqttMessage mqttMessageBack = new MqttMessage(mqttFixedHeaderBack2, mqttMessageIdVariableHeaderBack2);
-                log.debug("back--" + mqttMessageBack.toString());
-                channel.writeAndFlush(mqttMessageBack);
+            case EXACTLY_ONCE:
+                log.error("we don't support qos2 right now");
+
+
+//                //	刚好一次
+//                //	构建返回报文， 固定报头
+//                MqttFixedHeader mqttFixedHeaderBack2 = new MqttFixedHeader(MqttMessageType.PUBREC, false, MqttQoS.AT_LEAST_ONCE, false, 0x02);
+//                //	构建返回报文， 可变报头
+//                MqttMessageIdVariableHeader mqttMessageIdVariableHeaderBack2 =
+//                        MqttMessageIdVariableHeader.from(mqttPublishMessage.variableHeader().messageId());
+//                MqttMessage mqttMessageBack = new MqttMessage(mqttFixedHeaderBack2, mqttMessageIdVariableHeaderBack2);
+//                log.debug("back--" + mqttMessageBack.toString());
+//                channel.writeAndFlush(mqttMessageBack);
                 break;
             default:
+                log.error("not supported fixed header type");
                 break;
         }
     }
