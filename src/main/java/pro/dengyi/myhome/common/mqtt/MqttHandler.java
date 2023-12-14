@@ -30,6 +30,9 @@ public class MqttHandler extends ChannelHandlerAdapter {
 
         switch (mqttFixedHeader.messageType()) {
             case CONNECT:
+                //todo do auth control in this type of message
+
+
                 //	在一个网络连接上，客户端只能发送一次CONNECT报文。服务端必须将客户端发送的第二个CONNECT报文当作协议违规处理并断开客户端的连接
                 //	to do 建议connect消息单独处理，用来对客户端进行认证管理等 这里直接返回一个CONNACK消息
                 MqttMsgBack.connack(channel, mqttMessage);
