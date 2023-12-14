@@ -19,15 +19,14 @@ import io.netty.handler.timeout.IdleStateHandler;
  * @description：
  * @modified By：
  */
-public class MyHomeMqttServer {
+public class MqttServer {
 
     private NioEventLoopGroup bossGroup;
     private NioEventLoopGroup workerGroup;
+    private final Integer port;
 
-    private Integer port = 8888;
 
-
-    public MyHomeMqttServer(Integer port) {
+    public MqttServer(Integer port) {
         this.port = port;
     }
 
@@ -38,6 +37,7 @@ public class MyHomeMqttServer {
         ServerBootstrap serverBootstrap = new ServerBootstrap();
         serverBootstrap.group(bossGroup, workerGroup);
         serverBootstrap.channel(NioServerSocketChannel.class);
+
 
         try {
             //tcp参数配置
@@ -54,7 +54,6 @@ public class MyHomeMqttServer {
             });
             ChannelFuture channelFuture = serverBootstrap.bind(port).sync();
             if (channelFuture.isSuccess()) {
-                System.out.println("startup success port = " + port);
                 channelFuture.channel().closeFuture().sync();
             } else {
                 System.out.println("startup fail port = " + port);
@@ -73,13 +72,7 @@ public class MyHomeMqttServer {
                 workerGroup.shutdownGracefully().sync();
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
-            } finally {
             }
         }
-    }
-
-    public static void main(String[] args) {
-        MyHomeMqttServer myHomeMqttServer = new MyHomeMqttServer(1883);
-        myHomeMqttServer.startUp();
     }
 }
