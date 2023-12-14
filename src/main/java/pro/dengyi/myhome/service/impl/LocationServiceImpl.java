@@ -26,7 +26,7 @@ public class LocationServiceImpl implements LocationService {
     public void checkLocation(String beaconUuid) {
         if (!ObjectUtils.isEmpty(beaconUuid)) {
             Room room = roomDao.selectOne(
-                    new LambdaQueryWrapper<Room>().eq(Room::getBeaconUuid, beaconUuid).last("limit 1"));
+                    new LambdaQueryWrapper<Room>().eq(Room::getBeacon, beaconUuid).last("limit 1"));
             if (room != null) {
                 String floorId = room.getFloorId();
                 String roomId = room.getId();

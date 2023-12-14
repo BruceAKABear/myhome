@@ -80,10 +80,6 @@ public class DeviceServiceImpl implements DeviceService {
         Product product = productDao.selectById(device.getProductId());
 
         if (ObjectUtils.isEmpty(device.getId())) {
-            //如果芯片ID存在，则芯片ID为设备id
-            if (!ObjectUtils.isEmpty(device.getChipId())) {
-                device.setId(device.getChipId());
-            }
             //新增，默认离线，默认启用,固件版本为1
             device.setEnable(true);
             //不可控设备默认在线
@@ -109,11 +105,11 @@ public class DeviceServiceImpl implements DeviceService {
     }
 
     @Override
-    public IPage<DeviceDto> page(Integer pageNumber, Integer pageSize, String floorId, String roomId,
+    public IPage<DeviceDto> page(Integer pageNumber, Integer pageSize, String familyId, String floorId, String roomId,
                                  String categoryId) {
         IPage<DeviceDto> pageParam = new Page<>(pageNumber == null ? 1 : pageNumber,
                 pageSize == null ? 10 : pageSize);
-        return deviceDao.selectCustomPage(pageParam, floorId, roomId, categoryId);
+        return deviceDao.selectCustomPage(pageParam, familyId, floorId, roomId, categoryId);
     }
 
     @Override

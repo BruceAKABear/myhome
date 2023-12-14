@@ -52,8 +52,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String login(LoginVo loginVo, HttpServletRequest request) {
-        User user = userDao.selectOne(
-                new LambdaQueryWrapper<User>().eq(User::getEmail, loginVo.getEmail()));
+        User user = userDao.selectOne(new LambdaQueryWrapper<User>().eq(User::getEmail, loginVo.getEmail()));
         if (user != null) {
             if (!user.getEnable()) {
                 throw new BusinessException("system.login.user.disable");
@@ -78,8 +77,7 @@ public class UserServiceImpl implements UserService {
         }
         userDao.updateById(user);
         //更新可控设备
-        permUserDeviceDao.delete(
-                new LambdaQueryWrapper<PermUserDevice>().eq(PermUserDevice::getUserId, user.getId()));
+        permUserDeviceDao.delete(new LambdaQueryWrapper<PermUserDevice>().eq(PermUserDevice::getUserId, user.getId()));
 //    role
     }
 
@@ -112,14 +110,10 @@ public class UserServiceImpl implements UserService {
             userDao.updateById(user);
         }
         //设备管理
-        permUserDeviceDao.delete(
-                new LambdaQueryWrapper<PermUserDevice>().eq(PermUserDevice::getUserId, user.getId()));
+        permUserDeviceDao.delete(new LambdaQueryWrapper<PermUserDevice>().eq(PermUserDevice::getUserId, user.getId()));
         //todo
 
-        List<String> deviceIds = (List<String>) cache.get("roleDvice:" + user.getRoleId(),
-                (key) -> SwitchUtil.objToList(permRoleDeviceDao.selectObjs(
-                        new LambdaQueryWrapper<PermRoleDevice>().eq(PermRoleDevice::getRoleId, "1")
-                                .select(PermRoleDevice::getDeviceId)), String.class));
+        List<String> deviceIds = (List<String>) cache.get("roleDvice:" + user.getRoleId(), (key) -> SwitchUtil.objToList(permRoleDeviceDao.selectObjs(new LambdaQueryWrapper<PermRoleDevice>().eq(PermRoleDevice::getRoleId, "1").select(PermRoleDevice::getDeviceId)), String.class));
 
         //todo
         for (String deviceId : deviceIds) {
@@ -135,28 +129,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public IPage<User> page(Integer pageNumber, Integer pageSize, String name) {
-        IPage<User> pageParam = new Page<>(pageNumber == null ? 1 : pageNumber,
-                pageSize == null ? 10 : pageSize);
-        IPage<User> userIPage = userDao.selectPage(pageParam,
-                new LambdaQueryWrapper<User>().and(!(ObjectUtils.isEmpty(name)),
-                                userLambdaQueryWrapper -> userLambdaQueryWrapper.like(User::getName, name))
-                        .select(User::getId, User::getName, User::getAvatar, User::getEmail, User::getGender,
-                                User::getHeight, User::getWeight, User::getAge, User::getCreateTime,
-                                User::getUpdateTime, User::getSuperAdmin, User::getRoleId, User::getEnable));
+        IPage<User> pageParam = new Page<>(pageNumber == null ? 1 : pageNumber, pageSize == null ? 10 : pageSize);
+        IPage<User> userIPage = userDao.selectPage(pageParam, new LambdaQueryWrapper<User>().and(!(ObjectUtils.isEmpty(name)), userLambdaQueryWrapper -> userLambdaQueryWrapper.like(User::getName, name)).select(User::getId, User::getName, User::getAvatar, User::getEmail, User::getGender, User::getHeight, User::getWeight, User::getAge, User::getCreateTime, User::getUpdateTime, User::getSuperAdmin, User::getRoleId, User::getEnable));
 
         for (User user : userIPage.getRecords()) {
 
-            List<Object> objects = permUserDeviceDao.selectObjs(
-                    new LambdaQueryWrapper<PermUserDevice>().eq(PermUserDevice::getUserId, user.getId())
-                            .select(PermUserDevice::getDeviceId));
+            List<Object> objects = permUserDeviceDao.selectObjs(new LambdaQueryWrapper<PermUserDevice>().eq(PermUserDevice::getUserId, user.getId()).select(PermUserDevice::getDeviceId));
             for (Object object : objects) {
                 if (user.getDeviceIds() == null) {
                     user.setDeviceIds(new ArrayList<>());
                 }
                 user.getDeviceIds().add((String) object);
 
-                user.setRoleName(
-                        user.getRoleId() != null ? roleDao.selectById(user.getRoleId()).getName() : null);
+                user.setRoleName(user.getRoleId() != null ? roleDao.selectById(user.getRoleId()).getName() : null);
             }
 
         }
@@ -182,9 +167,9 @@ public class UserServiceImpl implements UserService {
         }
         userDao.deleteById(id);
         //删除设备关联
-        permUserDeviceDao.delete(
-                new LambdaQueryWrapper<PermUserDevice>().eq(PermUserDevice::getUserId, id));
+        permUserDeviceDao.delete(new LambdaQueryWrapper<PermUserDevice>().eq(PermUserDevice::getUserId, id));
     }
+
 
     @Transactional
     @Override
@@ -252,6 +237,13 @@ public class UserServiceImpl implements UserService {
         User user = userDao.selectById(UserHolder.getUser().getId());
         user.setSelectedFamilyId(familyParam.get("familyId"));
         user.setUpdateTime(LocalDateTime.now());
+        userDao.updateById(user);
+    }
+
+    @Override
+    public void updateLang(String lang) {
+        User user = userDao.selectById(UserHolder.getUser().getId());
+        user.setSelectLang(lang);
         userDao.updateById(user);
     }
 }

@@ -16,7 +16,7 @@ import java.util.List;
 @Repository
 public interface FloorDao extends BaseMapper<Floor> {
 
-    List<FloorPageDto> selectFloorDto();
+    List<FloorPageDto> selectFloorDto(@Param("familyId") String familyId);
 
     IPage<FloorPageDto> selectCustomPage(IPage<FloorPageDto> iPage,
                                          @Param("floorName") String floorName, @Param("familyId") String familyId);

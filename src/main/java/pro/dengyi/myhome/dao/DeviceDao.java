@@ -20,7 +20,7 @@ import java.util.List;
 @Repository
 public interface DeviceDao extends BaseMapper<Device> {
 
-    IPage<DeviceDto> selectCustomPage(IPage<DeviceDto> page, @Param("floorId") String floorId,
+    IPage<DeviceDto> selectCustomPage(IPage<DeviceDto> page, @Param("familyId") String familyId, @Param("floorId") String floorId,
                                       @Param("roomId") String roomId, @Param("categoryId") String categoryId);
 
     List<DeviceDto> listByRoomId(@Param("roomId") String roomId, @Param("user") User user,

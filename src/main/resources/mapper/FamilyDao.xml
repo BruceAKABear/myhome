@@ -20,9 +20,9 @@
         family.latitude,
         family.create_time,
         family.update_time,
-        (SELECT COUNT(*) FROM family_floor) AS floorCount,
-        (SELECT COUNT(*) FROM family_room) AS roomCount,
-        (SELECT COUNT(*) FROM device_device) AS deviceCount,
+        (SELECT COUNT(*) FROM family_floor where family_floor.family_id=family.id) AS floorCount,
+        (SELECT COUNT(*) FROM family_room where family_room.family_id=family.id) AS roomCount,
+        (SELECT COUNT(*) FROM device_device ) AS deviceCount,
         family.app_id,
         family.app_secret
         FROM family

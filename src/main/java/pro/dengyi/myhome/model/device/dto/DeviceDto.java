@@ -28,7 +28,7 @@ public class DeviceDto extends Device {
      */
     private String currentStatus;
 
-
+    private String familyName;
     private String floorName;
     private String roomName;
     private String productName;

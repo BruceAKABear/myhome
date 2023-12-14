@@ -70,7 +70,7 @@ public class FloorServiceImpl implements FloorService {
 
     @Override
     public List<FloorPageDto> floorList(String familyId) {
-        return floorDao.selectFloorDto();
+        return floorDao.selectFloorDto(familyId);
     }
 
     @Override

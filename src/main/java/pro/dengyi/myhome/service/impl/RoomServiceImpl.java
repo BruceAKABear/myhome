@@ -37,20 +37,19 @@ public class RoomServiceImpl implements RoomService {
     @Transactional
     @Override
     public void addUpdate(Room room) {
-        Room roomSaved = roomDao.selectOne(
-                new LambdaQueryWrapper<Room>().eq(Room::getFloorId, room.getFloorId())
-                        .eq(Room::getName, room.getName()));
+        Room roomSaved = roomDao.selectOne(new LambdaQueryWrapper<Room>().eq(Room::getFamilyId, room.getFamilyId()).eq(Room::getFloorId, room.getFloorId()).eq(Room::getName, room.getName()));
 
         if (ObjectUtils.isEmpty(room.getId())) {
-
             if (roomSaved != null) {
                 throw new BusinessException("room.add.name.exist");
             }
+            Long size = roomDao.selectCount(new LambdaQueryWrapper<Room>().eq(Room::getFamilyId, room.getFamilyId()).eq(Room::getFloorId, room.getFloorId()));
+            room.setSequence((int) (size + 1));
             room.setCreateTime(LocalDateTime.now());
             room.setUpdateTime(LocalDateTime.now());
             roomDao.insert(room);
         } else {
-            if (roomSaved != null && !roomSaved.equals(room.getId())) {
+            if (roomSaved != null && !roomSaved.getId().equals(room.getId())) {
                 throw new BusinessException("room.update.name.exist");
             }
             room.setUpdateTime(LocalDateTime.now());
@@ -61,8 +60,7 @@ public class RoomServiceImpl implements RoomService {
     @Transactional
     @Override
     public void delete(String id) {
-        Long deviceCount = deviceDao.selectCount(
-                new LambdaQueryWrapper<Device>().eq(Device::getRoomId, id));
+        Long deviceCount = deviceDao.selectCount(new LambdaQueryWrapper<Device>().eq(Device::getRoomId, id));
         if (deviceCount != 0) {
             throw new BusinessException("room.delete.fail.contain.devices");
         }
@@ -74,16 +72,14 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public IPage<RoomDto> page(Integer pageNumber, Integer pageSize, String floorId,
-                               String roomName) {
-        IPage<RoomDto> page = new Page<>(pageNumber == null ? 1 : pageNumber,
-                pageSize == null ? 10 : pageSize);
-        return roomDao.selectCustomPage(page, floorId, roomName);
+    public IPage<RoomDto> page(Integer pageNumber, Integer pageSize, String floorId, String roomName, String familyId) {
+        IPage<RoomDto> page = new Page<>(pageNumber == null ? 1 : pageNumber, pageSize == null ? 10 : pageSize);
+        return roomDao.selectCustomPage(page, floorId, roomName, familyId);
     }
 
     @Override
-    public List<Room> roomList() {
-        return roomDao.selectList(new LambdaQueryWrapper<>());
+    public List<Room> roomList(String floorId) {
+        return roomDao.selectList(new LambdaQueryWrapper<Room>().eq(Room::getFloorId, floorId));
     }
 
     @Override

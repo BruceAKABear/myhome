@@ -54,12 +54,10 @@ public class FloorController {
         floorService.addUpdate(floor);
     }
 
-    @ApiOperation("楼层集合")
+    @ApiOperation("根据家庭ID楼层集合")
     @GetMapping("/floorList")
-    public List<FloorPageDto> floorList() {
-        String familyId = FamilyHolder.familyId();
-
-        return (List<FloorPageDto>) cache.get("floorList", k -> floorService.floorList(familyId));
+    public List<FloorPageDto> floorList(String familyId) {
+        return floorService.floorList(familyId);
     }
 
     @ApiOperation("删除楼层")

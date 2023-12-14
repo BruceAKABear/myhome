@@ -7,7 +7,6 @@
     SELECT device_product_field.id,
            device_product_field.product_id,
            device_product_field.field,
-           device_product_field.field_type,
            device_product_field.label,
            device_product_field.create_time,
            device_product_field.update_time

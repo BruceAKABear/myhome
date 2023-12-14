@@ -15,6 +15,7 @@
                   AND family_floor.id = family_floor.id
               WHERE device_device.room_id = family_room.id) AS deviceCount
       FROM family_floor
+      where family_floor.family_id = #{familyId}
   </select>
   <select id="selectCustomPage" resultType="pro.dengyi.myhome.model.dto.FloorPageDto">
       SELECT

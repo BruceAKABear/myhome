@@ -30,6 +30,10 @@ public class Room extends BaseModel {
     private Integer sequence;
 
     @ApiModelProperty(value = "楼层ID")
+    @NotBlank(message = "家庭ID不能为空")
+    private String familyId;
+
+    @ApiModelProperty(value = "楼层ID")
     @NotBlank(message = "楼层ID不能为空")
     private String floorId;
 
@@ -38,6 +42,6 @@ public class Room extends BaseModel {
     @NotBlank(message = "房间名不能为空")
     private String name;
 
-    @ApiModelProperty(value = "beacon-uuid")
-    private String beaconUuid;
+    @ApiModelProperty(value = "beacon")
+    private String beacon;
 }

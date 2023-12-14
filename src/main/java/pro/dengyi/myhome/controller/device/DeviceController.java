@@ -54,9 +54,9 @@ public class DeviceController {
 
     @ApiOperation("分页查询")
     @GetMapping("/page")
-    public IPage<DeviceDto> page(Integer page, Integer size, String floorId,
+    public IPage<DeviceDto> page(Integer page, Integer size, String familyId, String floorId,
                                  String roomId, String productId) {
-        return deviceService.page(page, size, floorId, roomId, productId);
+        return deviceService.page(page, size, familyId, floorId, roomId, productId);
     }
 
     @ApiOperation("查询调试所有设备")
@@ -109,6 +109,7 @@ public class DeviceController {
 
     /**
      * send debug order to a device, this api only in develop mode can do
+     *
      * @param orderMap
      */
     @ApiOperation("下发debug命令")

@@ -40,4 +40,6 @@ public interface UserService {
     void logout();
 
     void updateSelectFamily(Map<String, String> familyParam);
+
+    void updateLang(String lang);
 }

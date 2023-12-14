@@ -15,5 +15,5 @@ import pro.dengyi.myhome.model.system.Room;
 public interface RoomDao extends BaseMapper<Room> {
 
     IPage<RoomDto> selectCustomPage(IPage<RoomDto> page, @Param("floorId") String floorId,
-                                    @Param("roomName") String roomName);
+                                    @Param("roomName") String roomName, @Param("familyId") String familyId);
 }

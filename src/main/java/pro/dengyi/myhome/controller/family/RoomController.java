@@ -7,6 +7,8 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import pro.dengyi.myhome.common.aop.annotations.Permission;
+import pro.dengyi.myhome.common.utils.FamilyHolder;
 import pro.dengyi.myhome.model.dto.RoomDto;
 import pro.dengyi.myhome.model.system.Room;
 import pro.dengyi.myhome.service.RoomService;
@@ -23,6 +25,7 @@ import java.util.List;
 @Validated
 @Api(tags = "房间接口")
 @RestController
+@Permission
 @RequestMapping("/room")
 public class RoomController {
 
@@ -34,23 +37,27 @@ public class RoomController {
 
     @ApiOperation("分页查询")
     @GetMapping("/page")
-    public IPage<RoomDto> page(Integer page, Integer size, String floorId,
-                               String roomName) {
-        return roomService.page(page, size, floorId, roomName);
+    public IPage<RoomDto> page(Integer page, Integer size, String floorId, String roomName) {
+        String familyId = FamilyHolder.familyId();
+        return roomService.page(page, size, floorId, roomName, familyId);
+    }
+
+    @ApiOperation("后台分页查询")
+    @GetMapping("/pageBackend")
+    public IPage<RoomDto> pageBackend(Integer page, Integer size, String floorId, String roomName, String familyId) {
+        return roomService.page(page, size, floorId, roomName, familyId);
     }
 
     @ApiOperation("查询房间列表")
     @GetMapping("/roomList")
-    public List<Room> roomList() {
-        return (List<Room>) cache.get("roomList", k -> roomService.roomList());
+    public List<Room> roomList(String floorId) {
+        return roomService.roomList(floorId);
     }
 
     @ApiOperation("根据楼层id查询房间列表")
     @GetMapping("/roomListByFloorId")
-    public List<Room> roomListByFloorId(
-            @RequestParam @NotBlank(message = "楼层id不能为空") String floorId) {
-        return (List<Room>) cache.get("roomListByFloorId:" + floorId,
-                k -> roomService.roomListByFloorId(floorId));
+    public List<Room> roomListByFloorId(@RequestParam @NotBlank(message = "楼层id不能为空") String floorId) {
+        return (List<Room>) cache.get("roomListByFloorId:" + floorId, k -> roomService.roomListByFloorId(floorId));
     }
 
 

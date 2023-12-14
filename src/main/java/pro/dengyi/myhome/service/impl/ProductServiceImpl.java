@@ -50,7 +50,7 @@ public class ProductServiceImpl implements ProductService {
                     new LambdaQueryWrapper<Product>().eq(Product::getName, product.getName()));
 
             if (exists) {
-                throw new BusinessException(1, "同名产品已存在，不能继续新增");
+                throw new BusinessException("product.add.name.exist");
             }
             product.setCreateTime(LocalDateTime.now());
             product.setUpdateTime(LocalDateTime.now());

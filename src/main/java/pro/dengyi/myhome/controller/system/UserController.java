@@ -25,6 +25,7 @@ import java.util.Map;
  */
 @Slf4j
 @Api(tags = "用户接口")
+@Permission
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -75,11 +76,10 @@ public class UserController {
         return userService.info();
     }
 
-    @ApiOperation("更新选择的语言")
-    @PostMapping("/updateSelectLang")
-    @Permission(needLogIn = false, needValidate = false)
-    public void updateSelectLang(@RequestBody Map<String, String> langParam) {
-        userService.updateSelectLang(langParam);
+    @ApiOperation("上报选择的语言")
+    @GetMapping("/updateLang")
+    public void updateLang(String lang) {
+        userService.updateLang(lang);
     }
 
     @ApiOperation("更新选择的家庭")

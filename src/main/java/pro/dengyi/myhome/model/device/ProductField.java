@@ -35,9 +35,4 @@ public class ProductField extends BaseModel {
     @NotBlank(message = "字段不能为空")
     private String field;
 
-    //todo 可以删除所有的类型都用字符串
-    @ApiModelProperty(value = "字段类型")
-    @NotBlank(message = "字段类型不能为空")
-    private String fieldType;
-
 }

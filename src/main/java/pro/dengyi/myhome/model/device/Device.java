@@ -23,17 +23,9 @@ import javax.validation.constraints.NotBlank;
 @ApiModel("设备实体")
 public class Device extends BaseModel {
 
-    //todo 可以和id合二为一
-    @ApiModelProperty(value = "芯片ID")
-    private String chipId;
-
     @ApiModelProperty(value = "产品ID")
     @NotBlank(message = "所属产品必选")
     private String productId;
-
-//  @ApiModelProperty(value = "连接密码")
-//  private String loginPassword;
-
 
     @ApiModelProperty(value = "是否网关设备")
     private Boolean gateway;
@@ -52,6 +44,9 @@ public class Device extends BaseModel {
     @Length(min = 2, max = 20)
     @NotBlank(message = "设备名必须填写")
     private String nickName;
+
+    @ApiModelProperty(value = "所属楼层ID")
+    private String familyId;
 
     @ApiModelProperty(value = "所属楼层ID")
     @TableField(updateStrategy = FieldStrategy.IGNORED)

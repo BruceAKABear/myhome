@@ -21,7 +21,7 @@ public interface DeviceService {
 
     void delete(String id);
 
-    IPage<DeviceDto> page(Integer pageNumber, Integer pageSize, String floorId, String roomId,
+    IPage<DeviceDto> page(Integer pageNumber, Integer pageSize, String familyId, String floorId, String roomId,
                           String categoryId);
 
     List<Device> debugDeviceList(String productId);
