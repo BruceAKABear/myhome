@@ -1,5 +1,6 @@
 package pro.dengyi.myhome.common.mqtt;
 
+import com.github.benmanes.caffeine.cache.Cache;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.ChannelFuture;
@@ -10,7 +11,6 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.mqtt.MqttDecoder;
-import io.netty.handler.codec.mqtt.MqttEncoder;
 import io.netty.handler.timeout.IdleStateHandler;
 
 /**
@@ -20,6 +20,8 @@ import io.netty.handler.timeout.IdleStateHandler;
  * @modified By：
  */
 public class MqttServer {
+
+
 
     private NioEventLoopGroup bossGroup;
     private NioEventLoopGroup workerGroup;
@@ -47,7 +49,7 @@ public class MqttServer {
                 protected void initChannel(NioSocketChannel ch) throws Exception {
                     ChannelPipeline channelPipeline = ch.pipeline();
                     channelPipeline.addLast(new IdleStateHandler(600, 600, 1200));
-                    channelPipeline.addLast("encoder", MqttEncoder.DEFAUL_ENCODER);
+                    channelPipeline.addLast("encoder", new MyMqttEncoder());
                     channelPipeline.addLast("decoder", new MqttDecoder());
                     channelPipeline.addLast(new MqttHandler());
                 }
