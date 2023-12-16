@@ -3,6 +3,7 @@ package pro.dengyi.myhome.common.mqtt;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.mqtt.*;
 import lombok.extern.slf4j.Slf4j;
+import pro.dengyi.myhome.model.device.Device;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,17 +21,39 @@ public class MqttMsgBack {
      */
     public static void connack(Channel channel, MqttMessage mqttMessage) {
         MqttConnectMessage mqttConnectMessage = (MqttConnectMessage) mqttMessage;
+        MqttConnAckVariableHeader mqttConnAckVariableHeaderBack = getMqttConnAckVariableHeader(mqttConnectMessage);
         MqttFixedHeader mqttFixedHeaderInfo = mqttConnectMessage.fixedHeader();
-        MqttConnectVariableHeader mqttConnectVariableHeaderInfo = mqttConnectMessage.variableHeader();
-
-        //	构建返回报文， 可变报头
-        MqttConnAckVariableHeader mqttConnAckVariableHeaderBack = new MqttConnAckVariableHeader(MqttConnectReturnCode.CONNECTION_ACCEPTED);
         //	构建返回报文， 固定报头
         MqttFixedHeader mqttFixedHeaderBack = new MqttFixedHeader(MqttMessageType.CONNACK, mqttFixedHeaderInfo.isDup(), MqttQoS.AT_MOST_ONCE, mqttFixedHeaderInfo.isRetain(), 0x02);
         //	构建CONNACK消息体
         MqttConnAckMessage connAck = new MqttConnAckMessage(mqttFixedHeaderBack, mqttConnAckVariableHeaderBack);
-        log.debug("back--" + connAck.toString());
         channel.writeAndFlush(connAck);
+
+    }
+
+    private static MqttConnAckVariableHeader getMqttConnAckVariableHeader(MqttConnectMessage mqttConnectMessage) {
+        MqttConnectPayload mqttConnectPayload = mqttConnectMessage.payload();
+        String clientId = mqttConnectPayload.clientIdentifier();
+        MqttConnAckVariableHeader mqttConnAckVariableHeaderBack = new MqttConnAckVariableHeader(MqttConnectReturnCode.CONNECTION_REFUSED_IDENTIFIER_REJECTED);
+        //to get all client identifiers and judgment
+        // whether the device can connect or not
+        ArrayList<Device> devices = new ArrayList<>();
+        Device device2 = new Device();
+        device2.setId("mqttx_0466bd74");
+        devices.add(device2);
+        for (Device device : devices) {
+            if (device.getId().equals(clientId)) {
+                mqttConnAckVariableHeaderBack = new MqttConnAckVariableHeader(MqttConnectReturnCode.CONNECTION_ACCEPTED);
+                MqttHandler.cache.put(clientId,clientId);
+                MqttHandler.cache.get(clientId,(key)->{
+                    MqttHandler.cache.put(clientId,clientId);
+                    return null;
+                });
+
+                Object o = MqttHandler.cache.getIfPresent(clientId);
+            }
+        }
+        return mqttConnAckVariableHeaderBack;
     }
 
     /**
@@ -97,7 +120,7 @@ public class MqttMsgBack {
         //	构建返回报文， 可变报头
         MqttMessageIdVariableHeader mqttMessageIdVariableHeaderBack = MqttMessageIdVariableHeader.from(messageIdVariableHeader.messageId());
         MqttMessage mqttMessageBack = new MqttMessage(mqttFixedHeaderBack, mqttMessageIdVariableHeaderBack);
-        log.debug("back--" + mqttMessageBack.toString());
+        log.debug("back--" + mqttMessageBack);
         channel.writeAndFlush(mqttMessageBack);
     }
 
@@ -124,7 +147,7 @@ public class MqttMsgBack {
         MqttFixedHeader mqttFixedHeaderBack = new MqttFixedHeader(MqttMessageType.SUBACK, false, MqttQoS.AT_MOST_ONCE, false, 2 + topics.size());
         //	构建返回报文	订阅确认
         MqttSubAckMessage subAck = new MqttSubAckMessage(mqttFixedHeaderBack, variableHeaderBack, payloadBack);
-        log.debug("back--" + subAck.toString());
+        log.debug("back--" + subAck);
         channel.writeAndFlush(subAck);
     }
 
@@ -135,6 +158,8 @@ public class MqttMsgBack {
      * @param mqttMessage
      */
     public static void unsuback(Channel channel, MqttMessage mqttMessage) {
+
+
         MqttMessageIdVariableHeader messageIdVariableHeader = (MqttMessageIdVariableHeader) mqttMessage.variableHeader();
         //	构建返回报文	可变报头
         MqttMessageIdVariableHeader variableHeaderBack = MqttMessageIdVariableHeader.from(messageIdVariableHeader.messageId());

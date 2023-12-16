@@ -1,11 +1,17 @@
 package pro.dengyi.myhome.common.mqtt;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.Scheduler;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.mqtt.MqttFixedHeader;
 import io.netty.handler.codec.mqtt.MqttMessage;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author ：dengyi(A.K.A Bear)
@@ -15,6 +21,13 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class MqttHandler extends ChannelHandlerAdapter {
+
+    static Cache<String, Object> cache;
+
+    static {
+        cache = Caffeine.newBuilder().scheduler(Scheduler.forScheduledExecutorService(Executors.newScheduledThreadPool(1))).expireAfterAccess(10, TimeUnit.SECONDS).removalListener((key, value, cause) -> System.err.println("过期" + key + ":" + value + ":" + cause)).build();
+
+    }
 
 
     @Override
@@ -28,18 +41,19 @@ public class MqttHandler extends ChannelHandlerAdapter {
         MqttFixedHeader mqttFixedHeader = mqttMessage.fixedHeader();
         Channel channel = ctx.channel();
 
+
         switch (mqttFixedHeader.messageType()) {
             case CONNECT:
                 //todo do auth control in this type of message
 
-
                 //	在一个网络连接上，客户端只能发送一次CONNECT报文。服务端必须将客户端发送的第二个CONNECT报文当作协议违规处理并断开客户端的连接
                 //	to do 建议connect消息单独处理，用来对客户端进行认证管理等 这里直接返回一个CONNACK消息
                 MqttMsgBack.connack(channel, mqttMessage);
+                break;
 
             case PUBLISH:        //	客户端发布消息
                 //	PUBACK报文是对QoS 1等级的PUBLISH报文的响应
-                System.out.println("123");
+                System.out.println(mqttMessage);
                 MqttMsgBack.puback(channel, mqttMessage);
                 break;
             case PUBREL:        //	发布释放
@@ -59,20 +73,32 @@ public class MqttHandler extends ChannelHandlerAdapter {
                 //	to do
                 MqttMsgBack.unsuback(channel, mqttMessage);
                 break;
-            case PINGREQ:        //	客户端发起心跳
+            case PINGREQ:
+                //	客户端发起心跳
                 //	客户端发送PINGREQ报文给服务端的
                 //	在没有任何其它控制报文从客户端发给服务的时，告知服务端客户端还活着
                 //	请求服务端发送 响应确认它还活着，使用网络以确认网络连接没有断开
                 MqttMsgBack.pingresp(channel, mqttMessage);
                 break;
-            case DISCONNECT:    //	客户端主动断开连接
+            case DISCONNECT:
+                //	客户端主动断开连接
                 //	DISCONNECT报文是客户端发给服务端的最后一个控制报文， 服务端必须验证所有的保留位都被设置为0
                 //	to do
+
+                handleDiscount(channel, mqttMessage);
                 break;
             default:
+                log.error("unsupported type of header");
                 break;
         }
 
+    }
+
+    private void handleDiscount(Channel channel, MqttMessage mqttMessage) {
+        MqttFixedHeader mqttFixedHeader = mqttMessage.fixedHeader();
+        Object payload = mqttMessage.payload();
+
+        System.out.println("---");
     }
 
 }
