@@ -69,7 +69,10 @@
                 AND scene_scene.id = #{sceneId}
             </if>
         </where>
-        limit #{start},#{end})as abc on scene_scene.id=abc.id
+        <if test="end != -1">
+            limit #{start},#{end})as abc on scene_scene.id=abc.id
+        </if>
+        ) as abc on scene_scene.id=abc.id
         ORDER BY
         scene_condition_group.order_number ASC,
         scene_condition.order_number ASC

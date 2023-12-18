@@ -26,7 +26,7 @@ public class SceneCacheInitialize {
     private Cache sceneCache;
 
 
-    @EventListener(ApplicationReadyEvent.class)
+//    @EventListener(ApplicationReadyEvent.class)
     public void initCache() {
         IPage<Scene> page = sceneService.page(1, -1, null, null);
         List<Scene> enableScenes = page.getRecords().stream().filter(Scene::getEnable).collect(Collectors.toList());
