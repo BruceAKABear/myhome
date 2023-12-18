@@ -1,13 +1,16 @@
 package pro.dengyi.myhome;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import pro.dengyi.myhome.common.pubsub.EventTypeEnum;
-import pro.dengyi.myhome.common.utils.JavaScriptEngine;
 import pro.dengyi.myhome.common.pubsub.PubAndSubService;
+import pro.dengyi.myhome.common.utils.JavaScriptEngine;
+import pro.dengyi.myhome.common.scene.SceneEngine;
 import pro.dengyi.myhome.dao.DeviceDao;
 import pro.dengyi.myhome.dao.PermUserDeviceDao;
 import pro.dengyi.myhome.dao.SceneDao;
@@ -78,8 +81,10 @@ class MyhomeApplicationTests {
 
             for (Device device : devices) {
                 boolean exists = permUserDeviceDao.exists(
-                        new LambdaQueryWrapper<PermUserDevice>().eq(PermUserDevice::getUserId, user.getId())
-                                .eq(PermUserDevice::getDeviceId, device.getId()));
+                        new LambdaQueryWrapper<PermUserDevice>().eq(
+                                        PermUserDevice::getUserId, user.getId())
+                                .eq(PermUserDevice::getDeviceId,
+                                        device.getId()));
                 if (!exists) {
                     PermUserDevice pud = new PermUserDevice();
                     pud.setDeviceId(device.getId());
@@ -209,7 +214,8 @@ class MyhomeApplicationTests {
          * */
 
 
-        ScriptEngine scriptEngine = new ScriptEngineManager().getEngineByName("JavaScript");
+        ScriptEngine scriptEngine = new ScriptEngineManager().getEngineByName(
+                "JavaScript");
 
     }
 
@@ -243,6 +249,24 @@ class MyhomeApplicationTests {
 
         pubAndSubService.publish(EventTypeEnum.DEVICE_REPORT, param);
         TimeUnit.SECONDS.sleep(20);
+
+    }
+
+
+    @Autowired
+    private SceneEngine sceneEngine;
+
+    @Test
+    public void triggerEngine() throws JsonProcessingException {
+
+        HashMap<String, Object> param = new HashMap<>();
+        param.put("deviceId", "abcd123111");
+        param.put("man", "false");
+        ObjectMapper objectMapper = new ObjectMapper();
+
+
+
+        sceneEngine.execute("abcd123111",objectMapper.writeValueAsString(param));
 
     }
 

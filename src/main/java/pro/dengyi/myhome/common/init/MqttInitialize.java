@@ -11,7 +11,7 @@ import pro.dengyi.myhome.common.mqtt.MqttServer;
  * @description：
  * @modified By：
  */
-@Component
+//@Component
 public class MqttInitialize {
 
 

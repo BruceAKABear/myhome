@@ -7,7 +7,17 @@ package pro.dengyi.myhome.common.enums;
  * @modified By：
  */
 public enum RelationEnum {
-    AND,
-    OR,
-    NOT
+    AND("&&"),
+    OR("||"),
+    NOT("!");
+
+    private String val;
+
+    RelationEnum(String value) {
+        this.val = value;
+    }
+
+    public String getValue() {
+        return val;
+    }
 }
