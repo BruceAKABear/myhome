@@ -5,8 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-import pro.dengyi.myhome.common.mqtt.MyHomeMqttServer;
 import pro.dengyi.myhome.common.utils.PasswordUtil;
 import pro.dengyi.myhome.common.utils.queue.DeviceLogQueue;
 import pro.dengyi.myhome.common.utils.queue.RoomSelectQueue;
@@ -31,7 +31,7 @@ import java.util.concurrent.Executor;
  * @modified By：
  */
 @Slf4j
-//@Component
+@Component
 public class SystemInitializing {
     private static final String INITIAL_DATA_ID = "1";
     @Autowired
@@ -94,14 +94,6 @@ public class SystemInitializing {
 
     }
 
-
-    @PostConstruct
-    public void startMqtt() {
-
-        MyHomeMqttServer server = new MyHomeMqttServer(1883);
-        server.startUp();
-
-    }
 
 
 }

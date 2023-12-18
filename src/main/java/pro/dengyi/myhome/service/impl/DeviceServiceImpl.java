@@ -45,8 +45,6 @@ public class DeviceServiceImpl implements DeviceService {
     @Autowired
     private DeviceDao deviceDao;
     @Autowired
-    private MqttClient mqttClient;
-    @Autowired
     private DeviceLogDao deviceLogDao;
     @Autowired
     private FloorDao floorDao;
@@ -223,14 +221,14 @@ public class DeviceServiceImpl implements DeviceService {
             String controlTopic = "control/" + device.getProductId() + "/" + device.getId();
             MqttMessage message = new MqttMessage(cmdContent.getBytes(StandardCharsets.UTF_8));
             message.setQos(1);
-            try {
-                mqttClient.publish(controlTopic, message);
-                DeviceLog deviceLog = new DeviceLog(device.getProductId(), device.getId(), controlTopic,
-                        cmdContent, "down", "man", UserHolder.getUser().getId());
-                DeviceLogQueue.publish(deviceLog);
-            } catch (MqttException e) {
-                log.error("发送命令失败", e);
-            }
+//            try {
+//                mqttClient.publish(controlTopic, message);
+//                DeviceLog deviceLog = new DeviceLog(device.getProductId(), device.getId(), controlTopic,
+//                        cmdContent, "down", "man", UserHolder.getUser().getId());
+//                DeviceLogQueue.publish(deviceLog);
+//            } catch (MqttException e) {
+//                log.error("发送命令失败", e);
+//            }
 
         }
 
@@ -463,15 +461,15 @@ public class DeviceServiceImpl implements DeviceService {
                         MqttMessage message = new MqttMessage(cmdContent.getBytes(StandardCharsets.UTF_8));
                         System.out.println(message);
                         message.setQos(1);
-                        try {
-                            mqttClient.publish(controlTopic, message);
-                            DeviceLog deviceLog = new DeviceLog(device.getProductId(), device.getId(),
-                                    controlTopic,
-                                    cmdContent, "down", "onebutton", UserHolder.getUser().getId());
-                            DeviceLogQueue.publish(deviceLog);
-                        } catch (MqttException e) {
-                            log.error("发送命令失败", e);
-                        }
+//                        try {
+//                            mqttClient.publish(controlTopic, message);
+//                            DeviceLog deviceLog = new DeviceLog(device.getProductId(), device.getId(),
+//                                    controlTopic,
+//                                    cmdContent, "down", "onebutton", UserHolder.getUser().getId());
+//                            DeviceLogQueue.publish(deviceLog);
+//                        } catch (MqttException e) {
+//                            log.error("发送命令失败", e);
+//                        }
                     }
 
                     break;

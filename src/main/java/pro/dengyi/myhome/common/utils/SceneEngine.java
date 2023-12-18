@@ -84,51 +84,8 @@ public class SceneEngine {
 
     }
 
-
-
-
-//    for (Scene scene : scenes) {
-//        boolean finalStatus = evaluateScene(scene);
-//        if (finalStatus) {
-//            sendCmd(scene);
-//        }
-//    }
-//
-//    private boolean evaluateScene(Scene scene) {
-//        String conditionGroupJudgmentString = scene.getSceneConditionGroups().stream()
-//                .map(this::evaluateConditionGroup)
-//                .collect(Collectors.joining(" "));
-//
-//        return jsEngineEva(conditionGroupJudgmentString);
-//    }
-//
-//    private String evaluateConditionGroup(SceneConditionGroup sceneConditionGroup) {
-//        RelationEnum relation = sceneConditionGroup.getRelation();
-//        String conditionJudgmentString = sceneConditionGroup.getConditions().stream()
-//                .map(this::evaluateCondition)
-//                .collect(Collectors.joining(" "));
-//
-//        return relation + " " + jsEngineEva(conditionJudgmentString);
-//    }
-//
-//    private String evaluateCondition(SceneCondition sceneCondition) {
-//        switch (sceneCondition.getType()) {
-//            case "timePeriod":
-//                LocalTime serverTimeNow = LocalTime.now();
-//                LocalTime startTime = sceneCondition.getStartTime();
-//                LocalTime endTime = sceneCondition.getEndTime();
-//                boolean isTimeWithinRange = !serverTimeNow.isBefore(startTime) && !serverTimeNow.isAfter(endTime);
-//                return isTimeWithinRange ? "true" : "false";
-//            case "device":
-//                // Evaluate device condition logic
-//                break;
-//            default:
-//                break;
-//        }
-//        return "";
-//    }
-
     private void doLogic(String deviceId, String payload, List<Scene> scenes) {
+
 
         for (Scene scene : scenes) {
             List<SceneConditionGroup> sceneConditionGroups = scene.getSceneConditionGroups();
@@ -166,6 +123,7 @@ public class SceneEngine {
 
                             break;
                         case "device":
+
                             break;
                         default:
                             break;

@@ -16,16 +16,16 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 public class CacheConfig {
 
-    @Bean("cache")
-    public Cache<String, Object> cache() {
-        return Caffeine.newBuilder()
-                //最后一次访问7天后过期
-                .expireAfterAccess(7, TimeUnit.DAYS)
-                // 初始的缓存空间大小
-                .initialCapacity(100)
-                // 缓存的最大条数
-                .maximumSize(10000).build();
-    }
+//    @Bean("cache")
+//    public Cache<String, Object> cache() {
+//        return Caffeine.newBuilder()
+//                //最后一次访问7天后过期
+//                .expireAfterAccess(7, TimeUnit.DAYS)
+//                // 初始的缓存空间大小
+//                .initialCapacity(100)
+//                // 缓存的最大条数
+//                .maximumSize(10000).build();
+//    }
 
 
     /**
@@ -41,17 +41,5 @@ public class CacheConfig {
                 // 缓存的最大条数
                 .maximumSize(10000).build();
     }
-
-
-//    @Bean("sceneCaches")
-//    public Cache<String, Object> sceneCaches() {
-//        return Caffeine.newBuilder()
-//                //最后一次访问7天后过期
-//                .expireAfterAccess(7, TimeUnit.DAYS)
-//                // 初始的缓存空间大小
-//                .initialCapacity(100)
-//                // 缓存的最大条数
-//                .maximumSize(10000).build();
-//    }
 
 }
