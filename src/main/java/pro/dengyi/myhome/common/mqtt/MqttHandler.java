@@ -1,17 +1,23 @@
 package pro.dengyi.myhome.common.mqtt;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.Scheduler;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.mqtt.MqttFixedHeader;
-import io.netty.handler.codec.mqtt.MqttMessage;
+import io.netty.handler.codec.mqtt.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationContext;
+import pro.dengyi.myhome.model.device.Device;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * @author ：dengyi(A.K.A Bear)
@@ -21,37 +27,53 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public class MqttHandler extends ChannelHandlerAdapter {
+    //supported version
+    public static final String PROTOCOL_VERSION = "4";
+    ObjectMapper objectMapper = new ObjectMapper();
+
 
     static Cache<String, Object> cache;
+    private ApplicationContext applicationContext;
 
     static {
-        cache = Caffeine.newBuilder().scheduler(Scheduler.forScheduledExecutorService(Executors.newScheduledThreadPool(1))).expireAfterAccess(10, TimeUnit.SECONDS).removalListener((key, value, cause) -> System.err.println("过期" + key + ":" + value + ":" + cause)).build();
-
+        cache = Caffeine.newBuilder().scheduler(
+                        Scheduler.forScheduledExecutorService(
+                                Executors.newScheduledThreadPool(1)))
+                .expireAfterAccess(60, TimeUnit.SECONDS).removalListener(
+                        (key, value, cause) -> System.err.println(
+                                "过期" + key + ":" + value + ":" + cause))
+                .build();
     }
 
 
+    public MqttHandler(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
+
+    /**
+     * we validate all message for safe,the first thing is do validate
+     *
+     * @param ctx
+     * @param msg
+     */
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
-        if (msg == null) {
-            log.error("mqtt client connect server error,message is null");
+        //safe validate
+        if (!safeCheck(ctx, msg)) {
             return;
         }
         MqttMessage mqttMessage = (MqttMessage) msg;
-        log.info("receive message from device,message is:{}", mqttMessage);
         MqttFixedHeader mqttFixedHeader = mqttMessage.fixedHeader();
+        Object variableHeader = mqttMessage.variableHeader();
         Channel channel = ctx.channel();
-
 
         switch (mqttFixedHeader.messageType()) {
             case CONNECT:
-                //todo do auth control in this type of message
-
-                //	在一个网络连接上，客户端只能发送一次CONNECT报文。服务端必须将客户端发送的第二个CONNECT报文当作协议违规处理并断开客户端的连接
-                //	to do 建议connect消息单独处理，用来对客户端进行认证管理等 这里直接返回一个CONNACK消息
-                MqttMsgBack.connack(channel, mqttMessage);
+                handleConnect(channel, mqttMessage);
                 break;
-
-            case PUBLISH:        //	客户端发布消息
+            case PUBLISH:
+                handlePublish(channel,mqttMessage);
+                //	客户端发布消息
                 //	PUBACK报文是对QoS 1等级的PUBLISH报文的响应
                 System.out.println(mqttMessage);
                 MqttMsgBack.puback(channel, mqttMessage);
@@ -61,12 +83,8 @@ public class MqttHandler extends ChannelHandlerAdapter {
                 //	to do
                 MqttMsgBack.pubcomp(channel, mqttMessage);
                 break;
-            case SUBSCRIBE:        //	客户端订阅主题
-                //	客户端向服务端发送SUBSCRIBE报文用于创建一个或多个订阅，每个订阅注册客户端关心的一个或多个主题。
-                //	为了将应用消息转发给与那些订阅匹配的主题，服务端发送PUBLISH报文给客户端。
-                //	SUBSCRIBE报文也（为每个订阅）指定了最大的QoS等级，服务端根据这个发送应用消息给客户端
-                // 	to do
-                MqttMsgBack.suback(channel, mqttMessage);
+            case SUBSCRIBE:
+                handleSubscribe(channel, mqttMessage);
                 break;
             case UNSUBSCRIBE:    //	客户端取消订阅
                 //	客户端发送UNSUBSCRIBE报文给服务端，用于取消订阅主题
@@ -74,31 +92,183 @@ public class MqttHandler extends ChannelHandlerAdapter {
                 MqttMsgBack.unsuback(channel, mqttMessage);
                 break;
             case PINGREQ:
-                //	客户端发起心跳
-                //	客户端发送PINGREQ报文给服务端的
-                //	在没有任何其它控制报文从客户端发给服务的时，告知服务端客户端还活着
-                //	请求服务端发送 响应确认它还活着，使用网络以确认网络连接没有断开
-                MqttMsgBack.pingresp(channel, mqttMessage);
+                handlePing(channel);
                 break;
             case DISCONNECT:
-                //	客户端主动断开连接
-                //	DISCONNECT报文是客户端发给服务端的最后一个控制报文， 服务端必须验证所有的保留位都被设置为0
-                //	to do
-
-                handleDiscount(channel, mqttMessage);
+                handleDiscount(channel);
                 break;
             default:
-                log.error("unsupported type of header");
+                log.error("unsupported type of mqtt header");
                 break;
         }
 
     }
 
-    private void handleDiscount(Channel channel, MqttMessage mqttMessage) {
-        MqttFixedHeader mqttFixedHeader = mqttMessage.fixedHeader();
-        Object payload = mqttMessage.payload();
+    private void handlePublish(Channel channel, MqttMessage mqttMessage) {
 
-        System.out.println("---");
+        MqttPublishMessage mqttPublishMessage = (MqttPublishMessage) mqttMessage;
+        MqttFixedHeader mqttFixedHeaderInfo = mqttPublishMessage.fixedHeader();
+        MqttQoS qos = mqttFixedHeaderInfo.qosLevel();
+        byte[] headBytes = new byte[mqttPublishMessage.payload().readableBytes()];
+        mqttPublishMessage.payload().readBytes(headBytes);
+        String data = new String(headBytes);
+
+
+    }
+
+    /**
+     * judgement
+     *
+     * @param channel
+     * @param mqttMessage
+     */
+    private void handleSubscribe(Channel channel, MqttMessage mqttMessage) {
+
+        MqttSubscribeMessage mqttSubscribeMessage = (MqttSubscribeMessage) mqttMessage;
+        MqttMessageIdVariableHeader messageIdVariableHeader = mqttSubscribeMessage.variableHeader();
+        //	构建返回报文， 可变报头
+        MqttMessageIdVariableHeader variableHeaderBack = MqttMessageIdVariableHeader.from(
+                messageIdVariableHeader.messageId());
+        Set<String> topics = mqttSubscribeMessage.payload().topicSubscriptions()
+                .stream()
+                .map(mqttTopicSubscription -> mqttTopicSubscription.topicName())
+                .collect(Collectors.toSet());
+        //log.info(topics.toString());
+        List<Integer> grantedQoSLevels = new ArrayList<>(topics.size());
+        for (int i = 0; i < topics.size(); i++) {
+            grantedQoSLevels.add(
+                    mqttSubscribeMessage.payload().topicSubscriptions().get(i)
+                            .qualityOfService().value());
+        }
+        //	构建返回报文	有效负载
+        MqttSubAckPayload payloadBack = new MqttSubAckPayload(grantedQoSLevels);
+        //	构建返回报文	固定报头
+        MqttFixedHeader mqttFixedHeaderBack = new MqttFixedHeader(
+                MqttMessageType.SUBACK, false, MqttQoS.AT_MOST_ONCE, false,
+                2 + topics.size());
+        //	构建返回报文	订阅确认
+        MqttSubAckMessage subAck = new MqttSubAckMessage(mqttFixedHeaderBack,
+                variableHeaderBack, payloadBack);
+        log.debug("back--" + subAck);
+        channel.writeAndFlush(subAck);
+
+
+    }
+
+    private void handlePing(Channel channel) {
+        String deviceAddress = channel.remoteAddress().toString();
+        Device device = (Device) cache.getIfPresent(deviceAddress);
+        log.info("ping from device:{}", device.getId());
+        MqttFixedHeader fixedHeader = new MqttFixedHeader(
+                MqttMessageType.PINGRESP, false, MqttQoS.AT_MOST_ONCE, false,
+                0);
+        MqttMessage mqttMessageBack = new MqttMessage(fixedHeader);
+        channel.writeAndFlush(mqttMessageBack);
+    }
+
+    /**
+     * 1. check ip
+     * 2. check  mqtt version
+     *
+     * @param ctx
+     * @param msg
+     * @return
+     */
+    private boolean safeCheck(ChannelHandlerContext ctx, Object msg) {
+        //we need to escape connect
+        boolean trough = true;
+        MqttMessage mqttMessage = (MqttMessage) msg;
+        MqttFixedHeader mqttFixedHeader = mqttMessage.fixedHeader();
+        if (!mqttFixedHeader.messageType().equals(MqttMessageType.CONNECT)) {
+            //todo msg validate
+            Channel channel = ctx.channel();
+            String deviceAddress = channel.remoteAddress().toString();
+            Object deviceLogin = cache.getIfPresent(deviceAddress);
+            if (deviceLogin == null) {
+                MqttFixedHeader mqttFixedHeaderBack = new MqttFixedHeader(
+                        MqttMessageType.CONNACK, false, MqttQoS.AT_MOST_ONCE,
+                        false, 0x02);
+                MqttConnAckVariableHeader mqttConnAckVariableHeaderBack = new MqttConnAckVariableHeader(
+                        MqttConnectReturnCode.CONNECTION_REFUSED_NOT_AUTHORIZED);
+                MqttConnAckMessage connAck = new MqttConnAckMessage(
+                        mqttFixedHeaderBack, mqttConnAckVariableHeaderBack);
+                channel.writeAndFlush(connAck);
+                trough = false;
+            }
+        }
+
+
+        return trough;
+
+    }
+
+    private void versionControl(ChannelHandlerContext ctx) {
+        Channel channel = ctx.channel();
+        String deviceAddress = channel.remoteAddress().toString();
+        Object deviceLogin = cache.getIfPresent(deviceAddress);
+    }
+
+    /**
+     * 处理mqtt连接逻辑
+     * <p>
+     * ip认证权重最高，基于DHCP租期到时ip会改变，基于clientID 进行第二重验证
+     * <p>
+     * 1.校验mqtt版本
+     *
+     * @param channel
+     * @param mqttMessage
+     */
+    private void handleConnect(Channel channel, MqttMessage mqttMessage) {
+        String deviceAddress = channel.remoteAddress().toString();
+        Object deviceLogin = cache.getIfPresent(deviceAddress);
+        MqttConnectMessage mqttConnectMessage = (MqttConnectMessage) mqttMessage;
+        if (deviceLogin == null) {
+            //查询设备clientid不在系统中，不允许连接，走缓存加速
+            String clientId = mqttConnectMessage.payload().clientIdentifier();
+            Cache deviceCache = (Cache) applicationContext.getBean(
+                    "deviceCache");
+            Object device = deviceCache.getIfPresent(clientId);
+            if (device == null) {
+                MqttFixedHeader fixedHeader = mqttConnectMessage.fixedHeader();
+                MqttFixedHeader mqttFixedHeaderBack = new MqttFixedHeader(
+                        MqttMessageType.CONNACK, fixedHeader.isDup(),
+                        MqttQoS.AT_MOST_ONCE, fixedHeader.isRetain(), 0x02);
+                MqttConnAckVariableHeader mqttConnAckVariableHeaderBack = new MqttConnAckVariableHeader(
+                        MqttConnectReturnCode.CONNECTION_REFUSED_IDENTIFIER_REJECTED);
+                MqttConnAckMessage connAck = new MqttConnAckMessage(
+                        mqttFixedHeaderBack, mqttConnAckVariableHeaderBack);
+                channel.writeAndFlush(connAck);
+            } else {
+                MqttFixedHeader fixedHeader = mqttConnectMessage.fixedHeader();
+                MqttFixedHeader mqttFixedHeaderBack = new MqttFixedHeader(
+                        MqttMessageType.CONNACK, fixedHeader.isDup(),
+                        MqttQoS.AT_MOST_ONCE, fixedHeader.isRetain(), 0x02);
+                MqttConnAckVariableHeader mqttConnAckVariableHeaderBack = new MqttConnAckVariableHeader(
+                        MqttConnectReturnCode.CONNECTION_ACCEPTED);
+                MqttConnAckMessage connAck = new MqttConnAckMessage(
+                        mqttFixedHeaderBack, mqttConnAckVariableHeaderBack);
+                channel.writeAndFlush(connAck);
+                cache.put(deviceAddress, device);
+            }
+        } else {
+            //why?
+            //在一个网络连接上，客户端只能发送一次CONNECT报文。服务端必须将客户端发送的第二个CONNECT报文当作协议违规处理并断开客户端的连接
+            //已经登录过，再次登录，踢掉
+            MqttFixedHeader fixedHeader = mqttConnectMessage.fixedHeader();
+            MqttFixedHeader mqttFixedHeaderBack = new MqttFixedHeader(
+                    MqttMessageType.CONNACK, fixedHeader.isDup(),
+                    MqttQoS.AT_MOST_ONCE, fixedHeader.isRetain(), 0x02);
+            MqttConnAckVariableHeader mqttConnAckVariableHeaderBack = new MqttConnAckVariableHeader(
+                    MqttConnectReturnCode.CONNECTION_ACCEPTED);
+            MqttConnAckMessage connAck = new MqttConnAckMessage(
+                    mqttFixedHeaderBack, mqttConnAckVariableHeaderBack);
+            channel.writeAndFlush(connAck);
+        }
+    }
+
+    private void handleDiscount(Channel channel) {
+        String deviceAddress = channel.remoteAddress().toString();
+        cache.invalidate(deviceAddress);
     }
 
 }

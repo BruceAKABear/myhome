@@ -5,8 +5,6 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.concurrent.TimeUnit;
-
 /**
  * 缓存配置
  *
@@ -35,6 +33,34 @@ public class CacheConfig {
      */
     @Bean("systemCache")
     public Cache<String, Object> systemCache() {
+        return Caffeine.newBuilder()
+                // 初始的缓存空间大小
+                .initialCapacity(100)
+                // 缓存的最大条数
+                .maximumSize(10000).build();
+    }
+
+//    @Bean("familyCache")
+//    public Cache<String, Object> familyCache() {
+//        return Caffeine.newBuilder()
+//                // 初始的缓存空间大小
+//                .initialCapacity(100)
+//                // 缓存的最大条数
+//                .maximumSize(10000).build();
+//    }
+
+
+    @Bean("deviceCache")
+    public Cache<String, Object> deviceCache() {
+        return Caffeine.newBuilder()
+                // 初始的缓存空间大小
+                .initialCapacity(100)
+                // 缓存的最大条数
+                .maximumSize(10000).build();
+    }
+
+    @Bean("sceneCache")
+    public Cache<String, Object> sceneCache() {
         return Caffeine.newBuilder()
                 // 初始的缓存空间大小
                 .initialCapacity(100)

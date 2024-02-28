@@ -9,7 +9,7 @@
       device_device.`online`,
       device_device.`enable`,
       device_device.frameware_version,
-      device_device.nick_name,
+      device_device.name,
       device_device.floor_id,
       device_device.product_id,
       family.name as familyName,

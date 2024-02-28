@@ -23,6 +23,9 @@ import javax.validation.constraints.NotBlank;
 @ApiModel("设备实体")
 public class Device extends BaseModel {
 
+    @TableField(exist = false)
+    private String chipId;
+
     @ApiModelProperty(value = "产品ID")
     @NotBlank(message = "所属产品必选")
     private String productId;
@@ -42,8 +45,7 @@ public class Device extends BaseModel {
     @ApiModelProperty(value = "设备名", notes = "只是用户起的别名")
     @TableField(updateStrategy = FieldStrategy.IGNORED)
     @Length(min = 2, max = 20)
-    @NotBlank(message = "设备名必须填写")
-    private String nickName;
+    private String name;
 
     @ApiModelProperty(value = "所属楼层ID")
     private String familyId;

@@ -25,6 +25,7 @@ import pro.dengyi.myhome.model.system.User;
 import pro.dengyi.myhome.model.vo.LoginVo;
 import pro.dengyi.myhome.service.UserService;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -44,8 +45,8 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private PermUserDeviceDao permUserDeviceDao;
-    @Autowired
-    private Cache cache;
+    @Resource
+    private Cache systemCache;
     @Autowired
     private PermRoleDeviceDao permRoleDeviceDao;
 
@@ -113,7 +114,7 @@ public class UserServiceImpl implements UserService {
         permUserDeviceDao.delete(new LambdaQueryWrapper<PermUserDevice>().eq(PermUserDevice::getUserId, user.getId()));
         //todo
 
-        List<String> deviceIds = (List<String>) cache.get("roleDvice:" + user.getRoleId(), (key) -> SwitchUtil.objToList(permRoleDeviceDao.selectObjs(new LambdaQueryWrapper<PermRoleDevice>().eq(PermRoleDevice::getRoleId, "1").select(PermRoleDevice::getDeviceId)), String.class));
+        List<String> deviceIds = (List<String>) systemCache.get("roleDvice:" + user.getRoleId(), (key) -> SwitchUtil.objToList(permRoleDeviceDao.selectObjs(new LambdaQueryWrapper<PermRoleDevice>().eq(PermRoleDevice::getRoleId, "1").select(PermRoleDevice::getDeviceId)), String.class));
 
         //todo
         for (String deviceId : deviceIds) {

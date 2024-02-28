@@ -32,8 +32,6 @@ public class FloorController {
 
     @Autowired
     private FloorService floorService;
-    @Resource
-    private Cache cache;
 
     @ApiOperation("楼层分页查询")
     @GetMapping("/page")

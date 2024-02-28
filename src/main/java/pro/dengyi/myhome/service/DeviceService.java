@@ -1,6 +1,7 @@
 package pro.dengyi.myhome.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import pro.dengyi.myhome.model.TreeDto;
 import pro.dengyi.myhome.model.device.Device;
 import pro.dengyi.myhome.model.device.dto.*;
 import pro.dengyi.myhome.model.dto.ChangeFavoriteDto;
@@ -52,4 +53,9 @@ public interface DeviceService {
     List<FavoriteDevicesModel> favoriteDevices();
 
     void oneButton(Map<String, Object> orderMap);
+
+    List<TreeDto> familyDeviceTree();
+
+    List<Device> debugDeviceList();
+
 }

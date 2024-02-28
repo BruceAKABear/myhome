@@ -13,6 +13,7 @@ import pro.dengyi.myhome.model.dto.RoomDto;
 import pro.dengyi.myhome.model.system.Room;
 import pro.dengyi.myhome.service.RoomService;
 
+import javax.annotation.Resource;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
 
@@ -31,8 +32,8 @@ public class RoomController {
 
     @Autowired
     private RoomService roomService;
-    @Autowired
-    private Cache cache;
+    @Resource
+    private Cache systemCache;
 
 
     @ApiOperation("分页查询")
@@ -57,7 +58,7 @@ public class RoomController {
     @ApiOperation("根据楼层id查询房间列表")
     @GetMapping("/roomListByFloorId")
     public List<Room> roomListByFloorId(@RequestParam @NotBlank(message = "楼层id不能为空") String floorId) {
-        return (List<Room>) cache.get("roomListByFloorId:" + floorId, k -> roomService.roomListByFloorId(floorId));
+        return (List<Room>) systemCache.get("roomListByFloorId:" + floorId, k -> roomService.roomListByFloorId(floorId));
     }
 
 

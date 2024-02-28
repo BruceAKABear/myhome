@@ -31,8 +31,6 @@ public class FloorServiceImpl implements FloorService {
     private FloorDao floorDao;
     @Autowired
     private RoomDao roomDao;
-    @Autowired
-    private Cache cache;
 
 
     @Transactional

@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.benmanes.caffeine.cache.Cache;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -21,6 +22,7 @@ import pro.dengyi.myhome.model.automation.SceneConditionGroup;
 import pro.dengyi.myhome.model.automation.dto.SceneChangeDto;
 import pro.dengyi.myhome.service.SceneService;
 
+import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -42,7 +44,7 @@ public class SceneServiceImpl implements SceneService {
     @Autowired
     private SceneConditionGroupDao sceneConditionGroupDao;
 
-    @Autowired
+    @Resource
     private Cache sceneCache;
 
 

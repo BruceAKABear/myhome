@@ -16,6 +16,7 @@ import pro.dengyi.myhome.model.dto.RoomDto;
 import pro.dengyi.myhome.model.system.Room;
 import pro.dengyi.myhome.service.RoomService;
 
+import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -30,8 +31,8 @@ public class RoomServiceImpl implements RoomService {
     private RoomDao roomDao;
     @Autowired
     private DeviceDao deviceDao;
-    @Autowired
-    private Cache cache;
+    @Resource
+    private Cache systemCache;
 
 
     @Transactional
@@ -55,6 +56,8 @@ public class RoomServiceImpl implements RoomService {
             room.setUpdateTime(LocalDateTime.now());
             roomDao.updateById(room);
         }
+
+
     }
 
     @Transactional
@@ -66,8 +69,8 @@ public class RoomServiceImpl implements RoomService {
         }
         Room room = roomDao.selectById(id);
 
-        cache.invalidate("roomList");
-        cache.invalidate("roomListByFloorId:" + room.getFloorId());
+        systemCache.invalidate("roomList");
+        systemCache.invalidate("roomListByFloorId:" + room.getFloorId());
         roomDao.deleteById(id);
     }
 

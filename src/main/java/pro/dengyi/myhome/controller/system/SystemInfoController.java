@@ -44,21 +44,20 @@ public class SystemInfoController {
         map.put("javaVersion", properties.get("java.version"));
         map.put("jvmVersion", properties.get("java.vm.version"));
 
-        //emqx
-        RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder();
-        RestTemplate restTemplate = restTemplateBuilder.basicAuthentication(
-                systemProperties.getMqttApiKey(), systemProperties.getMqttApiSecret()).build();
-        String url = "http://" + systemProperties.getMqttHostIp() + ":18083/api/v5/nodes";
-        ResponseEntity<ArrayList> entity = restTemplate.getForEntity(url, ArrayList.class);
-        map.put("emqxInfo", entity.getBody().get(0));
-
-        String urlStatus = "http://" + systemProperties.getMqttHostIp() + ":18083/api/v5/stats";
-        ResponseEntity<ArrayList> entityStatus = restTemplate.getForEntity(urlStatus, ArrayList.class);
-        map.put("emqxStatus", entityStatus.getBody().get(0));
+//        //emqx
+//        RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder();
+//        RestTemplate restTemplate = restTemplateBuilder.basicAuthentication(
+//                systemProperties.getMqttApiKey(),
+//                systemProperties.getMqttApiSecret()).build();
+//        String url = "http://" + systemProperties.getMqttHostIp() + ":18083/api/v5/nodes";
+//        ResponseEntity<ArrayList> entity = restTemplate.getForEntity(url,
+//                ArrayList.class);
+//        map.put("emqxInfo", entity.getBody().get(0));
+//
+//        String urlStatus = "http://" + systemProperties.getMqttHostIp() + ":18083/api/v5/stats";
+//        ResponseEntity<ArrayList> entityStatus = restTemplate.getForEntity(
+//                urlStatus, ArrayList.class);
+//        map.put("emqxStatus", entityStatus.getBody().get(0));
         return map;
     }
-
-    //6bf8cb828bb8152c
-    //Ihde34oYFFGrF9CA9BJJU5LNzPUQxxkiISzbj7g6Q30ZF
-
 }

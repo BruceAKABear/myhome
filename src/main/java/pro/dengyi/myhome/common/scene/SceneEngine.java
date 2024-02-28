@@ -29,8 +29,6 @@ import java.util.stream.Collectors;
 public class SceneEngine {
 
     @Autowired
-    private Cache cache;
-    @Autowired
     private DeviceDao deviceDao;
     @Autowired
     private DeviceLogDao deviceLogDao;

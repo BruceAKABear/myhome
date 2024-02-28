@@ -12,6 +12,7 @@ import pro.dengyi.myhome.model.perm.Role;
 import pro.dengyi.myhome.model.perm.dto.PermissionDto;
 import pro.dengyi.myhome.service.PermissionService;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -25,8 +26,8 @@ import java.util.List;
 @RequestMapping("/permission")
 public class PermissionController {
 
-    @Autowired
-    private Cache cache;
+    @Resource
+    private Cache systemCache;
 
     @Autowired
     private PermissionService permissionService;
@@ -43,7 +44,7 @@ public class PermissionController {
     @GetMapping("/allPermTree")
     @Permission
     public List<PermissionFunction> allPermTree() {
-        return (List<PermissionFunction>) cache.get(
+        return (List<PermissionFunction>) systemCache.get(
                 "allPermTree", key -> {
                     return permissionService.allPermTree();
                 });

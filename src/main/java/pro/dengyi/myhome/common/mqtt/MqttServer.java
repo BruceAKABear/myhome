@@ -1,6 +1,5 @@
 package pro.dengyi.myhome.common.mqtt;
 
-import com.github.benmanes.caffeine.cache.Cache;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.ChannelFuture;
@@ -12,6 +11,7 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.mqtt.MqttDecoder;
 import io.netty.handler.timeout.IdleStateHandler;
+import org.springframework.context.ApplicationContext;
 
 /**
  * @author ：dengyi(A.K.A Bear)
@@ -22,14 +22,16 @@ import io.netty.handler.timeout.IdleStateHandler;
 public class MqttServer {
 
 
-
     private NioEventLoopGroup bossGroup;
     private NioEventLoopGroup workerGroup;
     private final Integer port;
 
+    private ApplicationContext applicationContext;
 
-    public MqttServer(Integer port) {
+
+    public MqttServer(Integer port, ApplicationContext applicationContext) {
         this.port = port;
+        this.applicationContext = applicationContext;
     }
 
     public void startUp() {
@@ -43,17 +45,30 @@ public class MqttServer {
 
         try {
             //tcp参数配置
-            serverBootstrap.option(ChannelOption.SO_REUSEADDR, true).option(ChannelOption.SO_BACKLOG, 1024).option(ChannelOption.ALLOCATOR, ByteBufAllocator.DEFAULT).option(ChannelOption.SO_RCVBUF, 10485760);
-            serverBootstrap.childHandler(new ChannelInitializer<NioSocketChannel>() {
-                @Override
-                protected void initChannel(NioSocketChannel ch) throws Exception {
-                    ChannelPipeline channelPipeline = ch.pipeline();
-                    channelPipeline.addLast(new IdleStateHandler(600, 600, 1200));
-                    channelPipeline.addLast("encoder", new MyMqttEncoder());
-                    channelPipeline.addLast("decoder", new MqttDecoder());
-                    channelPipeline.addLast(new MqttHandler());
-                }
-            });
+            serverBootstrap
+                    .option(ChannelOption.SO_REUSEADDR, true)
+                    .option(ChannelOption.SO_BACKLOG, 1024)
+                    .option(ChannelOption.ALLOCATOR, ByteBufAllocator.DEFAULT)
+                    .option(ChannelOption.SO_RCVBUF, 10485760);
+
+            serverBootstrap.childHandler(
+                    new ChannelInitializer<NioSocketChannel>() {
+                        @Override
+                        protected void initChannel(
+                                NioSocketChannel ch) throws Exception {
+                            ChannelPipeline channelPipeline = ch.pipeline();
+                            channelPipeline.addLast(
+                                    new IdleStateHandler(600, 600, 1200));
+                            channelPipeline.addLast("encoder",
+                                    new MyMqttEncoder());
+                            channelPipeline.addLast("decoder",
+                                    new MqttDecoder());
+                            channelPipeline.addLast(
+                                    new MqttHandler(applicationContext));
+                            channelPipeline.addLast(new CustomExceptionHandler());
+                        }
+                    });
+
             ChannelFuture channelFuture = serverBootstrap.bind(port).sync();
             if (channelFuture.isSuccess()) {
                 channelFuture.channel().closeFuture().sync();

@@ -1,7 +1,6 @@
 package pro.dengyi.myhome.controller.device;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.github.benmanes.caffeine.cache.Cache;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +15,7 @@ import pro.dengyi.myhome.common.aop.annotations.NoLog;
 import pro.dengyi.myhome.common.aop.annotations.Permission;
 import pro.dengyi.myhome.common.config.properties.SystemProperties;
 import pro.dengyi.myhome.common.response.IgnoreResponseHandler;
+import pro.dengyi.myhome.model.TreeDto;
 import pro.dengyi.myhome.model.device.Device;
 import pro.dengyi.myhome.model.device.dto.*;
 import pro.dengyi.myhome.model.dto.ChangeFavoriteDto;
@@ -48,23 +48,35 @@ public class DeviceController {
     private DeviceService deviceService;
     @Autowired
     private SystemProperties systemProperties;
-    @Autowired
-    private Cache cache;
 
 
     @ApiOperation("分页查询")
     @GetMapping("/page")
-    public IPage<DeviceDto> page(Integer page, Integer size, String familyId, String floorId,
-                                 String roomId, String productId) {
-        return deviceService.page(page, size, familyId, floorId, roomId, productId);
+    public IPage<DeviceDto> page(Integer page, Integer size, String familyId,
+                                 String floorId, String roomId,
+                                 String productId) {
+        return deviceService.page(page, size, familyId, floorId, roomId,
+                productId);
     }
 
     @ApiOperation("查询调试所有设备")
     @GetMapping("/debugDeviceList")
-    public List<Device> debugDeviceList(String productId) {
+    public List<Device> debugDeviceList() {
+        return deviceService.debugDeviceList();
+    }
+//todo 可以删除或者修改成其他
+    @ApiOperation("查询调试所有设备")
+    @GetMapping("/debugDeviceList2")
+    public List<Device> debugDeviceList2(String productId) {
         return deviceService.debugDeviceList(productId);
     }
 
+
+    @ApiOperation("家庭设备树")
+    @GetMapping("/familyDeviceTree")
+    public List<TreeDto> familyDeviceTree() {
+        return deviceService.familyDeviceTree();
+    }
 
     @ApiOperation("查询所有设备(包含产品信息、产品字段信息等，供场景使用)")
     @GetMapping("/allDeviceList")
@@ -103,7 +115,8 @@ public class DeviceController {
 
     @ApiOperation("删除设备")
     @DeleteMapping("/delete/{id}")
-    public void delete(@PathVariable @NotBlank(message = "id不能为空") String id) {
+    public void delete(
+            @PathVariable @NotBlank(message = "id不能为空") String id) {
         deviceService.delete(id);
     }
 
@@ -136,7 +149,8 @@ public class DeviceController {
     @ApiOperation("查询地图模式所有灯开关程度")
     @GetMapping("/mapModeLamps")
     @Permission(needValidate = false)
-    public List<Map<String, Object>> mapModeLamps(@RequestParam String floorId) {
+    public List<Map<String, Object>> mapModeLamps(
+            @RequestParam String floorId) {
         return deviceService.mapModeLamps(floorId);
     }
 
@@ -157,7 +171,8 @@ public class DeviceController {
     @ApiOperation("设备登录")
     @PostMapping("/deviceLogin")
     @IgnoreResponseHandler
-    public Map<String, String> deviceLogin(@RequestBody DeviceLoginDto loginDto) {
+    public Map<String, String> deviceLogin(
+            @RequestBody DeviceLoginDto loginDto) {
         log.info("设备登录，设备登录信息为：{}", loginDto);
         Map<String, String> resMap = new HashMap<>(1);
         //无clientId不进行逻辑
@@ -165,7 +180,8 @@ public class DeviceController {
             resMap.put("result", "deny");
         }
         //有clientId进行查找设备是否在系统中
-        if (systemProperties.getMqttClientIds().contains(loginDto.getClientId())) {
+        if (systemProperties.getMqttClientIds()
+                .contains(loginDto.getClientId())) {
             //1. 服务端
             resMap.put("result", "allow");
         } else {
@@ -228,9 +244,12 @@ public class DeviceController {
     @ApiOperation("设备操作日志")
     @GetMapping("/deviceControlLog")
     @Permission(needValidate = false)
-    public List<DeviceControlLogDto> deviceControlLog(String userId, String roomId,
-                                                      String deviceId, @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startTime,
-                                                      @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endTime, Integer page,
+    public List<DeviceControlLogDto> deviceControlLog(String userId,
+                                                      String roomId,
+                                                      String deviceId,
+                                                      @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startTime,
+                                                      @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endTime,
+                                                      Integer page,
                                                       Integer size) {
         return deviceService.deviceControlLog(userId, roomId, deviceId,
                 startTime, endTime, page, size);

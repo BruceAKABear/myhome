@@ -1,17 +1,16 @@
 package pro.dengyi.myhome.common.init;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.github.benmanes.caffeine.cache.Cache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import pro.dengyi.myhome.model.automation.Scene;
-import pro.dengyi.myhome.service.SceneService;
+import pro.dengyi.myhome.dao.DeviceDao;
+import pro.dengyi.myhome.model.device.Device;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author ：dengyi(A.K.A Bear)
@@ -20,18 +19,21 @@ import java.util.stream.Collectors;
  * @modified By：
  */
 @Component
-public class SceneCacheInitialize {
+public class DeviceCacheInitialize {
     @Autowired
-    private SceneService sceneService;
+    private DeviceDao deviceDao;
     @Resource
-    private Cache sceneCache;
+    private Cache deviceCache;
 
 
     @EventListener(ApplicationReadyEvent.class)
+    @Async
     public void initCache() {
-        IPage<Scene> page = sceneService.page(1, -1, null, null);
-        List<Scene> enableScenes = page.getRecords().stream()
-                .filter(Scene::getEnable).collect(Collectors.toList());
-        enableScenes.forEach(scene -> sceneCache.put(scene.getId(), scene));
+        List<Device> devices = deviceDao.selectList(null);
+        devices.forEach(device -> {
+            deviceCache.put(device.getId(), device);
+        });
+
+
     }
 }
