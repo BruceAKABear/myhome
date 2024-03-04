@@ -28,11 +28,13 @@ public class UserUtil {
     static Cache<Object, Object> cacheExpire;
 
     static {
-        cacheExpire = Caffeine.newBuilder().expireAfterAccess(Duration.ofSeconds(LOGIN_EXPIRE_SECONDS)).build();
+        cacheExpire = Caffeine.newBuilder()
+                .expireAfterAccess(Duration.ofSeconds(LOGIN_EXPIRE_SECONDS))
+                .build();
         cacheNoExpire = Caffeine.newBuilder().build();
     }
 
-    private static Cache<Object, Object> getCaffeine() {
+    private static Cache<Object, Object> getSession() {
         switch (RequestTypeHolder.getType()) {
             case PC:
                 return cacheExpire;
@@ -44,7 +46,7 @@ public class UserUtil {
 
     public static String genToken(User user) {
         String uuid = UUID.randomUUID().toString().replaceAll("-", "");
-        getCaffeine().put(uuid, user);
+        getSession().put(uuid, user);
         return uuid;
     }
 
@@ -55,21 +57,25 @@ public class UserUtil {
      * @return
      */
     public static User decToken(String token) {
-        Object ifPresent = getCaffeine().getIfPresent(token);
+        Object ifPresent = getSession().getIfPresent(token);
         if (ifPresent == null) {
             //未登录或者登录过期
-            throw new BusinessException(Response.LOGIN_EXPIRE_CODE, "system.login.expire");
+            throw new BusinessException(Response.LOGIN_EXPIRE_CODE,
+                    "system.login.expire");
         }
         return (User) ifPresent;
     }
 
     /**
-     * 将用户提出系统
+     * 将用户踢出缓存
+     * <p>
+     * 1.意味着用户退出系统
+     * 2.自己可以踢自己，意味着自己主动退出
      *
      * @param userId 用户id
      */
     public static void kickOut(String userId) {
-        Cache<Object, Object> cache = getCaffeine();
+        Cache<Object, Object> cache = getSession();
         ConcurrentMap<@NonNull Object, @NonNull Object> map = cache.asMap();
         for (Object key : map.keySet()) {
             User user = (User) map.get(key);

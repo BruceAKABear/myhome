@@ -33,8 +33,6 @@ public interface UserService {
 
     void updateSelectRoom(Map<String, String> roomParam);
 
-    void updateDisplayMode(Map<String, String> modeParam);
-
     void kickOut(User user);
 
     void logout();

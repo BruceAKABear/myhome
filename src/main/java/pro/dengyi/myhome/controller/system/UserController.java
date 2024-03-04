@@ -52,7 +52,8 @@ public class UserController {
     @ApiOperation("登录")
     @PostMapping("/login")
     @Permission(needLogIn = false, needValidate = false)
-    public String login(@RequestBody @Validated LoginVo loginVo, HttpServletRequest request) {
+    public String login(@RequestBody @Validated LoginVo loginVo,
+                        HttpServletRequest request) {
         return userService.login(loginVo, request);
     }
 
@@ -85,7 +86,8 @@ public class UserController {
     @ApiOperation("更新选择的家庭")
     @PostMapping("/updateSelectFamily")
     @Permission(needValidate = false)
-    public void updateSelectFamily(@RequestBody Map<String, String> familyParam) {
+    public void updateSelectFamily(
+            @RequestBody Map<String, String> familyParam) {
         userService.updateSelectFamily(familyParam);
 
     }
@@ -98,15 +100,6 @@ public class UserController {
         userService.updateSelectRoom(roomParam);
 
     }
-
-    @ApiOperation("上报显示模式")
-    @PostMapping("/updateDisplayMode")
-    @Permission(needValidate = false)
-    public void updateDisplayMode(@RequestBody Map<String, String> modeParam) {
-        userService.updateDisplayMode(modeParam);
-
-    }
-
 
     @ApiOperation("新增用户")
     @PostMapping("/addOrUpdate")
@@ -127,7 +120,8 @@ public class UserController {
     @ApiOperation("更新个人信息")
     @PostMapping("/updateUserInfo")
     @Permission(needValidate = false)
-    public void updateUserInfo(@RequestBody @Validated Map<String, Object> updateUserInfo) {
+    public void updateUserInfo(
+            @RequestBody @Validated Map<String, Object> updateUserInfo) {
         userService.updateUserInfo(updateUserInfo);
 
     }
@@ -143,7 +137,8 @@ public class UserController {
     @ApiOperation("删除成员")
     @DeleteMapping("/delete/{id}")
     @Permission
-    public void delete(@PathVariable @NotBlank(message = "ID不能为空") String id) {
+    public void delete(
+            @PathVariable @NotBlank(message = "ID不能为空") String id) {
         userService.delete(id);
 
     }

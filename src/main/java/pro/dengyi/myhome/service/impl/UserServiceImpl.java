@@ -201,14 +201,6 @@ public class UserServiceImpl implements UserService {
     }
 
 
-    @Transactional
-    @Override
-    public void updateDisplayMode(Map<String, String> modeParam) {
-        User user = userDao.selectById(UserHolder.getUser().getId());
-        user.setDisplayMode(modeParam.get("displayMode"));
-        userDao.updateById(user);
-    }
-
     @Override
     public void kickOut(User user) {
         if (!UserHolder.getUser().getSuperAdmin() && !UserHolder.getUser().getAdmin()) {

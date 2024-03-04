@@ -1,6 +1,5 @@
 package pro.dengyi.myhome.model.system;
 
-import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
@@ -60,11 +59,11 @@ public class User extends BaseModel {
     @ApiModelProperty(value = "选择的房间ID")
     private String selectedRoomId;
 
-    @ApiModelProperty(value = "是否启用")
-    private Boolean enable;
-
     @ApiModelProperty(value = "选中的语言")
     private String selectLang;
+
+    @ApiModelProperty(value = "是否启用")
+    private Boolean enable;
 
     //todo 默认语言
     //todo 默认家庭
@@ -85,8 +84,6 @@ public class User extends BaseModel {
     private List<String> deviceIds;
 
 
-    @TableField(updateStrategy = FieldStrategy.IGNORED)
-    private String displayMode;
 
 
 }
