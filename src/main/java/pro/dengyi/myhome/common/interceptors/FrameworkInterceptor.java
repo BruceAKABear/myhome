@@ -9,7 +9,7 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 import pro.dengyi.myhome.common.aop.annotations.Permission;
-import pro.dengyi.myhome.common.enums.RequestType;
+import pro.dengyi.myhome.common.enums.RequestSourceEnum;
 import pro.dengyi.myhome.common.exception.BusinessException;
 import pro.dengyi.myhome.common.response.Response;
 import pro.dengyi.myhome.common.utils.*;
@@ -52,8 +52,9 @@ public class FrameworkInterceptor implements HandlerInterceptor {
      * @throws Exception
      */
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
-            throws Exception {
+    public boolean preHandle(HttpServletRequest request,
+                             HttpServletResponse response,
+                             Object handler) throws Exception {
         //限流  排除掉不需要限流的URI
         rateLimit(request);
         //通过状态
@@ -62,7 +63,7 @@ public class FrameworkInterceptor implements HandlerInterceptor {
             //封装语言选项
             handleLanguage(request);
             //handle request type
-            handleRequestType(request);
+            setRequestSource(request);
             String token = request.getHeader("token");
             String familyId = request.getHeader("familyId");
             if (!ObjectUtils.isEmpty(familyId)) {
@@ -70,31 +71,41 @@ public class FrameworkInterceptor implements HandlerInterceptor {
             }
 
             Method method = ((HandlerMethod) handler).getMethod();
-            Permission permissionInMethod = method.getAnnotation(Permission.class);
-            Permission permissionInClass = method.getDeclaringClass().getAnnotation(Permission.class);
+            Permission permissionInMethod = method.getAnnotation(
+                    Permission.class);
+            Permission permissionInClass = method.getDeclaringClass()
+                    .getAnnotation(Permission.class);
             if (permissionInMethod != null || permissionInClass != null) {
                 validatePermission(token,
-                        permissionInMethod == null ? permissionInClass : permissionInMethod, method, request);
+                        permissionInMethod == null ? permissionInClass : permissionInMethod,
+                        method, request);
             }
 
         }
         return throughFlag;
     }
 
-    private void handleRequestType(HttpServletRequest request) {
+    /**
+     * set request source pc or phone to the thread-local
+     *
+     * @param request
+     */
+    private void setRequestSource(HttpServletRequest request) {
         String userAgent = request.getHeader("User-Agent");
-        RequestType requestType = RequestType.PC;
+        RequestSourceEnum requestSource = RequestSourceEnum.PC;
         if (userAgent != null && userAgent.contains("Mobile")) {
-            requestType = RequestType.PHONE;
+            requestSource = RequestSourceEnum.PHONE;
         }
-        RequestTypeHolder.setType(requestType);
+        RequestSourceHolder.setSource(requestSource);
     }
 
     private void rateLimit(HttpServletRequest request) {
         if (!Arrays.asList(EXCLUDE_URIS).contains(request.getRequestURI())) {
-            Boolean acquireFlag = IpRateLimiter.tryAcquire(IpUtil.remoteIP(request), request.getRequestURI());
+            Boolean acquireFlag = IpRateLimiter.tryAcquire(
+                    IpUtil.remoteIP(request), request.getRequestURI());
             if (!acquireFlag) {
-                throw new BusinessException(Response.RATE_LIMIT_CODE, "system.rate.limit");
+                throw new BusinessException(Response.RATE_LIMIT_CODE,
+                        "system.rate.limit");
             }
         }
     }
@@ -119,13 +130,14 @@ public class FrameworkInterceptor implements HandlerInterceptor {
      * @param method
      * @param request
      */
-    private void validatePermission(String token, Permission permission, Method method,
-                                    HttpServletRequest request) {
+    private void validatePermission(String token, Permission permission,
+                                    Method method, HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         if (permission.needLogIn()) {
             //校验登录
             if (ObjectUtils.isEmpty(token)) {
-                throw new BusinessException(Response.LOGIN_EXPIRE_CODE, "system.login.expire");
+                throw new BusinessException(Response.LOGIN_EXPIRE_CODE,
+                        "system.login.expire");
             }
             //校验token
             User user = UserUtil.decToken(token);
@@ -134,7 +146,8 @@ public class FrameworkInterceptor implements HandlerInterceptor {
             if (permission.needValidate()) {
                 if (!user.getSuperAdmin()) {
                     //非超管，校验权限
-                    List<String> permURIs = permissionFunctionDao.selecAllPermUris(user);
+                    List<String> permURIs = permissionFunctionDao.selecAllPermUris(
+                            user);
                     Set<String> realPermURIs = new HashSet<>();
                     permURIs.forEach(item -> {
                         realPermURIs.addAll(Arrays.asList(item.split(",")));
@@ -151,12 +164,14 @@ public class FrameworkInterceptor implements HandlerInterceptor {
 
 
     @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
+    public void postHandle(HttpServletRequest request,
+                           HttpServletResponse response, Object handler,
                            ModelAndView modelAndView) throws Exception {
         UserHolder.remove();
         LocaleContextHolder.resetLocaleContext();
-        RequestTypeHolder.remove();
+        RequestSourceHolder.remove();
         FamilyHolder.remove();
-        HandlerInterceptor.super.postHandle(request, response, handler, modelAndView);
+        HandlerInterceptor.super.postHandle(request, response, handler,
+                modelAndView);
     }
 }

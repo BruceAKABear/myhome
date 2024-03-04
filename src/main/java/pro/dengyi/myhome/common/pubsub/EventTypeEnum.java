@@ -17,5 +17,6 @@ public enum EventTypeEnum {
      * save operation log
      */
     OPERATION_LOG,
-    NOTIFY_USER
+    NOTIFY_USER,
+    USER_UPDATE_SELECT
 }

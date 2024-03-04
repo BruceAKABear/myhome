@@ -21,7 +21,8 @@ public interface UserService {
 
     void addOrUpdate(User user);
 
-    IPage<User> page(Integer pageNumber, Integer pageSize, String name);
+    IPage<User> page(Integer pageNumber, Integer pageSize, String name,
+                     String familyId);
 
     void enable(User user);
 
@@ -31,13 +32,15 @@ public interface UserService {
 
     void updateUserInfo(Map<String, Object> updateUserInfo);
 
-    void updateSelectRoom(Map<String, String> roomParam);
+    void updateSelectRoom(String roomId);
 
     void kickOut(User user);
 
     void logout();
 
-    void updateSelectFamily(Map<String, String> familyParam);
+    void updateSelectFamily(String familyId);
 
     void updateLang(String lang);
+
+    void updateSelectFloor(String floorId);
 }

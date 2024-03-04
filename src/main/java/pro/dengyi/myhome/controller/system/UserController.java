@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pro.dengyi.myhome.common.aop.annotations.Permission;
-import pro.dengyi.myhome.common.utils.UserHolder;
 import pro.dengyi.myhome.model.system.User;
 import pro.dengyi.myhome.model.vo.LoginVo;
 import pro.dengyi.myhome.service.UserService;
@@ -28,6 +27,7 @@ import java.util.Map;
 @Permission
 @RestController
 @RequestMapping("/user")
+@Validated
 public class UserController {
 
     @Autowired
@@ -36,20 +36,12 @@ public class UserController {
     @ApiOperation("分页查询")
     @GetMapping("/page")
     @Permission
-    public IPage<User> page(Integer page, Integer size, String name) {
-        return userService.page(page, size, name);
+    public IPage<User> page(Integer page, Integer size, String name,
+                            String familyId) {
+        return userService.page(page, size, name, familyId);
     }
 
-
-    /**
-     * 手机端登录永不过期
-     * <p>
-     * pc端一小时过期
-     *
-     * @param loginVo
-     * @return
-     */
-    @ApiOperation("登录")
+    @ApiOperation("登录，pc端1小时过期，手机端永不过期")
     @PostMapping("/login")
     @Permission(needLogIn = false, needValidate = false)
     public String login(@RequestBody @Validated LoginVo loginVo,
@@ -78,30 +70,40 @@ public class UserController {
     }
 
     @ApiOperation("上报选择的语言")
-    @GetMapping("/updateLang")
-    public void updateLang(String lang) {
+    @GetMapping("/updateSelectLang")
+    public void updateSelectLang(
+            @NotBlank(message = "lang can not be blank") String lang) {
         userService.updateLang(lang);
     }
 
-    @ApiOperation("更新选择的家庭")
-    @PostMapping("/updateSelectFamily")
+    @ApiOperation("上报选择的家庭")
+    @GetMapping("/updateSelectFamily")
     @Permission(needValidate = false)
     public void updateSelectFamily(
-            @RequestBody Map<String, String> familyParam) {
-        userService.updateSelectFamily(familyParam);
+            @NotBlank(message = "family can not be blank") String familyId) {
+        userService.updateSelectFamily(familyId);
 
     }
 
-    @ApiOperation("更新选中后的楼层房间")
-    @PostMapping("/updateSelectRoom")
+    @ApiOperation("上报选择的楼层")
+    @GetMapping("/updateSelectFloor")
     @Permission(needValidate = false)
-    public void updateSelectRoom(@RequestBody Map<String, String> roomParam) {
-        roomParam.put("userId", UserHolder.getUser().getId());
-        userService.updateSelectRoom(roomParam);
+    public void updateSelectFloor(
+            @NotBlank(message = "floor can not be blank") String floorId) {
+        userService.updateSelectFloor(floorId);
 
     }
 
-    @ApiOperation("新增用户")
+    @ApiOperation("上报选择的")
+    @GetMapping("/updateSelectRoom")
+    @Permission(needValidate = false)
+    public void updateSelectRoom(
+            @NotBlank(message = "room can not be blank") String roomId) {
+        userService.updateSelectRoom(roomId);
+
+    }
+
+    @ApiOperation("新增或修改用户")
     @PostMapping("/addOrUpdate")
     @Permission
     public void addOrUpdate(@RequestBody @Validated User user) {
@@ -114,7 +116,6 @@ public class UserController {
     @Permission
     public void kickOut(@RequestBody User user) {
         userService.kickOut(user);
-
     }
 
     @ApiOperation("更新个人信息")
@@ -123,7 +124,6 @@ public class UserController {
     public void updateUserInfo(
             @RequestBody @Validated Map<String, Object> updateUserInfo) {
         userService.updateUserInfo(updateUserInfo);
-
     }
 
     @ApiOperation("成员启停")
@@ -131,7 +131,6 @@ public class UserController {
     @Permission
     public void enable(@RequestBody @Validated User user) {
         userService.enable(user);
-
     }
 
     @ApiOperation("删除成员")
@@ -140,7 +139,6 @@ public class UserController {
     public void delete(
             @PathVariable @NotBlank(message = "ID不能为空") String id) {
         userService.delete(id);
-
     }
 
 

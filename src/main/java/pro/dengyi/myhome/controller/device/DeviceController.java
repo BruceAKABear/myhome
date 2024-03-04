@@ -64,7 +64,8 @@ public class DeviceController {
     public List<Device> debugDeviceList() {
         return deviceService.debugDeviceList();
     }
-//todo 可以删除或者修改成其他
+
+    //todo 可以删除或者修改成其他
     @ApiOperation("查询调试所有设备")
     @GetMapping("/debugDeviceList2")
     public List<Device> debugDeviceList2(String productId) {

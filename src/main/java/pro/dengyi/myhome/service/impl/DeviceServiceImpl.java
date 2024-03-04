@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,6 @@ import pro.dengyi.myhome.common.config.properties.SystemProperties;
 import pro.dengyi.myhome.common.exception.BusinessException;
 import pro.dengyi.myhome.common.utils.PushUtil;
 import pro.dengyi.myhome.common.utils.UserHolder;
-import pro.dengyi.myhome.common.utils.queue.DeviceLogQueue;
 import pro.dengyi.myhome.dao.*;
 import pro.dengyi.myhome.model.TreeDto;
 import pro.dengyi.myhome.model.device.*;
@@ -489,48 +487,48 @@ public class DeviceServiceImpl implements DeviceService {
     @Override
     public void oneButton(Map<String, Object> orderMap) {
         User user = userDao.selectById(UserHolder.getUser().getId());
-        if (user.getSuperAdmin() || "1632628475547410434".equals(
-                user.getRoleId())) {
-            String type = (String) orderMap.get("type");
-            switch (type) {
-                case "switch":
-                    String status = (String) orderMap.get("status");
-                    String floorId = (String) orderMap.get("floorId");
-                    List<Device> devices = deviceDao.selectList(
-                            new LambdaQueryWrapper<Device>().eq(
-                                    Device::getOnline, true));
-                    String cmdContent = null;
-
-                    if ("open".equals(status)) {
-                        //一键全开
-                        cmdContent = "{\"ch1\":true,\"ch2\":true,\"ch3\":true}";
-                    } else if ("close".equals(status)) {
-                        //一键全关
-                        cmdContent = "{\"ch1\":false,\"ch2\":false,\"ch3\":false}";
-                    }
-                    for (Device device : devices) {
-                        String controlTopic = "control/" + device.getProductId() + "/" + device.getId();
-                        MqttMessage message = new MqttMessage(
-                                cmdContent.getBytes(StandardCharsets.UTF_8));
-                        System.out.println(message);
-                        message.setQos(1);
-//                        try {
-//                            mqttClient.publish(controlTopic, message);
-//                            DeviceLog deviceLog = new DeviceLog(device.getProductId(), device.getId(),
-//                                    controlTopic,
-//                                    cmdContent, "down", "onebutton", UserHolder.getUser().getId());
-//                            DeviceLogQueue.publish(deviceLog);
-//                        } catch (MqttException e) {
-//                            log.error("发送命令失败", e);
-//                        }
-                    }
-
-                    break;
-                default:
-                    log.error("未支持一键类型");
-            }
-
-        }
+//        if (user.getSuperAdmin() || "1632628475547410434".equals(
+//                user.getRoleId())) {
+//            String type = (String) orderMap.get("type");
+//            switch (type) {
+//                case "switch":
+//                    String status = (String) orderMap.get("status");
+//                    String floorId = (String) orderMap.get("floorId");
+//                    List<Device> devices = deviceDao.selectList(
+//                            new LambdaQueryWrapper<Device>().eq(
+//                                    Device::getOnline, true));
+//                    String cmdContent = null;
+//
+//                    if ("open".equals(status)) {
+//                        //一键全开
+//                        cmdContent = "{\"ch1\":true,\"ch2\":true,\"ch3\":true}";
+//                    } else if ("close".equals(status)) {
+//                        //一键全关
+//                        cmdContent = "{\"ch1\":false,\"ch2\":false,\"ch3\":false}";
+//                    }
+//                    for (Device device : devices) {
+//                        String controlTopic = "control/" + device.getProductId() + "/" + device.getId();
+//                        MqttMessage message = new MqttMessage(
+//                                cmdContent.getBytes(StandardCharsets.UTF_8));
+//                        System.out.println(message);
+//                        message.setQos(1);
+////                        try {
+////                            mqttClient.publish(controlTopic, message);
+////                            DeviceLog deviceLog = new DeviceLog(device.getProductId(), device.getId(),
+////                                    controlTopic,
+////                                    cmdContent, "down", "onebutton", UserHolder.getUser().getId());
+////                            DeviceLogQueue.publish(deviceLog);
+////                        } catch (MqttException e) {
+////                            log.error("发送命令失败", e);
+////                        }
+//                    }
+//
+//                    break;
+//                default:
+//                    log.error("未支持一键类型");
+//            }
+//
+//        }
     }
 
     @Override

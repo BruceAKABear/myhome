@@ -34,8 +34,13 @@ public class UserUtil {
         cacheNoExpire = Caffeine.newBuilder().build();
     }
 
+    /**
+     * 根据请求来源获取用户所存储的位置
+     *
+     * @return
+     */
     private static Cache<Object, Object> getSession() {
-        switch (RequestTypeHolder.getType()) {
+        switch (RequestSourceHolder.getSource()) {
             case PC:
                 return cacheExpire;
             case PHONE:
@@ -51,7 +56,7 @@ public class UserUtil {
     }
 
     /**
-     * 解析token
+     * 解析token，为空则用户登录过期
      *
      * @param token 用户token
      * @return

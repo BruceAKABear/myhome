@@ -60,6 +60,9 @@ public class Device extends BaseModel {
     @NotBlank(message = "必须选择分类")
     private String roomId;
 
+    @ApiModelProperty(value = "属于管理员，true只有超管管理员可以使用，false都能使用")
+    private Boolean admin;
+
 
     @TableField(exist = false)
     private Boolean favorite;

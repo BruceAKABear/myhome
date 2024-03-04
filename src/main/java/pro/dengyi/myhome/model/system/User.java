@@ -65,25 +65,15 @@ public class User extends BaseModel {
     @ApiModelProperty(value = "是否启用")
     private Boolean enable;
 
-    //todo 默认语言
-    //todo 默认家庭
-
+    @ApiModelProperty(value = "超级管理员，系统中只有一个")
     private Boolean superAdmin;
 
-    @TableField(exist = false)
+    @ApiModelProperty(value = "管理员")
     private Boolean admin;
-
-    private String roleId;
-
-
-    @TableField(exist = false)
-    private String roleName;
 
     @TableField(exist = false)
     @NotNull(message = "可控设备不能为空")
     private List<String> deviceIds;
-
-
 
 
 }
