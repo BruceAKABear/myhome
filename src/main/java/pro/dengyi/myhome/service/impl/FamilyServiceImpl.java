@@ -36,7 +36,9 @@ public class FamilyServiceImpl implements FamilyService {
     @Transactional
     @Override
     public void addUpdate(Family family) {
-        Family familyExist = familyDao.selectOne(new LambdaQueryWrapper<Family>().eq(Family::getName, family.getName()));
+        Family familyExist = familyDao.selectOne(
+                new LambdaQueryWrapper<Family>().eq(Family::getName,
+                        family.getName()));
 
         if (ObjectUtils.isEmpty(family.getId())) {
             if (familyExist != null) {
@@ -47,7 +49,8 @@ public class FamilyServiceImpl implements FamilyService {
             familyDao.insert(family);
         } else {
             //make sure not change to another name exist
-            if (familyExist != null && !familyExist.getId().equals(family.getId())) {
+            if (familyExist != null && !familyExist.getId()
+                    .equals(family.getId())) {
                 throw new BusinessException("family.update.name.exist");
             }
             family.setUpdateTime(LocalDateTime.now());
@@ -60,18 +63,13 @@ public class FamilyServiceImpl implements FamilyService {
         return CollectionUtils.isEmpty(familyDao.selectFamilyInfos());
     }
 
-    @Override
-    public List<FamilyDto> infoList() {
-        Page<FamilyDto> familyDtoPage = familyDao.selectCustomPage(new Page<>(1, -1), null);
-        return familyDtoPage.getRecords();
-    }
 
     @Override
     public FamilyDto infoById(String familyId) {
-        List<FamilyDto> familyDtos = (List<FamilyDto>) systemCache.get("familyInfos", key -> familyDao.selectFamilyInfos());
+        List<FamilyDto> familyDtos = (List<FamilyDto>) systemCache.get(
+                "familyInfos", key -> familyDao.selectFamilyInfos());
         if (CollectionUtils.isEmpty(familyDtos)) {
             List<FamilyDto> familyDtosNew = familyDao.selectFamilyInfos();
-//            systemCache.put("familyInfos", familyDtosNew);
             familyDtos = familyDtosNew;
         }
         for (FamilyDto familyDto : familyDtos) {
@@ -92,6 +90,7 @@ public class FamilyServiceImpl implements FamilyService {
     @Transactional
     @Override
     public void delete(String id) {
+        //todo 删除所有楼层房间设备？
 
         familyDao.deleteById(id);
     }

@@ -124,7 +124,7 @@
            family_room.floor_id,
            family_room.create_time,
            family_room.update_time,
-           family_room.beacon_uuid
+           family_room.beacon
     FROM device_user_favorite
            INNER JOIN device_device ON device_user_favorite.device_id = device_device.id
            INNER JOIN family_room ON device_device.room_id = family_room.id

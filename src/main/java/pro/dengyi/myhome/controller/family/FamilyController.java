@@ -35,10 +35,10 @@ public class FamilyController {
         return familyService.page(page, size, name);
     }
 
-    @ApiOperation("下拉")
+    @ApiOperation("查询所有家庭")
     @GetMapping("/list")
-    public IPage<FamilyDto> list() {
-        return familyService.page(1, -1, null);
+    public List<FamilyDto> list() {
+        return familyService.page(1, -1, null).getRecords();
     }
 
 
@@ -50,14 +50,9 @@ public class FamilyController {
 
     @ApiOperation("根据id查询家庭信息")
     @GetMapping("/infoById")
-    public FamilyDto infoById(@RequestParam @NotBlank(message = "family id can not be blank") String familyId) {
+    public FamilyDto infoById(
+            @RequestParam @NotBlank(message = "family id can not be blank") String familyId) {
         return familyService.infoById(familyId);
-    }
-
-    @ApiOperation("查询家庭信息集合")
-    @GetMapping("/infoList")
-    public List<FamilyDto> infoList() {
-        return familyService.infoList();
     }
 
     @ApiOperation("查询是否是第一次登陆")
