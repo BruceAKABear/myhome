@@ -1,4 +1,4 @@
-package pro.dengyi.myhome.common.mqtt;
+package pro.dengyi.myhome.mqtt;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.ByteBufAllocator;

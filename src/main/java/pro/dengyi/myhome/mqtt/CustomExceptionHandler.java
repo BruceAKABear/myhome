@@ -1,4 +1,4 @@
-package pro.dengyi.myhome.common.mqtt;
+package pro.dengyi.myhome.mqtt;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;

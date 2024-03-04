@@ -1,4 +1,4 @@
-package pro.dengyi.myhome.common.mqtt;
+package pro.dengyi.myhome.mqtt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.benmanes.caffeine.cache.Cache;

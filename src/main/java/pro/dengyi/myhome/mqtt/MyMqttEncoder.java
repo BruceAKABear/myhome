@@ -1,4 +1,4 @@
-package pro.dengyi.myhome.common.mqtt;
+package pro.dengyi.myhome.mqtt;
 
 import io.netty.channel.ChannelHandler;
 import io.netty.handler.codec.mqtt.MqttEncoder;

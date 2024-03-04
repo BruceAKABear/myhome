@@ -2,12 +2,11 @@ package pro.dengyi.myhome.common.init;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import pro.dengyi.myhome.common.mqtt.MqttServer;
+import pro.dengyi.myhome.mqtt.MqttServer;
 
 /**
  * @author ：dengyi(A.K.A Bear)
