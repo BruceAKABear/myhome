@@ -1,6 +1,5 @@
 package pro.dengyi.myhome.common.scene;
 
-import com.github.benmanes.caffeine.cache.Cache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -119,17 +118,12 @@ public class SceneEngine {
 
     private void sendCmd(Scene scene) {
         System.err.println("send cmd!!");
+        //todo mqtt send control payload
 
     }
 
-    /**
-     * use js to eval a string and get the response,the string will be like this "true and false or true"
-     *
-     * @param logicString
-     * @return
-     */
     private boolean jsEngineEval(StringBuilder logicString) {
-        // need to do some logic string validate
+        //todo  需要做一些logicString的正确性
         try {
             JavaScriptEngine.engine.eval("var result=" + logicString + ";");
             return (Boolean) JavaScriptEngine.engine.get("result");
